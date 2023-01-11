@@ -150,10 +150,15 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Buffer.h" />
     <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\DebugMessenger.h" />
     <ClInclude Include="src\FileSystem.h" />
+    <ClInclude Include="src\Instance.h" />
+    <ClInclude Include="src\QueueFamilies.h" />
     <ClInclude Include="src\SwapChain.h" />
+    <ClInclude Include="src\VulkanException.h" />
+    <ClInclude Include="src\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\compile.bat" />

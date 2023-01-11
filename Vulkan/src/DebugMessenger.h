@@ -38,14 +38,14 @@ public:
 	DebugMessenger& operator=(DebugMessenger&&) = delete;
 	DebugMessenger& operator=(const DebugMessenger&) = delete;
 
-	void AddRequiredExtensions(std::vector<const char*>* extensions)
+	static void AddRequiredExtensions(std::vector<const char*>* extensions)
 	{
 #ifndef NDEBUG
 		extensions->emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
 	}
 
-	void AddRequiredLayers(std::vector<const char*>* layers)
+	static void AddRequiredLayers(std::vector<const char*>* layers)
 	{
 #ifndef NDEBUG
 		layers->emplace_back("VK_LAYER_KHRONOS_validation");
@@ -61,6 +61,8 @@ private:
 		if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
 		{
 			std::cerr << pCallbackData->pMessage << std::endl;
+			if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+				throw VulkanException(pCallbackData->pMessage);
 		}
 		return VK_FALSE;
 	}

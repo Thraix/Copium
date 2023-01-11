@@ -1,10 +1,11 @@
 #pragma once
 
+#include "VulkanException.h"
 #include <vulkan/vulkan.hpp>
 #include <iostream>
 
 #define ASSERT(Function, message) if(!(Function)) { throw std::runtime_error(message); } while(false)
-#define VK_ASSERT(Function, message) if(Function != VK_SUCCESS) { throw std::runtime_error(message); } while(false)
+#define VK_ASSERT(Function, message) if(Function != VK_SUCCESS) { throw VulkanException(message); } while(false)
 
 VkResult vkCreateDebugUtilsMessengerEXT(VkInstance instance, 
 	                                      const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
