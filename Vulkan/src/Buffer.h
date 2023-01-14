@@ -7,7 +7,8 @@
 
 class Buffer
 {
-private:
+	CP_DELETE_COPY_AND_MOVE_CTOR(Buffer);
+protected:
   Instance& instance;
 
 	VkDeviceMemory memory;
@@ -27,7 +28,7 @@ public:
     createInfo.usage = usage;
     createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    VK_ASSERT(vkCreateBuffer(instance.GetDevice(), &createInfo, nullptr, &handle), "Failed to initialize buffer");
+    CP_VK_ASSERT(vkCreateBuffer(instance.GetDevice(), &createInfo, nullptr, &handle), "Failed to initialize buffer");
 
     VkMemoryRequirements memoryRequirements;
     vkGetBufferMemoryRequirements(instance.GetDevice(), handle, &memoryRequirements);
@@ -37,12 +38,12 @@ public:
     allocateInfo.allocationSize = memoryRequirements.size;
     allocateInfo.memoryTypeIndex = FindMemoryType(instance, memoryRequirements.memoryTypeBits, properties);
 
-    VK_ASSERT(vkAllocateMemory(instance.GetDevice(), &allocateInfo, nullptr, &memory), "Failed to allocate buffer memory");
+    CP_VK_ASSERT(vkAllocateMemory(instance.GetDevice(), &allocateInfo, nullptr, &memory), "Failed to allocate buffer memory");
 
     vkBindBufferMemory(instance.GetDevice(), handle, memory, 0);
 	}
 
-  ~Buffer()
+  virtual ~Buffer()
   {
     vkFreeMemory(instance.GetDevice(), memory, nullptr);
     vkDestroyBuffer(instance.GetDevice(), handle, nullptr);
@@ -50,7 +51,7 @@ public:
 
 	void Update(void* indexData, int index)
 	{
-    ASSERT(index >= 0 && index < count, "instance is outside of the buffer");
+    CP_ASSERT(index >= 0 && index < count, "index is outside of the buffer");
 
     if (mappedData == nullptr)
     {
@@ -65,32 +66,56 @@ public:
     }
 	}
 
+  void UpdateStaging(void* data)
+  {
+		VkDeviceSize bufferSize = size * count;
+    Buffer stagingBuffer{instance, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};
+
+    stagingBuffer.Update(data, 0);
+
+    CopyBuffer(instance, stagingBuffer, *this, 0, bufferSize);
+  }
+
+  void UpdateStaging(void* data, VkDeviceSize offset, VkDeviceSize size)
+  {
+    Buffer stagingBuffer{instance, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, size, 1};
+
+    stagingBuffer.Update(data, 0);
+
+    CopyBuffer(instance, stagingBuffer, *this, offset, size);
+  }
+
   void Map()
   {
-    ASSERT(mappedData == nullptr, "Mapping an already mapped buffer")
+    CP_ASSERT(mappedData == nullptr, "Mapping an already mapped buffer");
 		vkMapMemory(instance.GetDevice(), memory, 0, size * count, 0, &mappedData);
   }
 
   void Unmap()
   {
-    ASSERT(mappedData != nullptr, "Unmapping an already unmapped buffer")
+    CP_ASSERT(mappedData != nullptr, "Unmapping an already unmapped buffer");
 
 		vkUnmapMemory(instance.GetDevice(), memory);
 		mappedData = nullptr;
   }
 
+  virtual void Bind(VkCommandBuffer commandBuffer) { CP_UNIMPLEMENTED(); };
+
+  void BindAsVertexBuffer(VkCommandBuffer commandBuffer)
+  {
+    VkDeviceSize offset = 0;
+    vkCmdBindVertexBuffers(commandBuffer, 0, 1, &handle, &offset);
+  }
+
+  void BindAsIndexBuffer(VkCommandBuffer commandBuffer)
+  {
+    // TODO: Maybe don't assume that indices are uint16?
+    vkCmdBindIndexBuffer(commandBuffer, handle, 0, VK_INDEX_TYPE_UINT16);
+  }
+
   VkBuffer GetHandle() const
   {
     return handle;
-  }
-
-  VkDescriptorBufferInfo GetDescriptorBufferInfo(int instance)
-  {
-		VkDescriptorBufferInfo bufferInfo{};
-		bufferInfo.buffer = handle;
-    bufferInfo.offset = (VkDeviceSize)instance * size;
-		bufferInfo.range = size;
-    return bufferInfo;
   }
 
   VkDeviceSize GetSize() const
@@ -100,13 +125,12 @@ public:
 
   VkDeviceSize GetPosition(int index) const
   {
-    ASSERT(index >= 0 && index < count, "Instance is outside of the buffer");
+    CP_ASSERT(index >= 0 && index < count, "index is outside of the buffer");
     return size * (VkDeviceSize)index;
   }
 
-  static void CopyBuffer(Instance& instance, const Buffer& srcBuffer, const Buffer& dstBuffer)
+  static void CopyBuffer(Instance& instance, const Buffer& srcBuffer, const Buffer& dstBuffer, VkDeviceSize offset, VkDeviceSize size)
   {
-    ASSERT(srcBuffer.size == dstBuffer.size && srcBuffer.count == dstBuffer.count, "Buffers have different sizes");
     VkCommandBufferAllocateInfo allocateInfo{};
 
     allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -115,7 +139,7 @@ public:
     allocateInfo.commandBufferCount = 1;
 
     VkCommandBuffer commandBuffer;
-    VK_ASSERT(vkAllocateCommandBuffers(instance.GetDevice(), &allocateInfo, &commandBuffer), "Failed to initialize command buffer");
+    CP_VK_ASSERT(vkAllocateCommandBuffers(instance.GetDevice(), &allocateInfo, &commandBuffer), "Failed to initialize command buffer");
 
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -124,9 +148,9 @@ public:
     vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
     VkBufferCopy bufferCopy{};
-    bufferCopy.dstOffset = 0;
+    bufferCopy.dstOffset = offset;
     bufferCopy.srcOffset = 0;
-    bufferCopy.size = srcBuffer.size * (VkDeviceSize)srcBuffer.count;
+    bufferCopy.size = size;
 
     vkCmdCopyBuffer(commandBuffer, srcBuffer.GetHandle(), dstBuffer.GetHandle(), 1, &bufferCopy);
 

@@ -4,6 +4,7 @@
 
 class DebugMessenger
 {
+	CP_DELETE_COPY_AND_MOVE_CTOR(DebugMessenger);
 public:
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
@@ -22,7 +23,7 @@ public:
 													   VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
 		createInfo.pfnUserCallback = DebugCallback;
 		createInfo.pUserData = nullptr;
-		VK_ASSERT(vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger), "Failed to initialze debug messenger");
+		CP_VK_ASSERT(vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger), "Failed to initialze debug messenger");
 #endif
 	}
 
@@ -32,11 +33,6 @@ public:
 		vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif
 	}
-
-	DebugMessenger(DebugMessenger&&) = delete;
-	DebugMessenger(const DebugMessenger&) = delete;
-	DebugMessenger& operator=(DebugMessenger&&) = delete;
-	DebugMessenger& operator=(const DebugMessenger&) = delete;
 
 	static void AddRequiredExtensions(std::vector<const char*>* extensions)
 	{

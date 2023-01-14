@@ -5,7 +5,7 @@
 class VulkanException : public std::runtime_error
 {
 public:
-	VulkanException(const char* str)
-		: runtime_error{str}
+	VulkanException(const std::string& str)
+		: runtime_error{str.c_str()}
 	{}
 };

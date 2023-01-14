@@ -4,12 +4,12 @@
 #include <optional>
 #include <vector>
 
-struct QueueFamilies
+struct QueueFamiliesQuery
 {
   std::optional<uint32_t> graphicsFamily;
   std::optional<uint32_t> presentFamily;
 
-  QueueFamilies(VkSurfaceKHR surface, VkPhysicalDevice device)
+  QueueFamiliesQuery(VkSurfaceKHR surface, VkPhysicalDevice device)
   {
     uint32_t queueFamilyCount = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
