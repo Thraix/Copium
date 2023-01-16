@@ -15,8 +15,8 @@ class Pipeline
 private:
   Instance& instance;
 
-  std::map<uint32_t, VkDescriptorSetLayout> vertexDescriptorSetLayouts;
-  std::map<uint32_t, VkDescriptorSetLayout> fragmentDescriptorSetLayouts;
+  VkDescriptorSetLayout vertexDescriptorSetLayout;
+  VkDescriptorSetLayout fragmentDescriptorSetLayout;
   VkPipelineLayout pipelineLayout;
   VkPipeline graphicsPipeline;
 
@@ -32,14 +32,8 @@ public:
   {
     vkDestroyPipeline(instance.GetDevice(), graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(instance.GetDevice(), pipelineLayout, nullptr);
-    for (auto&& descriptorSetLayout : vertexDescriptorSetLayouts)
-    {
-      vkDestroyDescriptorSetLayout(instance.GetDevice(), descriptorSetLayout.second, nullptr);
-    }
-    for (auto&& descriptorSetLayout : fragmentDescriptorSetLayouts)
-    {
-      vkDestroyDescriptorSetLayout(instance.GetDevice(), descriptorSetLayout.second, nullptr);
-    }
+    vkDestroyDescriptorSetLayout(instance.GetDevice(), vertexDescriptorSetLayout, nullptr);
+    vkDestroyDescriptorSetLayout(instance.GetDevice(), fragmentDescriptorSetLayout, nullptr);
   }
 
   void Bind(VkCommandBuffer commandBuffer)
@@ -65,35 +59,21 @@ public:
     return pipelineLayout;
   }
 
-  VkDescriptorSetLayout GetVertexDescriptorSetLayout(uint32_t binding)
+  VkDescriptorSetLayout GetVertexDescriptorSetLayout()
   {
-    return vertexDescriptorSetLayouts.at(binding);
+    return vertexDescriptorSetLayout;
   }
 
-  VkDescriptorSetLayout GetFragmentDescriptorSetLayout(uint32_t binding)
+  VkDescriptorSetLayout GetFragmentDescriptorSetLayout()
   {
-    return fragmentDescriptorSetLayouts.at(binding);
+    return fragmentDescriptorSetLayout;
   }
 
 private:
   void InitializeDescriptorSetLayouts(const PipelineCreator& creator)
   {
-    {
-      int i = 0;
-      for (auto& binding : creator.vertexDescriptorSetLayouts)
-      {
-        vertexDescriptorSetLayouts.emplace(binding, InitializeDescriptorSetLayout(binding, VK_SHADER_STAGE_VERTEX_BIT));
-        i++;
-      }
-    }
-    {
-      int i = 0;
-      for (auto& binding : creator.fragmentDescriptorSetLayouts)
-      {
-        fragmentDescriptorSetLayouts.emplace(binding, InitializeDescriptorSetLayout(binding, VK_SHADER_STAGE_FRAGMENT_BIT));
-        i++;
-      }
-    }
+    vertexDescriptorSetLayout = InitializeDescriptorSetLayouts(creator.vertexDescriptorSetLayouts, VK_SHADER_STAGE_VERTEX_BIT);
+    fragmentDescriptorSetLayout = InitializeDescriptorSetLayouts(creator.fragmentDescriptorSetLayouts, VK_SHADER_STAGE_FRAGMENT_BIT);
   }
 
   void InitializePipeline(const PipelineCreator& creator)
@@ -119,10 +99,10 @@ private:
 
     VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
     vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputCreateInfo.vertexBindingDescriptionCount = 1;
-    vertexInputCreateInfo.pVertexBindingDescriptions = &creator.vertexInputBindingDescription;
-    vertexInputCreateInfo.vertexAttributeDescriptionCount = creator.vertexInputAttributeDescriptions.size();
-    vertexInputCreateInfo.pVertexAttributeDescriptions = creator.vertexInputAttributeDescriptions.data();
+    vertexInputCreateInfo.vertexBindingDescriptionCount = creator.vertexDescriptor.GetBindings().size();
+    vertexInputCreateInfo.pVertexBindingDescriptions = creator.vertexDescriptor.GetBindings().data();
+    vertexInputCreateInfo.vertexAttributeDescriptionCount = creator.vertexDescriptor.GetAttributes().size();
+    vertexInputCreateInfo.pVertexAttributeDescriptions = creator.vertexDescriptor.GetAttributes().data();
 
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyCreateInfo{};
     inputAssemblyCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -205,16 +185,9 @@ private:
     colorBlendCreateInfo.blendConstants[2] = 0.0f;
     colorBlendCreateInfo.blendConstants[3] = 0.0f;
 
-    std::vector<VkDescriptorSetLayout> layouts{vertexDescriptorSetLayouts.size() + fragmentDescriptorSetLayouts.size()};
-    int i = 0;
-    for (auto&& descriptorSetLayout : vertexDescriptorSetLayouts)
-    {
-      layouts[i++] = descriptorSetLayout.second;
-    }
-    for (auto&& descriptorSetLayout : fragmentDescriptorSetLayouts)
-    {
-      layouts[i++] = descriptorSetLayout.second;
-    }
+    std::vector<VkDescriptorSetLayout> layouts{};
+    if (vertexDescriptorSetLayout != VK_NULL_HANDLE) layouts.emplace_back(vertexDescriptorSetLayout);
+    if (fragmentDescriptorSetLayout != VK_NULL_HANDLE) layouts.emplace_back(fragmentDescriptorSetLayout );
     VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo{};
     pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutCreateInfo.setLayoutCount = layouts.size();
@@ -261,23 +234,37 @@ private:
     return shaderModule;
   }
 
-  VkDescriptorSetLayout InitializeDescriptorSetLayout(uint32_t binding, VkShaderStageFlags flags)
+  VkDescriptorSetLayout InitializeDescriptorSetLayouts(const std::set<uint32_t>& bindings, VkShaderStageFlags flags)
   {
     VkDescriptorSetLayout descriptorSetLayout;
-    VkDescriptorSetLayoutBinding layoutBinding{};
-    layoutBinding.binding = binding;
-    layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    layoutBinding.descriptorCount = 1;
-    layoutBinding.stageFlags = flags;
-    layoutBinding.pImmutableSamplers = nullptr;
+    std::vector<VkDescriptorSetLayoutBinding> descriptorSetLayoutBindings{bindings.size()};
 
-    VkDescriptorSetLayoutCreateInfo createInfo{};
-    createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    createInfo.bindingCount = 1;
-    createInfo.pBindings = &layoutBinding;
+    int i = 0;
+    for (auto&& binding : bindings)
+    {
+      VkDescriptorSetLayoutBinding layoutBinding{};
+      layoutBinding.binding = binding;
+      layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+      layoutBinding.descriptorCount = 1;
+      layoutBinding.stageFlags = flags;
+      layoutBinding.pImmutableSamplers = nullptr;
+      descriptorSetLayoutBindings[i++] = layoutBinding;
+    }
 
-    CP_VK_ASSERT(vkCreateDescriptorSetLayout(instance.GetDevice(), &createInfo, nullptr, &descriptorSetLayout), "Failed to initialize descriptor set layout");
+    if (!descriptorSetLayoutBindings.empty())
+    {
+      VkDescriptorSetLayoutCreateInfo createInfo{};
+      createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+      createInfo.bindingCount = descriptorSetLayoutBindings.size();
+      createInfo.pBindings = descriptorSetLayoutBindings.data();
 
-    return descriptorSetLayout;
+      CP_VK_ASSERT(vkCreateDescriptorSetLayout(instance.GetDevice(), &createInfo, nullptr, &descriptorSetLayout), "Failed to initialize descriptor set layout");
+
+      return descriptorSetLayout;
+    }
+    else
+    {
+      return VK_NULL_HANDLE;
+    }
   }
 };

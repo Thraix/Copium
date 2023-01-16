@@ -14,8 +14,9 @@ public:
   template <typename T>
   void AddAttribute(uint32_t binding, uint32_t location, VkFormat format, uint32_t offset)
   {
-    auto it = std::find_if(bindings.begin(), bindings.end(), [&binding](const VkVertexInputBindingDescription& description) { return description.binding == binding; });
-    if (it == bindings.end())
+    CP_ASSERT(binding <= bindings.size(), "Attribute binding must less than or be equal to the amount of current bindings");
+
+    if (binding == bindings.size())
       AddLayout(binding, sizeof(T));
 
     VkVertexInputAttributeDescription description{};
@@ -34,6 +35,16 @@ public:
       bufferSize += binding.stride;
     }
     return bufferSize;
+  }
+
+  const std::vector<VkVertexInputAttributeDescription>& GetAttributes() const
+  {
+    return attributes;
+  }
+
+  const std::vector<VkVertexInputBindingDescription>& GetBindings() const
+  {
+    return bindings;
   }
 
 private:

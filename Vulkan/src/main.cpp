@@ -14,6 +14,7 @@
 #include <optional>
 #include <set>
 #include <glm/glm.hpp>
+#include <stb/stb_image.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <chrono>
 
@@ -24,15 +25,30 @@ const std::vector<Vertex> vertices = {
 	Vertex{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
 };
 
+const std::vector<glm::vec2> positions = {
+	{-0.5f, -0.5f},
+	{0.5f, -0.5f},
+	{0.5f, 0.5f},
+	{-0.5f, 0.5f}
+};
+
+const std::vector<glm::vec3> colors = {
+	glm::vec3{1.0f, 0.0f, 0.0f},
+	glm::vec3{0.0f, 1.0f, 0.0f},
+	glm::vec3{0.0f, 0.0f, 1.0f},
+	glm::vec3{1.0f, 1.0f, 1.0f}
+};
+
 const std::vector<uint16_t> indices = {
     0, 1, 2, 2, 3, 0
 };
 
-struct ShaderUniform
+struct alignas(64) ShaderUniform
 {
-  glm::mat4 model;
-  glm::mat4 view;
-  glm::mat4 projection;
+  alignas(16) glm::mat4 projection;
+  alignas(16) glm::mat4 view;
+  alignas(16) glm::mat4 model;
+  alignas(16) glm::vec3 lightPos;
 };
 
 class Application final
@@ -42,7 +58,7 @@ private:
   std::unique_ptr<Pipeline> graphicsPipeline;
   std::unique_ptr<VertexBuffer> vertexBuffer;
   std::unique_ptr<IndexBuffer> indexBuffer;
-  std::unique_ptr<UniformBuffer<ShaderUniform>> uniformBuffer;
+  std::unique_ptr<UniformBuffer<ShaderUniform>> shaderUniformBuffer;
   std::vector<VkCommandBuffer> commandBuffers;
 
 public:
@@ -86,23 +102,22 @@ private:
 
   void InitializeUniformBuffer()
   {
-    uniformBuffer = std::make_unique<UniformBuffer<ShaderUniform>>(*instance, *graphicsPipeline, 0, graphicsPipeline->GetVertexDescriptorSetLayout(0));
+    shaderUniformBuffer = std::make_unique<UniformBuffer<ShaderUniform>>(*instance, *graphicsPipeline, 0, graphicsPipeline->GetVertexDescriptorSetLayout());
   }
 
   void InitializeGraphicsPipeline() 
   {
     PipelineCreator creator{"res/shaders/vert.spv", "res/shaders/frag.spv"};
     creator.AddVertexDescriptorSetLayoutBinding(0);
-    creator.SetVertexInputBindingDescription(Vertex::GetBindingDescription());
-    creator.SetVertexInputAttributeDescription(Vertex::GetAttributeDescriptions());
+    creator.SetVertexDescriptor(Vertex::GetDescriptor());
+    creator.SetCullMode(VK_CULL_MODE_NONE);
     graphicsPipeline = std::make_unique<Pipeline>(*instance, creator);
   }
 
   void InitializeVertexBuffer()
   {
-		VkDeviceSize bufferSize = sizeof(Vertex) * vertices.size();
-    vertexBuffer = std::make_unique<VertexBuffer>(*instance, bufferSize);
-    vertexBuffer->UpdateStaging((void*)vertices.data());
+    vertexBuffer = std::make_unique<VertexBuffer>(*instance, Vertex::GetDescriptor(), vertices.size());
+    vertexBuffer->Update(0, (void*)vertices.data());
 	}
 
   void InitializeIndexBuffer()
@@ -154,7 +169,7 @@ private:
 
     vertexBuffer->Bind(commandBuffer);
     indexBuffer->Bind(commandBuffer);
-    uniformBuffer->Bind(commandBuffer);
+    shaderUniformBuffer->Bind(commandBuffer);
 
     indexBuffer->Draw(commandBuffer);
 
@@ -168,12 +183,12 @@ private:
 
     float time = startTimer.Elapsed();
     ShaderUniform shaderUniform;
-    shaderUniform.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		shaderUniform.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		shaderUniform.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		shaderUniform.projection = glm::perspective(glm::radians(45.0f), instance->GetSwapChain().GetExtent().width / (float) instance->GetSwapChain().GetExtent().height, 0.1f, 10.0f);
+    shaderUniform.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     shaderUniform.projection[1][1] *= -1;
 
-    uniformBuffer->Update(shaderUniform);
+    shaderUniformBuffer->Update(shaderUniform);
   }
 
   VkShaderModule InitializeShaderModule(const std::vector<char>& code)

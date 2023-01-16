@@ -13,8 +13,7 @@ private:
 
 	std::string vertexShader;
 	std::string fragmentShader;
-	VkVertexInputBindingDescription vertexInputBindingDescription;
-	std::vector<VkVertexInputAttributeDescription> vertexInputAttributeDescriptions{};
+	VertexDescriptor vertexDescriptor{};
 	VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
   VkCullModeFlags cullMode = VK_CULL_MODE_BACK_BIT;
 	VkFrontFace frontFace = VK_FRONT_FACE_CLOCKWISE;
@@ -25,18 +24,14 @@ public:
 		: vertexShader{vertexShader}, fragmentShader{fragmentShader}
 	{}
 
-	void SetVertexInputBindingDescription(VkVertexInputBindingDescription description)
+	void SetVertexDescriptor(const VertexDescriptor& descriptor)
 	{
-		vertexInputBindingDescription = description;
-	}
-
-	void SetVertexInputAttributeDescription(const std::vector<VkVertexInputAttributeDescription>& descriptions)
-	{
-		vertexInputAttributeDescriptions = descriptions;
+		vertexDescriptor = descriptor;
 	}
 
 	void AddVertexDescriptorSetLayoutBinding(uint32_t binding)
 	{
+		CP_ASSERT(binding == 0, "Currently only support uniforms with binding = 0");
 		vertexDescriptorSetLayouts.emplace(binding);
 	}
 
