@@ -15,8 +15,7 @@ class Pipeline
 private:
   Instance& instance;
 
-  VkDescriptorSetLayout vertexDescriptorSetLayout;
-  VkDescriptorSetLayout fragmentDescriptorSetLayout;
+  std::vector<VkDescriptorSetLayout> descriptorSetLayouts{};
   VkPipelineLayout pipelineLayout;
   VkPipeline graphicsPipeline;
 
@@ -24,7 +23,7 @@ public:
   Pipeline(Instance& instance, PipelineCreator creator)
     : instance{instance}
   {
-    InitializeDescriptorSetLayouts(creator);
+    InitializeDescriptorSetLayout(creator);
     InitializePipeline(creator);
   }
 
@@ -32,8 +31,10 @@ public:
   {
     vkDestroyPipeline(instance.GetDevice(), graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(instance.GetDevice(), pipelineLayout, nullptr);
-    vkDestroyDescriptorSetLayout(instance.GetDevice(), vertexDescriptorSetLayout, nullptr);
-    vkDestroyDescriptorSetLayout(instance.GetDevice(), fragmentDescriptorSetLayout, nullptr);
+    for (auto&& descriptorSetLayout : descriptorSetLayouts)
+    {
+      vkDestroyDescriptorSetLayout(instance.GetDevice(), descriptorSetLayout, nullptr);
+    }
   }
 
   void Bind(VkCommandBuffer commandBuffer)
@@ -59,21 +60,32 @@ public:
     return pipelineLayout;
   }
 
-  VkDescriptorSetLayout GetVertexDescriptorSetLayout()
+  VkDescriptorSetLayout GetDescriptorSetLayout(uint32_t setIndex) const
   {
-    return vertexDescriptorSetLayout;
-  }
-
-  VkDescriptorSetLayout GetFragmentDescriptorSetLayout()
-  {
-    return fragmentDescriptorSetLayout;
+    return descriptorSetLayouts[setIndex];
   }
 
 private:
-  void InitializeDescriptorSetLayouts(const PipelineCreator& creator)
+  void InitializeDescriptorSetLayout(const PipelineCreator& creator)
   {
-    vertexDescriptorSetLayout = InitializeDescriptorSetLayouts(creator.vertexDescriptorSetLayouts, VK_SHADER_STAGE_VERTEX_BIT);
-    fragmentDescriptorSetLayout = InitializeDescriptorSetLayouts(creator.fragmentDescriptorSetLayouts, VK_SHADER_STAGE_FRAGMENT_BIT);
+    descriptorSetLayouts.resize(creator.descriptorSetLayouts.size());
+    int i = 0;
+    for (auto&& binding : creator.descriptorSetLayouts)
+    {
+      VkDescriptorSetLayoutBinding layoutBinding{};
+      layoutBinding.binding = 0;
+      layoutBinding.descriptorType = binding.second.type;
+      layoutBinding.descriptorCount = 1;
+      layoutBinding.stageFlags = binding.second.flags;
+      layoutBinding.pImmutableSamplers = nullptr;
+
+      VkDescriptorSetLayoutCreateInfo createInfo{};
+      createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+      createInfo.bindingCount = 1;
+      createInfo.pBindings = &layoutBinding;
+
+      CP_VK_ASSERT(vkCreateDescriptorSetLayout(instance.GetDevice(), &createInfo, nullptr, &descriptorSetLayouts[i++]), "Failed to initialize descriptor set layout");
+    }
   }
 
   void InitializePipeline(const PipelineCreator& creator)
@@ -185,13 +197,10 @@ private:
     colorBlendCreateInfo.blendConstants[2] = 0.0f;
     colorBlendCreateInfo.blendConstants[3] = 0.0f;
 
-    std::vector<VkDescriptorSetLayout> layouts{};
-    if (vertexDescriptorSetLayout != VK_NULL_HANDLE) layouts.emplace_back(vertexDescriptorSetLayout);
-    if (fragmentDescriptorSetLayout != VK_NULL_HANDLE) layouts.emplace_back(fragmentDescriptorSetLayout );
     VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo{};
     pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutCreateInfo.setLayoutCount = layouts.size();
-    pipelineLayoutCreateInfo.pSetLayouts = layouts.data();
+    pipelineLayoutCreateInfo.setLayoutCount = descriptorSetLayouts.size();
+    pipelineLayoutCreateInfo.pSetLayouts = descriptorSetLayouts.data();
     pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
     pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
@@ -234,37 +243,4 @@ private:
     return shaderModule;
   }
 
-  VkDescriptorSetLayout InitializeDescriptorSetLayouts(const std::set<uint32_t>& bindings, VkShaderStageFlags flags)
-  {
-    VkDescriptorSetLayout descriptorSetLayout;
-    std::vector<VkDescriptorSetLayoutBinding> descriptorSetLayoutBindings{bindings.size()};
-
-    int i = 0;
-    for (auto&& binding : bindings)
-    {
-      VkDescriptorSetLayoutBinding layoutBinding{};
-      layoutBinding.binding = binding;
-      layoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-      layoutBinding.descriptorCount = 1;
-      layoutBinding.stageFlags = flags;
-      layoutBinding.pImmutableSamplers = nullptr;
-      descriptorSetLayoutBindings[i++] = layoutBinding;
-    }
-
-    if (!descriptorSetLayoutBindings.empty())
-    {
-      VkDescriptorSetLayoutCreateInfo createInfo{};
-      createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-      createInfo.bindingCount = descriptorSetLayoutBindings.size();
-      createInfo.pBindings = descriptorSetLayoutBindings.data();
-
-      CP_VK_ASSERT(vkCreateDescriptorSetLayout(instance.GetDevice(), &createInfo, nullptr, &descriptorSetLayout), "Failed to initialize descriptor set layout");
-
-      return descriptorSetLayout;
-    }
-    else
-    {
-      return VK_NULL_HANDLE;
-    }
-  }
 };

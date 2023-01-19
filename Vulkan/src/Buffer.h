@@ -36,7 +36,7 @@ public:
     VkMemoryAllocateInfo allocateInfo{};
     allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocateInfo.allocationSize = memoryRequirements.size;
-    allocateInfo.memoryTypeIndex = FindMemoryType(instance, memoryRequirements.memoryTypeBits, properties);
+    allocateInfo.memoryTypeIndex = instance.FindMemoryType(memoryRequirements.memoryTypeBits, properties);
 
     CP_VK_ASSERT(vkAllocateMemory(instance.GetDevice(), &allocateInfo, nullptr, &memory), "Failed to allocate buffer memory");
 
@@ -85,10 +85,11 @@ public:
     CopyBuffer(instance, stagingBuffer, *this, offset, size);
   }
 
-  void Map()
+  void* Map()
   {
     CP_ASSERT(mappedData == nullptr, "Mapping an already mapped buffer");
 		vkMapMemory(instance.GetDevice(), memory, 0, size * count, 0, &mappedData);
+    return mappedData;
   }
 
   void Unmap()
@@ -166,17 +167,4 @@ public:
 
     vkFreeCommandBuffers(instance.GetDevice(), instance.GetCommandPool(), 1, &commandBuffer);
   }
-
-private:
-	static uint32_t FindMemoryType(Instance& instance, uint32_t typeFilter, VkMemoryPropertyFlags properties) 
-  {
-    VkPhysicalDeviceMemoryProperties memoryProperties;
-    vkGetPhysicalDeviceMemoryProperties(instance.GetPhysicalDevice(), &memoryProperties);
-    for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; ++i)
-    {
-      if ((typeFilter & (1 << i)) && (memoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
-        return i;
-    }
-    throw std::runtime_error("Failed to find suitable memory type");
-	}
 };

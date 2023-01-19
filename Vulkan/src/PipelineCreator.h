@@ -6,10 +6,14 @@
 
 class PipelineCreator
 {
+	struct DescriptorSetLayout
+	{
+		VkDescriptorType type;
+		VkShaderStageFlags flags;
+	};
 	friend class Pipeline;
 private:
-	std::set<uint32_t> vertexDescriptorSetLayouts{};
-	std::set<uint32_t> fragmentDescriptorSetLayouts{};
+	std::map<uint32_t, DescriptorSetLayout> descriptorSetLayouts{};
 
 	std::string vertexShader;
 	std::string fragmentShader;
@@ -29,15 +33,9 @@ public:
 		vertexDescriptor = descriptor;
 	}
 
-	void AddVertexDescriptorSetLayoutBinding(uint32_t binding)
+	void AddDescriptorSetLayoutBinding(uint32_t set, VkDescriptorType type, VkShaderStageFlags stageFlags)
 	{
-		CP_ASSERT(binding == 0, "Currently only support uniforms with binding = 0");
-		vertexDescriptorSetLayouts.emplace(binding);
-	}
-
-	void AddFragmentDescriptorSetLayoutBinding(uint32_t binding)
-	{
-		fragmentDescriptorSetLayouts.emplace(binding);
+		descriptorSetLayouts.emplace(set, DescriptorSetLayout{type, stageFlags});
 	}
 
 	void SetPrimitiveTopology(VkPrimitiveTopology primitiveTopology)

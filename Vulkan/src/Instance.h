@@ -157,6 +157,19 @@ public:
     return *swapChain;
   }
 
+  // TODO: Create Device class and move this there
+	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) 
+  {
+    VkPhysicalDeviceMemoryProperties memoryProperties;
+    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+    for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; ++i)
+    {
+      if ((typeFilter & (1 << i)) && (memoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
+        return i;
+    }
+    throw std::runtime_error("Failed to find suitable memory type");
+	}
+
 private:
   void InitializeWindow(const std::string& applicationName)
   {
@@ -277,6 +290,7 @@ private:
     std::vector<const char*> deviceExtensions = GetRequiredDeviceExtensions();
     VkPhysicalDeviceFeatures deviceFeatures{};
     deviceFeatures.fillModeNonSolid = VK_TRUE;
+    deviceFeatures.samplerAnisotropy = VK_TRUE;
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
@@ -380,7 +394,7 @@ private:
 
     VkPhysicalDeviceFeatures deviceFeatures;
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
-    if (!deviceFeatures.fillModeNonSolid)
+    if (!deviceFeatures.fillModeNonSolid || !deviceFeatures.samplerAnisotropy)
       return false;
 
     QueueFamiliesQuery query{surface, device};

@@ -168,11 +168,13 @@
     <ClInclude Include="src\Buffer.h" />
     <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\DebugMessenger.h" />
+    <ClInclude Include="src\DescriptorSet.h" />
+    <ClInclude Include="src\DescriptorPool.h" />
     <ClInclude Include="src\FileSystem.h" />
-    <ClInclude Include="src\Framebuffer.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Pipeline.h" />
     <ClInclude Include="src\PipelineCreator.h" />
+    <ClInclude Include="src\Sampler.h" />
     <ClInclude Include="src\UniformBuffer.h" />
     <ClInclude Include="src\Instance.h" />
     <ClInclude Include="src\QueueFamilies.h" />
