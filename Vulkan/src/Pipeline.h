@@ -3,7 +3,9 @@
 #include "Common.h"
 #include "Instance.h"
 #include "FileSystem.h"
+#include "DescriptorSet.h"
 #include "PipelineCreator.h"
+#include "Shader.h"
 
 #include <vulkan/vulkan.hpp>
 #include <map>
@@ -16,6 +18,7 @@ private:
   Instance& instance;
 
   std::vector<VkDescriptorSetLayout> descriptorSetLayouts{};
+  std::vector<VkDescriptorSet> boundDescriptorSets;
   VkPipelineLayout pipelineLayout;
   VkPipeline graphicsPipeline;
 
@@ -55,9 +58,15 @@ public:
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
   }
 
-  VkPipelineLayout GetPipelineLayout() const
+  void SetDescriptorSet(uint32_t setIndex, const DescriptorSet& descriptorSet)
   {
-    return pipelineLayout;
+    CP_ASSERT(setIndex < boundDescriptorSets.size(), "DescriptorSet index is out of bounds");
+    boundDescriptorSets[setIndex] = descriptorSet.GetHandle();
+  }
+
+  void BindDescriptorSets(VkCommandBuffer commandBuffer)
+  {
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, boundDescriptorSets.size(), boundDescriptorSets.data(), 0, nullptr);
   }
 
   VkDescriptorSetLayout GetDescriptorSetLayout(uint32_t setIndex) const
@@ -68,21 +77,27 @@ public:
 private:
   void InitializeDescriptorSetLayout(const PipelineCreator& creator)
   {
+    boundDescriptorSets.resize(creator.descriptorSetLayouts.size());
     descriptorSetLayouts.resize(creator.descriptorSetLayouts.size());
     int i = 0;
-    for (auto&& binding : creator.descriptorSetLayouts)
+    for (auto&& bindings : creator.descriptorSetLayouts)
     {
-      VkDescriptorSetLayoutBinding layoutBinding{};
-      layoutBinding.binding = 0;
-      layoutBinding.descriptorType = binding.second.type;
-      layoutBinding.descriptorCount = 1;
-      layoutBinding.stageFlags = binding.second.flags;
-      layoutBinding.pImmutableSamplers = nullptr;
+      std::vector<VkDescriptorSetLayoutBinding> layoutBindings{bindings.second.size()};
+      int j = 0;
+      for (auto&& binding : bindings.second)
+      {
+        layoutBindings[j].binding = binding.binding;
+        layoutBindings[j].descriptorType = binding.type;
+        layoutBindings[j].descriptorCount = binding.count;
+        layoutBindings[j].stageFlags = binding.flags;
+        layoutBindings[j].pImmutableSamplers = nullptr;
+        j++;
+      }
 
       VkDescriptorSetLayoutCreateInfo createInfo{};
       createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-      createInfo.bindingCount = 1;
-      createInfo.pBindings = &layoutBinding;
+      createInfo.bindingCount = layoutBindings.size();
+      createInfo.pBindings = layoutBindings.data();
 
       CP_VK_ASSERT(vkCreateDescriptorSetLayout(instance.GetDevice(), &createInfo, nullptr, &descriptorSetLayouts[i++]), "Failed to initialize descriptor set layout");
     }
@@ -90,24 +105,7 @@ private:
 
   void InitializePipeline(const PipelineCreator& creator)
   {
-    std::vector<char> vertShaderCode = FileSystem::ReadFile(creator.vertexShader);
-    std::vector<char> fragShaderCode = FileSystem::ReadFile(creator.fragmentShader);
-
-    VkShaderModule vertShaderModule = InitializeShaderModule(vertShaderCode);
-    VkShaderModule fragShaderModule = InitializeShaderModule(fragShaderCode);
-
-    VkPipelineShaderStageCreateInfo shaderStages[2];
-    shaderStages[0] = {};
-    shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-    shaderStages[0].module = vertShaderModule;
-    shaderStages[0].pName = "main";
-
-    shaderStages[1] = {};
-    shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    shaderStages[1].module = fragShaderModule;
-    shaderStages[1].pName = "main";
+    Shader shader{instance, ShaderType::GlslFile, creator.vertexShader, creator.fragmentShader};
 
     VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
     vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -173,6 +171,19 @@ private:
     multisampleCreateInfo.alphaToCoverageEnable = VK_FALSE;
     multisampleCreateInfo.alphaToOneEnable = VK_FALSE;
 
+    VkPipelineDepthStencilStateCreateInfo depthStencilCreateInfo{};
+    depthStencilCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+    depthStencilCreateInfo.depthTestEnable = VK_TRUE;
+    depthStencilCreateInfo.depthWriteEnable = VK_TRUE;
+    depthStencilCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+    depthStencilCreateInfo.depthBoundsTestEnable = VK_FALSE;
+    depthStencilCreateInfo.minDepthBounds = 0.0f;
+    depthStencilCreateInfo.maxDepthBounds = 1.0f;
+    depthStencilCreateInfo.stencilTestEnable = VK_FALSE;
+    depthStencilCreateInfo.front = {};
+    depthStencilCreateInfo.back = {};
+
+
     VkPipelineColorBlendAttachmentState colorBlendAttachment{}; // TODO: Add to PipelineCreator
     colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | 
                                           VK_COLOR_COMPONENT_G_BIT | 
@@ -206,16 +217,17 @@ private:
 
     CP_VK_ASSERT(vkCreatePipelineLayout(instance.GetDevice(), &pipelineLayoutCreateInfo, nullptr, &pipelineLayout), "Failed to initialize pipeline layout");
 
+    const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages = shader.GetShaderStages();
     VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo{};
     graphicsPipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    graphicsPipelineCreateInfo.stageCount = 2;
-    graphicsPipelineCreateInfo.pStages = shaderStages;
+    graphicsPipelineCreateInfo.stageCount = shaderStages.size();
+    graphicsPipelineCreateInfo.pStages = shaderStages.data();
     graphicsPipelineCreateInfo.pVertexInputState = &vertexInputCreateInfo;
     graphicsPipelineCreateInfo.pInputAssemblyState = &inputAssemblyCreateInfo;
     graphicsPipelineCreateInfo.pViewportState = &viewportStateCreateInfo;
     graphicsPipelineCreateInfo.pRasterizationState = &rasterizerCreateInfo;
     graphicsPipelineCreateInfo.pMultisampleState = &multisampleCreateInfo;
-    graphicsPipelineCreateInfo.pDepthStencilState = nullptr;
+    graphicsPipelineCreateInfo.pDepthStencilState = &depthStencilCreateInfo;
     graphicsPipelineCreateInfo.pColorBlendState = &colorBlendCreateInfo;
     graphicsPipelineCreateInfo.pDynamicState = &dynamicStateCreateInfo;
     graphicsPipelineCreateInfo.layout = pipelineLayout;
@@ -225,9 +237,6 @@ private:
     graphicsPipelineCreateInfo.basePipelineIndex =  -1;
 
     CP_VK_ASSERT(vkCreateGraphicsPipelines(instance.GetDevice(), VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo, nullptr, &graphicsPipeline), "Failed to initialize graphics pipeline");
-
-    vkDestroyShaderModule(instance.GetDevice(), vertShaderModule, nullptr);
-    vkDestroyShaderModule(instance.GetDevice(), fragShaderModule, nullptr);
   }
 
   VkShaderModule InitializeShaderModule(const std::vector<char>& code)

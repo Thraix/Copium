@@ -28,6 +28,7 @@ public:
     createInfo.poolSizeCount = poolSizes.size();
     createInfo.pPoolSizes = poolSizes.data();
     createInfo.maxSets = DESCRIPTOR_SET_COUNT * instance.GetMaxFramesInFlight();
+    createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
     CP_VK_ASSERT(vkCreateDescriptorPool(instance.GetDevice(), &createInfo, nullptr, &descriptorPool), "Failed to initialize descriptor pool");
   }
@@ -51,5 +52,10 @@ public:
     CP_VK_ASSERT(vkAllocateDescriptorSets(instance.GetDevice(), &allocateInfo, descriptorSets.data()), "Failed to allocate descriptor sets");
 
     return descriptorSets;
+  }
+
+  void FreeDescriptorSets(const std::vector<VkDescriptorSet>& descriptorSets)
+  {
+    vkFreeDescriptorSets(instance.GetDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
   }
 };

@@ -1,7 +1,10 @@
 #pragma once
 
+#include "Common.h"
+
 #include <vulkan/vulkan.h>
 #include <vector>
+#include <GLFW/glfw3.h>
 
 class Instance;
 
@@ -26,6 +29,9 @@ private:
   VkRenderPass renderPass;
   VkFormat imageFormat;
   VkExtent2D extent;
+  VkImage depthImage;
+  VkImageView depthImageView;
+  VkDeviceMemory depthImageMemory;
   std::vector<VkImageView> imageViews;
   std::vector<VkImage> images;
   std::vector<VkFramebuffer> framebuffers;
@@ -48,11 +54,14 @@ public:
 private:
   void Initialize();
   void InitializeImageViews();
+  void InitializeDepthBuffer();
   void InitializeRenderPass();
   void InitializeFramebuffers();
   void Destroy();
 
   VkSurfaceFormatKHR SelectSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+  VkFormat SelectDepthFormat();
+  VkFormat SelectSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
   VkPresentModeKHR SelectSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
   VkExtent2D SelectSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities);
 };

@@ -2,11 +2,11 @@
 
 #include "Common.h"
 #include "DescriptorPool.h"
-#include "Sampler.h"
+#include "Texture2D.h"
 #include "UniformBuffer.h"
 #include <vulkan/vulkan.hpp>
 
-class DescriptorSet
+class DescriptorSet final
 {
   CP_DELETE_COPY_AND_MOVE_CTOR(DescriptorSet);
 private:
@@ -21,6 +21,11 @@ public:
     : instance{instance}, descriptorPool{descriptorPool}, descriptorSetLayout{descriptorSetLayout}
   {
     descriptorSets = descriptorPool.AllocateDescriptorSets(descriptorSetLayout);
+  }
+
+  ~DescriptorSet()
+  {
+    descriptorPool.FreeDescriptorSets(descriptorSets);
   }
 
   void AddUniform(const UniformBuffer& uniformBuffer, uint32_t binding)
@@ -42,9 +47,9 @@ public:
     }
   }
 
-  void AddSampler(const Sampler& sampler, uint32_t binding)
+  void AddTexture2D(const Texture2D& texture2D, uint32_t binding)
   {
-    VkDescriptorImageInfo imageInfo = sampler.GetDescriptorImageInfo();
+    VkDescriptorImageInfo imageInfo = texture2D.GetDescriptorImageInfo();
     for (auto&& descriptorSet : descriptorSets) {
       VkWriteDescriptorSet descriptorWrite{};
       descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

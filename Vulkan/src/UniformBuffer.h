@@ -2,7 +2,6 @@
 
 #include "Common.h"
 #include "Buffer.h"
-#include "Pipeline.h"
 #include <vulkan/vulkan.hpp>
 
 class UniformBuffer : public Buffer
@@ -19,11 +18,6 @@ public:
   {
     CP_ASSERT(sizeof(T) == Buffer::GetSize(), "Template size is not the same as buffer size %u != %u", sizeof(T), Buffer::GetSize());
     Buffer::Update((void*)&t, instance.GetFlightIndex());
-  }
-
-  void Bind(VkCommandBuffer commandBuffer) const
-  {
-		// vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.GetPipelineLayout(), 0, 1, &descriptorSets[instance.GetFlightIndex()], 0, nullptr);
   }
 
   VkDescriptorBufferInfo GetDescriptorBufferInfo(int index) const

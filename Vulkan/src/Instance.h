@@ -48,10 +48,10 @@ public:
 		InitializeSurface();
     SelectPhysicalDevice();
     InitializeLogicalDevice();
-    InitializeSwapChain();
     InitializeCommandPool();
+    InitializeSwapChain();
     InitializeSyncObjects();
-    std::cout << "Initialized Vulkan in " << timer.Elapsed() << " seconds" << std::endl;
+    CP_INFO("Initialized Vulkan in %f seconds", timer.Elapsed());
   }
 
   ~Instance()
@@ -211,10 +211,10 @@ private:
     std::vector<VkExtensionProperties> extensions{extensionCount};
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-    std::cout << "Supported Extensions: " << std::endl;
+    CP_INFO("Supported Extensions:");
     for (auto&& extension : extensions)
     {
-      std::cout << "\t" << extension.extensionName << std::endl;
+      CP_INFO_CONT("\t%s", extension.extensionName);
     }
 
     std::vector<const char*> layers{};
@@ -249,12 +249,12 @@ private:
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-    std::cout << "Available devices: " << std::endl;
+    CP_INFO("Available devices:");
     for (auto&& device : devices)
     {
       VkPhysicalDeviceProperties deviceProperties;
       vkGetPhysicalDeviceProperties(device, &deviceProperties);
-      std::cout << "\t" << deviceProperties.deviceName << std::endl;
+      CP_INFO_CONT("\t%s", deviceProperties.deviceName);
     }
     for (auto&& device : devices)
     {
@@ -263,7 +263,7 @@ private:
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(device, &deviceProperties);
         physicalDevice = device;
-        std::cout << "Selecting device: " << deviceProperties.deviceName << std::endl;
+        CP_INFO("Selecting device: %s", deviceProperties.deviceName);
         break;
       }
     }
@@ -362,10 +362,10 @@ private:
     std::vector<VkLayerProperties> availableLayers(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-    std::cout << "Supported Layers: " << std::endl;
+    CP_INFO("Supported Layers:");
     for (auto&& availableLayer : availableLayers)
     {
-      std::cout << "\t" << availableLayer.layerName << std::endl;
+      CP_INFO_CONT("\t%s", availableLayer.layerName);
     }
 
     for (auto&& layer : layers)

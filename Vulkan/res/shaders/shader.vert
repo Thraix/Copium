@@ -8,15 +8,19 @@ layout(set = 0, binding = 0) uniform SceneUniformBufferObject
 	vec3 lightPos;
 } ubo;
 
-layout(location = 0) in vec2 inPosition;
+layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inColor;
 layout(location = 2) in vec2 inTexCoord;
 
 layout(location = 0) out vec3 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
+layout(location = 2) out vec3 fragPosition;
+layout(location = 3) out vec3 fragLightPos;
 
 void main() {
-    gl_Position = ubo.projection * ubo.view * ubo.model * vec4(inPosition.x, 0.0, inPosition.y, 1.0);
+    gl_Position = ubo.projection * ubo.view * ubo.model * vec4(inPosition, 1.0);
     fragColor = inColor;
 	fragTexCoord = inTexCoord;
+    fragPosition =	vec3(ubo.model * vec4(inPosition, 1.0));
+	fragLightPos = ubo.lightPos;
 }
