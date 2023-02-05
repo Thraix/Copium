@@ -46,7 +46,7 @@ namespace Copium
         fragShaderModule = InitializeShaderModule(FileSystem::ReadFile(fragmentInput));
         break;
       default:
-        CP_ASSERT(false, "Unreachable switch case %d", (int)type);
+        CP_ASSERT(false, "Shader : Unreachable switch case %d", (int)type);
       }
 
       shaderStages.resize(2);
@@ -99,7 +99,7 @@ namespace Copium
         {
           if (FileSystem::DateModified(filename) < FileSystem::DateModified(spvFilename))
           {
-            CP_DEBUG("Loading cached shader file: %s", filename.c_str());
+            CP_DEBUG("InitializeShaderModuleFromGlslFile : Loading cached shader file: %s", filename.c_str());
             std::vector<char> data = FileSystem::ReadFile(spvFilename);
             CP_ASSERT(data.size() % 4 == 0, "Spv data size is not a factor of 4");
             return InitializeShaderModule((const uint32_t*)data.data(), data.size());
@@ -108,9 +108,9 @@ namespace Copium
       }
       catch (const std::runtime_error& e)
       {
-        CP_WARN("Cached shader file is invalid, recreating it");
+        CP_WARN("InitializeShaderModuleFromGlslFile : Cached shader file is invalid, recreating it");
       }
-      CP_DEBUG("Compiling shader file: %s", filename.c_str());
+      CP_DEBUG("InitializeShaderModuleFromGlslFile : Compiling shader file: %s", filename.c_str());
       shaderc::Compiler compiler;
       shaderc::CompileOptions options;
 
@@ -118,7 +118,7 @@ namespace Copium
 
       std::vector<char> glslCode = FileSystem::ReadFile(filename);
       shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(glslCode.data(), glslCode.size(), type, filename.c_str(), options);
-      CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success, "Failed to compile shader: %s\n%s", filename.c_str(), result.GetErrorMessage().c_str());
+      CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success, "InitializeShaderModuleFromGlslFile : Failed to compile shader: %s\n%s", filename.c_str(), result.GetErrorMessage().c_str());
 
       std::vector<uint32_t> data{result.cbegin(), result.cend()};
       FileSystem::WriteFile(spvFilename, (const char*)data.data(), data.size() * sizeof(uint32_t));
@@ -133,7 +133,7 @@ namespace Copium
       options.SetOptimizationLevel(shaderc_optimization_level_size);
 
       shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(code.data(), type, "inline_shader_code", options);
-      CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success, "Failed to compile inline shader code: %s", result.GetErrorMessage());
+      CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success, "InitializeShaderModuleFromGlslCode : Failed to compile inline shader code: %s", result.GetErrorMessage());
 
       std::vector<uint32_t> data{result.cbegin(), result.cend()};
       return InitializeShaderModule(data.data(), data.size() * sizeof(uint32_t));
@@ -147,7 +147,7 @@ namespace Copium
       createInfo.pCode = data;
 
       VkShaderModule shaderModule;
-      CP_VK_ASSERT(vkCreateShaderModule(instance.GetDevice(), &createInfo, nullptr, &shaderModule), "Failed to initialize shader module");
+      CP_VK_ASSERT(vkCreateShaderModule(instance.GetDevice(), &createInfo, nullptr, &shaderModule), "InitializeShaderModule : Failed to initialize shader module");
 
       return shaderModule;
     }

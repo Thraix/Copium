@@ -10,7 +10,7 @@ namespace Copium
 {
   class Instance;
   class CommandBuffer;
-  class Texture2D;
+  class DepthAttachment;
 
   struct SwapChainSupportDetails
   {
@@ -32,7 +32,7 @@ namespace Copium
     VkRenderPass renderPass;
     VkFormat imageFormat;
     VkExtent2D extent;
-    std::unique_ptr<Texture2D> depthImage;
+    std::unique_ptr<DepthAttachment> depthAttachment;
     std::vector<VkImageView> imageViews;
     std::vector<VkImage> images;
     std::vector<VkFramebuffer> framebuffers;
@@ -56,7 +56,7 @@ namespace Copium
   private:
     void Initialize();
     void InitializeImageViews();
-    void InitializeDepthBuffer();
+    void InitializeDepthAttachment();
     void InitializeRenderPass();
     void InitializeFramebuffers();
     void Destroy();

@@ -30,7 +30,7 @@ namespace Copium
       createInfo.usage = usage;
       createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-      CP_VK_ASSERT(vkCreateBuffer(instance.GetDevice(), &createInfo, nullptr, &handle), "Failed to initialize buffer");
+      CP_VK_ASSERT(vkCreateBuffer(instance.GetDevice(), &createInfo, nullptr, &handle), "Buffer : Failed to initialize buffer");
 
       VkMemoryRequirements memoryRequirements;
       vkGetBufferMemoryRequirements(instance.GetDevice(), handle, &memoryRequirements);
@@ -40,7 +40,7 @@ namespace Copium
       allocateInfo.allocationSize = memoryRequirements.size;
       allocateInfo.memoryTypeIndex = instance.FindMemoryType(memoryRequirements.memoryTypeBits, properties);
 
-      CP_VK_ASSERT(vkAllocateMemory(instance.GetDevice(), &allocateInfo, nullptr, &memory), "Failed to allocate buffer memory");
+      CP_VK_ASSERT(vkAllocateMemory(instance.GetDevice(), &allocateInfo, nullptr, &memory), "Buffer : Failed to allocate buffer memory");
 
       vkBindBufferMemory(instance.GetDevice(), handle, memory, 0);
     }
@@ -53,7 +53,7 @@ namespace Copium
 
     void Update(void* indexData, int index)
     {
-      CP_ASSERT(index >= 0 && index < count, "index is outside of the buffer");
+      CP_ASSERT(index >= 0 && index < count, "Update : Index is outside of the buffer");
 
       if (mappedData == nullptr)
       {
@@ -89,14 +89,14 @@ namespace Copium
 
     void* Map()
     {
-      CP_ASSERT(mappedData == nullptr, "Mapping an already mapped buffer");
+      CP_ASSERT(mappedData == nullptr, "Map : Mapping an already mapped buffer");
       vkMapMemory(instance.GetDevice(), memory, 0, size * count, 0, &mappedData);
       return mappedData;
     }
 
     void Unmap()
     {
-      CP_ASSERT(mappedData != nullptr, "Unmapping an already unmapped buffer");
+      CP_ASSERT(mappedData != nullptr, "Unmap : Unmapping an already unmapped buffer");
 
       vkUnmapMemory(instance.GetDevice(), memory);
       mappedData = nullptr;
@@ -128,7 +128,7 @@ namespace Copium
 
     VkDeviceSize GetPosition(int index) const
     {
-      CP_ASSERT(index >= 0 && index < count, "index is outside of the buffer");
+      CP_ASSERT(index >= 0 && index < count, "GetPosition : Index is outside of the buffer");
       return size * (VkDeviceSize)index;
     }
 
@@ -142,7 +142,7 @@ namespace Copium
       allocateInfo.commandBufferCount = 1;
 
       VkCommandBuffer commandBuffer;
-      CP_VK_ASSERT(vkAllocateCommandBuffers(instance.GetDevice(), &allocateInfo, &commandBuffer), "Failed to initialize command buffer");
+      CP_VK_ASSERT(vkAllocateCommandBuffers(instance.GetDevice(), &allocateInfo, &commandBuffer), "CopyBuffer : Failed to initialize command buffer");
 
       VkCommandBufferBeginInfo beginInfo{};
       beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;

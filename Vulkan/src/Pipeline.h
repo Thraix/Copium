@@ -45,24 +45,11 @@ namespace Copium
     void Bind(const CommandBuffer& commandBuffer)
     {
       vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-
-      VkViewport viewport{};
-      viewport.x = 0.0f;
-      viewport.y = 0.0f;
-      viewport.width = instance.GetSwapChain().GetExtent().width;
-      viewport.height = instance.GetSwapChain().GetExtent().height;
-      viewport.minDepth = 0.0f;
-      viewport.maxDepth = 1.0f;
-      vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
-      VkRect2D scissor{};
-      scissor.offset = {0, 0};
-      scissor.extent = instance.GetSwapChain().GetExtent();
-      vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     }
 
     void SetDescriptorSet(uint32_t setIndex, const DescriptorSet& descriptorSet)
     {
-      CP_ASSERT(setIndex < boundDescriptorSets.size(), "DescriptorSet index is out of bounds");
+      CP_ASSERT(setIndex < boundDescriptorSets.size(), "SetDescriptorSet : DescriptorSet index is out of bounds");
       boundDescriptorSets[setIndex] = descriptorSet.GetHandle();
     }
 
@@ -101,7 +88,7 @@ namespace Copium
         createInfo.bindingCount = layoutBindings.size();
         createInfo.pBindings = layoutBindings.data();
 
-        CP_VK_ASSERT(vkCreateDescriptorSetLayout(instance.GetDevice(), &createInfo, nullptr, &descriptorSetLayouts[i++]), "Failed to initialize descriptor set layout");
+        CP_VK_ASSERT(vkCreateDescriptorSetLayout(instance.GetDevice(), &createInfo, nullptr, &descriptorSetLayouts[i++]), "InitializeDescriptorSetLayout : Failed to initialize descriptor set layout");
       }
     }
 
@@ -124,14 +111,14 @@ namespace Copium
       VkViewport viewport{};
       viewport.x = 0;
       viewport.y = 0;
-      viewport.width = instance.GetSwapChain().GetExtent().width;
-      viewport.height = instance.GetSwapChain().GetExtent().height;
+      viewport.width = 1;
+      viewport.height = 1;
       viewport.minDepth = 0.0f;
       viewport.maxDepth = 1.0f;
 
       VkRect2D scissor{};
       scissor.offset = {0, 0};
-      scissor.extent = instance.GetSwapChain().GetExtent();
+      scissor.extent = {1, 1};
 
       std::vector<VkDynamicState> dynamicStates = {
         VK_DYNAMIC_STATE_VIEWPORT,
@@ -217,7 +204,7 @@ namespace Copium
       pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
       pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
-      CP_VK_ASSERT(vkCreatePipelineLayout(instance.GetDevice(), &pipelineLayoutCreateInfo, nullptr, &pipelineLayout), "Failed to initialize pipeline layout");
+      CP_VK_ASSERT(vkCreatePipelineLayout(instance.GetDevice(), &pipelineLayoutCreateInfo, nullptr, &pipelineLayout), "InitializePipeline : Failed to initialize pipeline layout");
 
       const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages = shader.GetShaderStages();
       VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo{};
@@ -238,21 +225,7 @@ namespace Copium
       graphicsPipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
       graphicsPipelineCreateInfo.basePipelineIndex = -1;
 
-      CP_VK_ASSERT(vkCreateGraphicsPipelines(instance.GetDevice(), VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo, nullptr, &graphicsPipeline), "Failed to initialize graphics pipeline");
+      CP_VK_ASSERT(vkCreateGraphicsPipelines(instance.GetDevice(), VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo, nullptr, &graphicsPipeline), "InitializePipeline : Failed to initialize graphics pipeline");
     }
-
-    VkShaderModule InitializeShaderModule(const std::vector<char>& code)
-    {
-      VkShaderModuleCreateInfo createInfo{};
-      createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-      createInfo.codeSize = code.size();
-      createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-
-      VkShaderModule shaderModule;
-      CP_VK_ASSERT(vkCreateShaderModule(instance.GetDevice(), &createInfo, nullptr, &shaderModule), "Failed to initialize shader module");
-
-      return shaderModule;
-    }
-
   };
 }

@@ -35,7 +35,7 @@ namespace Copium
       allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
       allocateInfo.commandPool = instance.GetCommandPool();
       allocateInfo.commandBufferCount = commandBuffers.size();
-      CP_VK_ASSERT(vkAllocateCommandBuffers(instance.GetDevice(), &allocateInfo, commandBuffers.data()), "Failed to allocate CommandBuffer");
+      CP_VK_ASSERT(vkAllocateCommandBuffers(instance.GetDevice(), &allocateInfo, commandBuffers.data()), "CommandBuffer : Failed to allocate CommandBuffer");
     }
 
     ~CommandBuffer()
@@ -65,11 +65,11 @@ namespace Copium
         currentCommandBuffer = commandBuffers[instance.GetFlightIndex()];
         break;
       default:
-        CP_WARN("Unhandled enum case: %d", (int)type);
+        CP_ABORT("Begin : Unreachable switch case");
       }
 
       vkResetCommandBuffer(currentCommandBuffer, 0);
-      CP_VK_ASSERT(vkBeginCommandBuffer(currentCommandBuffer, &beginInfo), "Failed to begin command buffer");
+      CP_VK_ASSERT(vkBeginCommandBuffer(currentCommandBuffer, &beginInfo), "Begin : Failed to begin command buffer");
     }
 
     void End()

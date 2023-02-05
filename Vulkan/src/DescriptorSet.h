@@ -2,8 +2,9 @@
 
 #include "Common.h"
 #include "DescriptorPool.h"
-#include "Texture2D.h"
+#include "Sampler.h"
 #include "UniformBuffer.h"
+
 #include <vulkan/vulkan.hpp>
 
 namespace Copium
@@ -49,10 +50,10 @@ namespace Copium
       }
     }
 
-    void AddTexture2D(const Texture2D& texture2D, uint32_t binding)
+    void AddSampler(const Sampler& sampler, uint32_t binding)
     {
       for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i) {
-        VkDescriptorImageInfo imageInfo = texture2D.GetDescriptorImageInfo(i);
+        VkDescriptorImageInfo imageInfo = sampler.GetDescriptorImageInfo(i);
         VkWriteDescriptorSet descriptorWrite{};
         descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrite.dstSet = descriptorSets[i];

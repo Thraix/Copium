@@ -6,6 +6,6 @@ layout(location = 0) out vec2 fragTexCoord;
 
 void main()
 {
-  gl_Position = vec4(inPosition* 0.5, 0.999, 1.0);
+  gl_Position = vec4(inPosition * 0.5, 0.999, 1.0);
   fragTexCoord = inPosition * 0.5 + 0.5;
 }

@@ -16,7 +16,7 @@ int main()
       glfwPollEvents();
       if (timer.Elapsed() >= 1.0)
       {
-        CP_DEBUG("%d fps", frames);
+        CP_DEBUG("main : %d fps", frames);
         frames = 0;
         timer.Start();
       }

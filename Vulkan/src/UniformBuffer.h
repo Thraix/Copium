@@ -18,7 +18,7 @@ namespace Copium
     template <typename T>
     void Update(const T& t)
     {
-      CP_ASSERT(sizeof(T) == Buffer::GetSize(), "Template size is not the same as buffer size %u != %u", sizeof(T), Buffer::GetSize());
+      CP_ASSERT(sizeof(T) == Buffer::GetSize(), "Update : Template size is not the same as buffer size %u != %u", sizeof(T), Buffer::GetSize());
       Buffer::Update((void*)&t, instance.GetFlightIndex());
     }
 

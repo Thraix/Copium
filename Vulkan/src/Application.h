@@ -103,8 +103,15 @@ namespace Copium
 
     bool Update()
     {
+      if (framebuffer->GetWidth() != instance->GetSwapChain().GetExtent().width || framebuffer->GetHeight() != instance->GetSwapChain().GetExtent().height)
+      {
+        framebuffer->Resize(instance->GetSwapChain().GetExtent().width / 8, instance->GetSwapChain().GetExtent().height / 8);
+        descriptorSetPassthrough->AddSampler(framebuffer->GetColorAttachment(), 0);
+      }
       if (!instance->BeginPresent())
+      {
         return true;
+      }
 
       RecordCommandBuffer();
       commandBuffer->SubmitAsGraphicsQueue();
@@ -140,10 +147,10 @@ namespace Copium
 
       descriptorSet = std::make_unique<DescriptorSet>(*instance, *descriptorPool, graphicsPipeline->GetDescriptorSetLayout(0));
       descriptorSet->AddUniform(*shaderUniformBuffer, 0);
-      descriptorSet->AddTexture2D(*texture2D, 1);
+      descriptorSet->AddSampler(*texture2D, 1);
 
       descriptorSetPassthrough = std::make_unique<DescriptorSet>(*instance, *descriptorPool, graphicsPipelinePassthrough->GetDescriptorSetLayout(0));
-      descriptorSetPassthrough->AddTexture2D(framebuffer->GetTexture2D(), 0);
+      descriptorSetPassthrough->AddSampler(framebuffer->GetColorAttachment(), 0);
     }
 
     void InitializeGraphicsPipeline()
@@ -188,11 +195,6 @@ namespace Copium
     void RecordCommandBuffer()
     {
       commandBuffer->Begin();
-      std::vector<VkClearValue> clearValues{2};
-      clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-      clearValues[1].depthStencil = {1.0f, 0};
-
-
 
       framebuffer->Bind(*commandBuffer);
       graphicsPipeline->Bind(*commandBuffer);
@@ -228,7 +230,7 @@ namespace Copium
       float time = startTimer.Elapsed();
       ShaderUniform shaderUniform;
       shaderUniform.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-      shaderUniform.projection = glm::perspective(glm::radians(45.0f), instance->GetSwapChain().GetExtent().width / (float)instance->GetSwapChain().GetExtent().height, 0.1f, 10.0f);
+      shaderUniform.projection = glm::perspective(glm::radians(45.0f), framebuffer->GetWidth() / (float)framebuffer->GetHeight(), 0.1f, 10.0f);
       shaderUniform.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
       shaderUniform.projection[1][1] *= -1;
       shaderUniform.lightPos = glm::rotate(glm::mat4{1.0f}, time * glm::radians(45.0f), glm::vec3(0, 1, 0)) * glm::vec4{0.3, 0.1, 0, 1};

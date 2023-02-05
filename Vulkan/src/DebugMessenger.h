@@ -25,7 +25,7 @@ namespace Copium
                                VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
       createInfo.pfnUserCallback = DebugCallback;
       createInfo.pUserData = nullptr;
-      CP_VK_ASSERT(vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger), "Failed to initialze debug messenger");
+      CP_VK_ASSERT(vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger), "DebugMessenger : Failed to initialze debug messenger");
   #endif
     }
 
@@ -59,11 +59,9 @@ namespace Copium
       if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
       {
         if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
-        {
-          CP_ERR(pCallbackData->pMessage);
-          throw VulkanException(pCallbackData->pMessage);
-        }
-        CP_WARN(pCallbackData->pMessage);
+          CP_ABORT("DebugCallback : %s", pCallbackData->pMessage);
+        else
+          CP_WARN("DebugCallback : %s", pCallbackData->pMessage);
       }
       return VK_FALSE;
     }

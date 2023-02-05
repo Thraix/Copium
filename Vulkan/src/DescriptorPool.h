@@ -32,7 +32,7 @@ namespace Copium
       createInfo.maxSets = DESCRIPTOR_SET_COUNT * instance.GetMaxFramesInFlight();
       createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
-      CP_VK_ASSERT(vkCreateDescriptorPool(instance.GetDevice(), &createInfo, nullptr, &descriptorPool), "Failed to initialize descriptor pool");
+      CP_VK_ASSERT(vkCreateDescriptorPool(instance.GetDevice(), &createInfo, nullptr, &descriptorPool), "DescriptorPool : Failed to initialize descriptor pool");
     }
 
     ~DescriptorPool()
@@ -51,7 +51,7 @@ namespace Copium
       allocateInfo.pSetLayouts = layouts.data();
 
       descriptorSets.resize(instance.GetMaxFramesInFlight());
-      CP_VK_ASSERT(vkAllocateDescriptorSets(instance.GetDevice(), &allocateInfo, descriptorSets.data()), "Failed to allocate descriptor sets");
+      CP_VK_ASSERT(vkAllocateDescriptorSets(instance.GetDevice(), &allocateInfo, descriptorSets.data()), "AllocateDescriptorSets : Failed to allocate descriptor sets");
 
       return descriptorSets;
     }

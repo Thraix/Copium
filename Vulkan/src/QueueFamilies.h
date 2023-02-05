@@ -33,7 +33,6 @@ namespace Copium
         }
         i++;
       }
-
     }
 
     bool AllRequiredFamiliesSupported()

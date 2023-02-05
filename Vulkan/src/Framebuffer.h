@@ -3,21 +3,21 @@
 #include "Common.h"
 #include "Image.h"
 #include "Instance.h"
-#include "Texture2D.h"
+#include "ColorAttachment.h"
+#include "DepthAttachment.h"
 
 #include  <vulkan/vulkan.hpp>
 
 namespace Copium
 {
-  // TODO: Add resizing (recreate image, depthImage, framebuffers)
   class Framebuffer
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Framebuffer);
   private:
     Instance& instance;
 
-    std::unique_ptr<Texture2D> image;
-    std::unique_ptr<Texture2D> depthImage;
+    std::unique_ptr<ColorAttachment> colorAttachment;
+    std::unique_ptr<DepthAttachment> depthAttachment;
     std::vector<VkFramebuffer> framebuffers;
     VkRenderPass renderPass;
 
@@ -27,7 +27,7 @@ namespace Copium
     Framebuffer(Instance& instance, uint32_t width, uint32_t height)
       : instance{instance}, width{width}, height{height}
     {
-      InitializeImages();
+      InitializeImage();
       InitializeDepthBuffer();
       InitializeRenderPass();
       InitializeFramebuffers();
@@ -38,6 +38,20 @@ namespace Copium
       for (auto& framebuffer : framebuffers)
         vkDestroyFramebuffer(instance.GetDevice(), framebuffer, nullptr);
       vkDestroyRenderPass(instance.GetDevice(), renderPass, nullptr);
+    }
+
+    void Resize(uint32_t width, uint32_t height)
+    {
+      vkDeviceWaitIdle(instance.GetDevice());
+      this->width = width;
+      this->height = height;
+      colorAttachment.reset();
+      depthAttachment.reset();
+      for (auto&& framebuffer : framebuffers)
+        vkDestroyFramebuffer(instance.GetDevice(), framebuffer, nullptr);
+      InitializeImage();
+      InitializeDepthBuffer();
+      InitializeFramebuffers();
     }
 
     void Bind(const CommandBuffer& commandBuffer)
@@ -55,6 +69,19 @@ namespace Copium
       renderPassBeginInfo.clearValueCount = clearValues.size();
       renderPassBeginInfo.pClearValues = clearValues.data();
       vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+      VkViewport viewport{};
+      viewport.x = 0.0f;
+      viewport.y = 0.0f;
+      viewport.width = width;
+      viewport.height = height;
+      viewport.minDepth = 0.0f;
+      viewport.maxDepth = 1.0f;
+      vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+      VkRect2D scissor{};
+      scissor.offset = {0, 0};
+      scissor.extent = {width, height};
+      vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     }
 
     void Unbind(const CommandBuffer& commandBuffer)
@@ -72,21 +99,31 @@ namespace Copium
       return framebuffers[instance.GetFlightIndex()];
     }
 
-    const Texture2D& GetTexture2D() const
+    const ColorAttachment& GetColorAttachment() const
     {
-      return *image;
+      return *colorAttachment;
+    }
+
+    uint32_t GetWidth() const
+    {
+      return width;
+    }
+
+    uint32_t GetHeight() const
+    {
+      return height;
     }
 
   private:
 
-    void InitializeImages()
+    void InitializeImage()
     {
-      image = std::make_unique<Texture2D>(instance, width, height, Texture2D::Type::Dynamic, Texture2D::Format::Color);
+      colorAttachment = std::make_unique<ColorAttachment>(instance, width, height);
     }
 
     void InitializeDepthBuffer()
     {
-      depthImage = std::make_unique<Texture2D>(instance, width, height, Texture2D::Type::Static, Texture2D::Format::Depth);
+      depthAttachment  = std::make_unique<DepthAttachment>(instance, width, height);
     }
 
     void InitializeRenderPass()
@@ -159,7 +196,7 @@ namespace Copium
 
       for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i)
       {
-        std::vector<VkImageView> attachments{image->GetImageView(i), depthImage->GetImageView()};
+        std::vector<VkImageView> attachments{colorAttachment->GetImageView(i), depthAttachment->GetImageView()};
 
         VkFramebufferCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -170,7 +207,7 @@ namespace Copium
         createInfo.height = height;
         createInfo.layers = 1;
 
-        CP_VK_ASSERT(vkCreateFramebuffer(instance.GetDevice(), &createInfo, nullptr, &framebuffers[i]), "InitializeFramebuffers : Failed to initialize swap chain framebuffer");
+        CP_VK_ASSERT(vkCreateFramebuffer(instance.GetDevice(), &createInfo, nullptr, &framebuffers[i]), "InitializeFramebuffers : Failed to initialize framebuffer");
       }
     }
   };

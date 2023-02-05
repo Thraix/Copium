@@ -53,7 +53,7 @@ namespace Copium
       InitializeCommandPool();
       InitializeSwapChain();
       InitializeSyncObjects();
-      CP_INFO("Initialized Vulkan in %f seconds", timer.Elapsed());
+      CP_INFO("Instance : Initialized Vulkan in %f seconds", timer.Elapsed());
     }
 
     ~Instance()
@@ -106,7 +106,7 @@ namespace Copium
       submitInfo.signalSemaphoreCount = 1;
       submitInfo.pSignalSemaphores = &renderFinishedSemaphores[flightIndex];
 
-      CP_VK_ASSERT(vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[flightIndex]), "Failed to submit command buffer");
+      CP_VK_ASSERT(vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[flightIndex]), "SubmitGraphicsQueue : Failed to submit command buffer");
     }
 
     VkInstance GetInstance() const
@@ -169,7 +169,7 @@ namespace Copium
         if ((typeFilter & (1 << i)) && (memoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
           return i;
       }
-      throw std::runtime_error("Failed to find suitable memory type");
+      CP_ABORT("FindMemoryType : Failed to find suitable memory type");
     }
 
   private:
@@ -190,7 +190,7 @@ namespace Copium
 #else
       window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, applicationName.c_str(), nullptr, nullptr);
 #endif
-      CP_ASSERT(window, "Failed to initialize glfw window");
+      CP_ASSERT(window, "InitializeWindow : Failed to initialize glfw window");
 
       glfwSetWindowUserPointer(window, this);
       glfwSetFramebufferSizeCallback(window, FramebufferResizeCallback);
@@ -213,7 +213,7 @@ namespace Copium
       std::vector<VkExtensionProperties> extensions{extensionCount};
       vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-      CP_INFO("Supported Extensions:");
+      CP_INFO("InitiaizeInstace : Supported Extensions:");
       for (auto&& extension : extensions)
       {
         CP_INFO_CONT("\t%s", extension.extensionName);
@@ -221,7 +221,7 @@ namespace Copium
 
       std::vector<const char*> layers{};
       DebugMessenger::AddRequiredLayers(&layers);
-      CP_ASSERT(CheckLayerSupport(layers), "Some required layers are not supported");
+      CP_ASSERT(CheckLayerSupport(layers), "InitializeInstance : Some required layers are not supported");
 
       VkInstanceCreateInfo createInfo{};
       createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -230,7 +230,7 @@ namespace Copium
       createInfo.ppEnabledExtensionNames = requiredExtensions.data();
       createInfo.enabledLayerCount = layers.size();
       createInfo.ppEnabledLayerNames = layers.data();
-      CP_VK_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance), "Failed to create instance");
+      CP_VK_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance), "InitializeInstance : Failed to create instance");
     }
 
     void InitializeDebugMessenger()
@@ -240,18 +240,18 @@ namespace Copium
 
     void InitializeSurface()
     {
-      CP_VK_ASSERT(glfwCreateWindowSurface(instance, window, nullptr, &surface), "Failed to create Vulkan surface");
+      CP_VK_ASSERT(glfwCreateWindowSurface(instance, window, nullptr, &surface), "InitializeSurface : Failed to create Vulkan surface");
     }
 
     void SelectPhysicalDevice()
     {
       uint32_t deviceCount;
       vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-      CP_ASSERT(deviceCount != 0, "No available devices support Vulkan");
+      CP_ASSERT(deviceCount != 0, "SelectPhysicaDevice : No available devices support Vulkan");
 
       std::vector<VkPhysicalDevice> devices(deviceCount);
       vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-      CP_INFO("Available devices:");
+      CP_INFO("SelectPhysicaDevice : Available devices:");
       for (auto&& device : devices)
       {
         VkPhysicalDeviceProperties deviceProperties;
@@ -265,11 +265,11 @@ namespace Copium
           VkPhysicalDeviceProperties deviceProperties;
           vkGetPhysicalDeviceProperties(device, &deviceProperties);
           physicalDevice = device;
-          CP_INFO("Selecting device: %s", deviceProperties.deviceName);
+          CP_INFO("SelectPhysicaDevice : Selecting device: %s", deviceProperties.deviceName);
           break;
         }
       }
-      CP_ASSERT(physicalDevice != VK_NULL_HANDLE, "Failed to find suitable GPU");
+      CP_ASSERT(physicalDevice != VK_NULL_HANDLE, "SelectPhysicaDevice : Failed to find suitable GPU");
     }
 
     void InitializeLogicalDevice()
@@ -301,7 +301,7 @@ namespace Copium
       createInfo.ppEnabledExtensionNames = deviceExtensions.data();
       createInfo.enabledExtensionCount = deviceExtensions.size();
 
-      CP_VK_ASSERT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device), "Failed to initialize logical device");
+      CP_VK_ASSERT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device), "InitializeLogicalDevice : Failed to initialize logical device");
 
       graphicsQueueIndex = query.graphicsFamily.value();
       presentQueueIndex = query.presentFamily.value();
@@ -320,7 +320,7 @@ namespace Copium
       createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
       createInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
       createInfo.queueFamilyIndex = graphicsQueueIndex;
-      CP_VK_ASSERT(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool), "Failed to initialize command pool");
+      CP_VK_ASSERT(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool), "InitializeCommandPool : Failed to initialize command pool");
     }
 
     void InitializeSyncObjects()
@@ -332,14 +332,14 @@ namespace Copium
       semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
       for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
       {
-        CP_VK_ASSERT(vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]), "Failed to initialize available image semaphore");
-        CP_VK_ASSERT(vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]), "Failed to initialize render finished semaphore");
+        CP_VK_ASSERT(vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]), "InitializeSyncObjects : Failed to initialize available image semaphore");
+        CP_VK_ASSERT(vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]), "InitializeSyncObjects : Failed to initialize render finished semaphore");
 
         VkFenceCreateInfo fenceCreateInfo{};
         fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-        CP_VK_ASSERT(vkCreateFence(device, &fenceCreateInfo, nullptr, &inFlightFences[i]), "Failed to initialize in flight fence");
+        CP_VK_ASSERT(vkCreateFence(device, &fenceCreateInfo, nullptr, &inFlightFences[i]), "InitializeSyncObjects : Failed to initialize in flight fence");
       }
     }
 
@@ -364,7 +364,7 @@ namespace Copium
       std::vector<VkLayerProperties> availableLayers(layerCount);
       vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-      CP_INFO("Supported Layers:");
+      CP_INFO("CheckLayerSupport : Supported Layers:");
       for (auto&& availableLayer : availableLayers)
       {
         CP_INFO_CONT("\t%s", availableLayer.layerName);

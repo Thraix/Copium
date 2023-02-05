@@ -5,43 +5,23 @@
 #include "Common.h"
 #include "Image.h"
 #include "Instance.h"
+#include "Sampler.h"
 
 namespace Copium
 {
-  // TODO: Separate Texture2D and Framebuffer Attachments
-  class Texture2D
+  class Texture2D : public Sampler
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Texture2D);
-  public:
-    enum class Type
-    {
-      Static, Dynamic
-    };
-
-    enum class Format
-    {
-      Image, Color, Depth
-    };
   private:
-    Instance& instance;
-
-    std::vector<VkImage> images;
-    std::vector<VkDeviceMemory> imageMemories;
-    std::vector<VkImageView> imageViews;
-    VkSampler sampler;
-    Type type;
-    Format format;
+    VkImage image;
+    VkDeviceMemory imageMemory;
+    VkImageView imageView;
   public:
     Texture2D(Instance& instance, const std::string& filename);
-    Texture2D(Instance& instance, int width, int height, Type type, Format format);
-    ~Texture2D();
+    ~Texture2D() override;
 
-    VkDescriptorImageInfo GetDescriptorImageInfo(int index) const;
-    VkImageView GetImageView() const;
-    VkImageView GetImageView(int index);
+    VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;
   private:
     void InitializeTextureImage(const std::string& filename);
-    void InitializeTexture(int width, int height);
-    void InitializeSampler();
   };
 }
