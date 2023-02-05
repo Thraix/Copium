@@ -12,12 +12,12 @@ public:
     : Buffer{instance, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexCount * sizeof(uint16_t), 1}, indexCount{indexCount}
   {}
 
-  void Bind(VkCommandBuffer commandBuffer) override
+  void Bind(const CommandBuffer& commandBuffer) override
   {
     vkCmdBindIndexBuffer(commandBuffer, handle, 0, VK_INDEX_TYPE_UINT16);
   }
 
-  void Draw(VkCommandBuffer commandBuffer)
+  void Draw(const CommandBuffer& commandBuffer)
   {
     vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
   }

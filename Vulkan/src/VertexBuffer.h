@@ -22,7 +22,7 @@ public:
     }
   }
 
-  void Bind(VkCommandBuffer commandBuffer) override
+  void Bind(const CommandBuffer& commandBuffer) override
   {
     std::vector<VkBuffer> buffers{bindingOffsets.size(), handle};
     vkCmdBindVertexBuffers(commandBuffer, 0, bindingOffsets.size(), buffers.data(), bindingOffsets.data());

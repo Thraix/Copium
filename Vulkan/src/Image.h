@@ -28,7 +28,7 @@ public:
     createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     createInfo.flags = 0;
 
-    CP_VK_ASSERT(vkCreateImage(instance.GetDevice(), &createInfo, nullptr, image), "Failed to initialize image");
+    CP_VK_ASSERT(vkCreateImage(instance.GetDevice(), &createInfo, nullptr, image), "InitializeImage : Failed to initialize image");
 
     VkMemoryRequirements memoryRequirements;
     vkGetImageMemoryRequirements(instance.GetDevice(), *image, &memoryRequirements);
@@ -38,7 +38,7 @@ public:
     allocateInfo.allocationSize = memoryRequirements.size;
     allocateInfo.memoryTypeIndex = instance.FindMemoryType(memoryRequirements.memoryTypeBits, properties);
 
-    CP_VK_ASSERT(vkAllocateMemory(instance.GetDevice(), &allocateInfo, nullptr, imageMemory), "Failed to initiallizse image memory");
+    CP_VK_ASSERT(vkAllocateMemory(instance.GetDevice(), &allocateInfo, nullptr, imageMemory), "InitializeImage : Failed to initiallizse image memory");
 
     vkBindImageMemory(instance.GetDevice(), *image, *imageMemory, 0);
   }
@@ -60,7 +60,7 @@ public:
     createInfo.subresourceRange.levelCount = 1;
     createInfo.subresourceRange.baseArrayLayer = 0;
     createInfo.subresourceRange.layerCount = 1;
-    CP_VK_ASSERT(vkCreateImageView(instance.GetDevice(), &createInfo, nullptr, &imageView), "Failed to initialize image view");
+    CP_VK_ASSERT(vkCreateImageView(instance.GetDevice(), &createInfo, nullptr, &imageView), "InitializeImageView : Failed to initialize image view");
     return imageView;
   }
 
@@ -115,12 +115,19 @@ public:
       srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
       dstStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     }
+    else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+      barrier.srcAccessMask = 0;
+      barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+      srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+      dstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    }
     else 
     {
-      throw std::invalid_argument("Unsupported layout transition");
+      CP_ABORT("TransitioinImageLayout : Unsupported layout transition");
     }
 
-    vkCmdPipelineBarrier(commandBuffer.GetHandle(), srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+    vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
   }
 
   static void CopyBufferToImage(Instance& instance, const Buffer& buffer, VkImage image, uint32_t width, uint32_t height)
@@ -140,12 +147,36 @@ public:
     region.imageOffset = {0, 0, 0};
     region.imageExtent = {width, height, 1};
 
-    vkCmdCopyBufferToImage(commandBuffer.GetHandle(), buffer.GetHandle(), image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+    vkCmdCopyBufferToImage(commandBuffer, buffer.GetHandle(), image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+  }
+
+
+  static VkFormat SelectDepthFormat(Instance& instance)
+  {
+    return SelectSupportedFormat(instance, {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
   }
 
 private:
   static bool HasStencilComponent(VkFormat format)
   {
     return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+  }
+
+  static VkFormat SelectSupportedFormat(Instance& instance, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+  {
+    for (VkFormat format : candidates) 
+    {
+      VkFormatProperties properties;
+      vkGetPhysicalDeviceFormatProperties(instance.GetPhysicalDevice(), format, &properties);
+      if(tiling == VK_IMAGE_TILING_LINEAR && (properties.linearTilingFeatures & features) == features)
+      {
+        return format;
+      }
+      else if (tiling == VK_IMAGE_TILING_OPTIMAL && (properties.optimalTilingFeatures & features) == features)
+      {
+        return format;
+      }
+    }
+    CP_ABORT("SelectSupportedFormat : Failed to select supported format");
   }
 };

@@ -41,6 +41,11 @@ public:
     vkFreeCommandBuffers(instance.GetDevice(), instance.GetCommandPool(), commandBuffers.size(), commandBuffers.data());
   }
 
+  operator VkCommandBuffer() const
+  {
+    return currentCommandBuffer;
+  }
+
   // TODO: Test as constexpr function to see if it avoids the switch case
   void Begin()
   {
@@ -87,7 +92,7 @@ public:
     instance.SubmitGraphicsQueue({currentCommandBuffer});
   }
 
-  VkCommandBuffer GetHandle()
+  VkCommandBuffer GetHandle() const
   {
     return currentCommandBuffer;
   }

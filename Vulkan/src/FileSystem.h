@@ -2,6 +2,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <filesystem>
 
 #include "Common.h"
 
@@ -48,6 +49,8 @@ namespace FileSystem
 
 	static void WriteFile(const std::string& filename, const char* data, size_t size)
 	{
+		std::filesystem::path path{filename};
+		std::filesystem::create_directories(path.parent_path());
 		std::ofstream file(filename, std::ios::binary);
 		CP_ASSERT(file.is_open(), "Failed to open file");
 

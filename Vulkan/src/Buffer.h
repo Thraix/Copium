@@ -100,7 +100,7 @@ public:
 		mappedData = nullptr;
   }
 
-  virtual void Bind(VkCommandBuffer commandBuffer) { CP_UNIMPLEMENTED(); };
+  virtual void Bind(const CommandBuffer& commandBuffer) { CP_UNIMPLEMENTED(); };
 
   void BindAsVertexBuffer(VkCommandBuffer commandBuffer)
   {

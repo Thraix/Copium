@@ -21,6 +21,9 @@
     <ClCompile Include="src\SwapChain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Texture2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DebugMessenger.h">
@@ -95,6 +98,12 @@
     <ClInclude Include="src\Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Framebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexPassthrough.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\shader.frag" />
@@ -102,7 +111,7 @@
     <None Include="compile.bat">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="res\shaders\frag.spv" />
-    <None Include="res\shaders\vert.spv" />
+    <None Include="res\shaders\passthrough.frag" />
+    <None Include="res\shaders\passthrough.vert" />
   </ItemGroup>
 </Project>

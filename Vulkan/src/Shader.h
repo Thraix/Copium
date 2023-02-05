@@ -89,7 +89,7 @@ private:
 
   VkShaderModule InitializeShaderModuleFromGlslFile(const std::string& filename, shaderc_shader_kind shaderType)
   {
-    std::string spvFilename = filename + ".spv";
+    std::string spvFilename = ".cache/" + filename + ".spv";
     try
     {
       if (FileSystem::FileExists(spvFilename))

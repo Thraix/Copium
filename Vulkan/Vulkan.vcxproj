@@ -130,7 +130,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>glslc res/shaders/shader.vert -o res/shaders/vert.spv &amp;&amp; glslc res/shaders/shader.frag -o res/shaders/frag.spv</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -157,12 +158,14 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>glslc res/shaders/shader.vert -o res/shaders/vert.spv &amp;&amp; glslc res/shaders/shader.frag -o res/shaders/frag.spv</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SwapChain.cpp" />
+    <ClCompile Include="src\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Buffer.h" />
@@ -172,6 +175,7 @@
     <ClInclude Include="src\DescriptorSet.h" />
     <ClInclude Include="src\DescriptorPool.h" />
     <ClInclude Include="src\FileSystem.h" />
+    <ClInclude Include="src\Framebuffer.h" />
     <ClInclude Include="src\Image.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Pipeline.h" />
@@ -189,13 +193,14 @@
     <ClInclude Include="src\VertexDescriptor.h" />
     <ClInclude Include="src\VulkanException.h" />
     <ClInclude Include="src\Window.h" />
+    <ClInclude Include="src\VertexPassthrough.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="compile.bat" />
-    <None Include="res\shaders\frag.spv" />
+    <None Include="res\shaders\passthrough.frag" />
+    <None Include="res\shaders\passthrough.vert" />
     <None Include="res\shaders\shader.frag" />
     <None Include="res\shaders\shader.vert" />
-    <None Include="res\shaders\vert.spv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

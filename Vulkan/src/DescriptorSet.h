@@ -49,11 +49,11 @@ public:
 
   void AddTexture2D(const Texture2D& texture2D, uint32_t binding)
   {
-    VkDescriptorImageInfo imageInfo = texture2D.GetDescriptorImageInfo();
-    for (auto&& descriptorSet : descriptorSets) {
+    for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i) {
+      VkDescriptorImageInfo imageInfo = texture2D.GetDescriptorImageInfo(i);
       VkWriteDescriptorSet descriptorWrite{};
       descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      descriptorWrite.dstSet = descriptorSet;
+      descriptorWrite.dstSet = descriptorSets[i];
       descriptorWrite.dstBinding = binding;
       descriptorWrite.dstArrayElement = 0;
       descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;

@@ -1,8 +1,10 @@
 #include "SwapChain.h"
 
+#include "CommandBuffer.h"
 #include "Image.h"
 #include "Instance.h"
 #include "QueueFamilies.h"
+#include "Texture2D.h"
 
 #include <glfw/glfw3.h>
 #include <vulkan/vulkan.h>
@@ -48,6 +50,28 @@ SwapChain::~SwapChain()
 {
 	Destroy();
 	vkDestroyRenderPass(instance.GetDevice(), renderPass, nullptr);
+}
+
+void SwapChain::BeginFrameBuffer(const CommandBuffer& commandBuffer) const
+{
+  std::vector<VkClearValue> clearValues{2};
+  clearValues[0].color = {{0.02f, 0.02f, 0.02f, 1.0f}};
+  clearValues[1].depthStencil = {1.0f, 0};
+
+  VkRenderPassBeginInfo renderPassBeginInfo{};
+  renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassBeginInfo.renderPass = renderPass;
+  renderPassBeginInfo.framebuffer = framebuffers[imageIndex];
+  renderPassBeginInfo.renderArea.offset = {0, 0};
+	renderPassBeginInfo.renderArea.extent = extent;
+  renderPassBeginInfo.clearValueCount = clearValues.size();
+  renderPassBeginInfo.pClearValues = clearValues.data();
+  vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void SwapChain::EndFrameBuffer(const CommandBuffer& commandBuffer) const
+{
+  vkCmdEndRenderPass(commandBuffer);
 }
 
 VkSwapchainKHR SwapChain::GetHandle() const
@@ -182,11 +206,7 @@ void SwapChain::InitializeImageViews()
 
 void SwapChain::InitializeDepthBuffer()
 {
-	VkFormat depthFormat = SelectDepthFormat();
-	Image::InitializeImage(instance, extent.width, extent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &depthImage, &depthImageMemory);
-	Image::TransitionImageLayout(instance, depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-
-  depthImageView = Image::InitializeImageView(instance, depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+	depthImage = std::make_unique<Texture2D>(instance, extent.width, extent.height, Texture2D::Type::Static, Texture2D::Format::Depth);
 }
 
 void SwapChain::InitializeRenderPass()
@@ -202,7 +222,7 @@ void SwapChain::InitializeRenderPass()
 	colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 	VkAttachmentDescription depthAttachment{};
-	depthAttachment.format = SelectDepthFormat();
+	depthAttachment.format = Image::SelectDepthFormat(instance);
 	depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 	depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -252,7 +272,7 @@ void SwapChain::InitializeFramebuffers()
 
 	for (size_t i = 0; i < imageViews.size(); ++i)
 	{
-		std::vector<VkImageView> attachments{imageViews[i], depthImageView};
+		std::vector<VkImageView> attachments{imageViews[i], depthImage->GetImageView()};
 
 		VkFramebufferCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -269,9 +289,6 @@ void SwapChain::InitializeFramebuffers()
 
 void SwapChain::Destroy()
 {
-	vkDestroyImage(instance.GetDevice(), depthImage, nullptr);
-  vkFreeMemory(instance.GetDevice(), depthImageMemory, nullptr);
-	vkDestroyImageView(instance.GetDevice(), depthImageView, nullptr);
 	for (auto&& framebuffer : framebuffers)
 	{
 		vkDestroyFramebuffer(instance.GetDevice(), framebuffer, nullptr);
@@ -293,29 +310,6 @@ VkSurfaceFormatKHR SwapChain::SelectSwapSurfaceFormat(const std::vector<VkSurfac
 		}
 	}
 	return availableFormats[0];
-}
-
-VkFormat SwapChain::SelectDepthFormat()
-{
-	return SelectSupportedFormat({VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-}
-
-VkFormat SwapChain::SelectSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
-{
-  for (VkFormat format : candidates) 
-	{
-    VkFormatProperties properties;
-    vkGetPhysicalDeviceFormatProperties(instance.GetPhysicalDevice(), format, &properties);
-    if(tiling == VK_IMAGE_TILING_LINEAR && (properties.linearTilingFeatures & features) == features)
-    {
-      return format;
-    }
-    else if (tiling == VK_IMAGE_TILING_OPTIMAL && (properties.optimalTilingFeatures & features) == features)
-    {
-      return format;
-    }
-  }
-	throw std::runtime_error("Failed to select supported format");
 }
 
 VkPresentModeKHR SwapChain::SelectSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)

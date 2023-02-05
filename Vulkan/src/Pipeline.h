@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.h"
+#include "CommandBuffer.h"
 #include "Instance.h"
 #include "FileSystem.h"
 #include "DescriptorSet.h"
@@ -40,7 +41,7 @@ public:
     }
   }
 
-  void Bind(VkCommandBuffer commandBuffer)
+  void Bind(const CommandBuffer& commandBuffer)
   {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
@@ -231,7 +232,7 @@ private:
     graphicsPipelineCreateInfo.pColorBlendState = &colorBlendCreateInfo;
     graphicsPipelineCreateInfo.pDynamicState = &dynamicStateCreateInfo;
     graphicsPipelineCreateInfo.layout = pipelineLayout;
-    graphicsPipelineCreateInfo.renderPass = instance.GetSwapChain().GetRenderPass();
+    graphicsPipelineCreateInfo.renderPass = creator.renderPass;
     graphicsPipelineCreateInfo.subpass = 0;
     graphicsPipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
     graphicsPipelineCreateInfo.basePipelineIndex =  -1;

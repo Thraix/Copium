@@ -7,6 +7,8 @@
 #include <GLFW/glfw3.h>
 
 class Instance;
+class CommandBuffer;
+class Texture2D;
 
 struct SwapChainSupportDetails
 {
@@ -24,24 +26,22 @@ class SwapChain final
 private:
   Instance& instance;
 
-  // Created by the class
   VkSwapchainKHR handle;
   VkRenderPass renderPass;
   VkFormat imageFormat;
   VkExtent2D extent;
-  VkImage depthImage;
-  VkImageView depthImageView;
-  VkDeviceMemory depthImageMemory;
+  std::unique_ptr<Texture2D> depthImage;
   std::vector<VkImageView> imageViews;
   std::vector<VkImage> images;
   std::vector<VkFramebuffer> framebuffers;
-
   uint32_t  imageIndex;
 
 public:
   SwapChain(Instance& instance);
   ~SwapChain();
 
+  void BeginFrameBuffer(const CommandBuffer& commandBuffer) const;
+  void EndFrameBuffer(const CommandBuffer& commandBuffer) const;
   VkSwapchainKHR GetHandle() const;
   VkRenderPass GetRenderPass() const;
   VkExtent2D GetExtent() const;
@@ -60,8 +60,6 @@ private:
   void Destroy();
 
   VkSurfaceFormatKHR SelectSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-  VkFormat SelectDepthFormat();
-  VkFormat SelectSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
   VkPresentModeKHR SelectSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
   VkExtent2D SelectSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities);
 };

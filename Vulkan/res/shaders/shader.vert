@@ -2,10 +2,10 @@
 
 layout(set = 0, binding = 0) uniform SceneUniformBufferObject
 {
-	mat4 projection;
-	mat4 view;
-	mat4 model;
-	vec3 lightPos;
+  mat4 projection;
+  mat4 view;
+  mat4 model;
+  vec3 lightPos;
 } ubo;
 
 layout(location = 0) in vec3 inPosition;
@@ -18,9 +18,9 @@ layout(location = 2) out vec3 fragPosition;
 layout(location = 3) out vec3 fragLightPos;
 
 void main() {
-    gl_Position = ubo.projection * ubo.view * ubo.model * vec4(inPosition, 1.0);
-    fragColor = inColor;
-	fragTexCoord = inTexCoord;
-    fragPosition =	vec3(ubo.model * vec4(inPosition, 1.0));
-	fragLightPos = ubo.lightPos;
+  gl_Position = ubo.projection * ubo.view * ubo.model * vec4(inPosition, 1.0);
+  fragColor = inColor;
+  fragTexCoord = inTexCoord;
+  fragPosition =  vec3(ubo.model * vec4(inPosition, 1.0));
+  fragLightPos = ubo.lightPos;
 }
