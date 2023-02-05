@@ -192,7 +192,6 @@
     <ClInclude Include="src\VertexBuffer.h" />
     <ClInclude Include="src\VertexDescriptor.h" />
     <ClInclude Include="src\VulkanException.h" />
-    <ClInclude Include="src\Window.h" />
     <ClInclude Include="src\VertexPassthrough.h" />
   </ItemGroup>
   <ItemGroup>

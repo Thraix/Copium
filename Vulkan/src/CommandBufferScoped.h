@@ -3,19 +3,22 @@
 #include "Common.h"
 #include "CommandBuffer.h"
 
-class CommandBufferScoped : public CommandBuffer
+namespace Copium
 {
-  CP_DELETE_COPY_AND_MOVE_CTOR(CommandBufferScoped);
-public:
-  CommandBufferScoped(Instance& instance)
-    : CommandBuffer{instance, CommandBufferType::SingleUse}
+  class CommandBufferScoped : public CommandBuffer
   {
-    CommandBuffer::Begin();
-  }
+    CP_DELETE_COPY_AND_MOVE_CTOR(CommandBufferScoped);
+  public:
+    CommandBufferScoped(Instance& instance)
+      : CommandBuffer{instance, Type::SingleUse}
+    {
+      CommandBuffer::Begin();
+    }
 
-  ~CommandBufferScoped()
-  {
-    CommandBuffer::End();
-    CommandBuffer::Submit();
-  }
-};
+    ~CommandBufferScoped()
+    {
+      CommandBuffer::End();
+      CommandBuffer::Submit();
+    }
+  };
+}

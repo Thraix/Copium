@@ -6,60 +6,63 @@
 #include <vector>
 #include <GLFW/glfw3.h>
 
-class Instance;
-class CommandBuffer;
-class Texture2D;
-
-struct SwapChainSupportDetails
+namespace Copium
 {
-	VkSurfaceCapabilitiesKHR capabilities;
-	std::vector<VkSurfaceFormatKHR> formats;
-	std::vector<VkPresentModeKHR> presentModes;
+  class Instance;
+  class CommandBuffer;
+  class Texture2D;
 
-  SwapChainSupportDetails(VkSurfaceKHR surface, VkPhysicalDevice physicalDevice);
-  bool Valid();
-};
+  struct SwapChainSupportDetails
+  {
+    VkSurfaceCapabilitiesKHR capabilities;
+    std::vector<VkSurfaceFormatKHR> formats;
+    std::vector<VkPresentModeKHR> presentModes;
 
-class SwapChain final
-{
-	CP_DELETE_COPY_AND_MOVE_CTOR(SwapChain);
-private:
-  Instance& instance;
+    SwapChainSupportDetails(VkSurfaceKHR surface, VkPhysicalDevice physicalDevice);
+    bool Valid();
+  };
 
-  VkSwapchainKHR handle;
-  VkRenderPass renderPass;
-  VkFormat imageFormat;
-  VkExtent2D extent;
-  std::unique_ptr<Texture2D> depthImage;
-  std::vector<VkImageView> imageViews;
-  std::vector<VkImage> images;
-  std::vector<VkFramebuffer> framebuffers;
-  uint32_t  imageIndex;
+  class SwapChain final
+  {
+    CP_DELETE_COPY_AND_MOVE_CTOR(SwapChain);
+  private:
+    Instance& instance;
 
-public:
-  SwapChain(Instance& instance);
-  ~SwapChain();
+    VkSwapchainKHR handle;
+    VkRenderPass renderPass;
+    VkFormat imageFormat;
+    VkExtent2D extent;
+    std::unique_ptr<Texture2D> depthImage;
+    std::vector<VkImageView> imageViews;
+    std::vector<VkImage> images;
+    std::vector<VkFramebuffer> framebuffers;
+    uint32_t  imageIndex;
 
-  void BeginFrameBuffer(const CommandBuffer& commandBuffer) const;
-  void EndFrameBuffer(const CommandBuffer& commandBuffer) const;
-  VkSwapchainKHR GetHandle() const;
-  VkRenderPass GetRenderPass() const;
-  VkExtent2D GetExtent() const;
-  VkFramebuffer GetFramebuffer() const;
-  bool BeginPresent(VkSemaphore signalSemaphore);
-  void EndPresent(VkQueue presentQueue, VkSemaphore* waitSemaphore, bool framebufferResized);
-  void Recreate();
-  
+  public:
+    SwapChain(Instance& instance);
+    ~SwapChain();
 
-private:
-  void Initialize();
-  void InitializeImageViews();
-  void InitializeDepthBuffer();
-  void InitializeRenderPass();
-  void InitializeFramebuffers();
-  void Destroy();
+    void BeginFrameBuffer(const CommandBuffer& commandBuffer) const;
+    void EndFrameBuffer(const CommandBuffer& commandBuffer) const;
+    VkSwapchainKHR GetHandle() const;
+    VkRenderPass GetRenderPass() const;
+    VkExtent2D GetExtent() const;
+    VkFramebuffer GetFramebuffer() const;
+    bool BeginPresent(VkSemaphore signalSemaphore);
+    void EndPresent(VkQueue presentQueue, VkSemaphore* waitSemaphore, bool framebufferResized);
+    void Recreate();
 
-  VkSurfaceFormatKHR SelectSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
-  VkPresentModeKHR SelectSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
-  VkExtent2D SelectSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities);
-};
+
+  private:
+    void Initialize();
+    void InitializeImageViews();
+    void InitializeDepthBuffer();
+    void InitializeRenderPass();
+    void InitializeFramebuffers();
+    void Destroy();
+
+    VkSurfaceFormatKHR SelectSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkPresentModeKHR SelectSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+    VkExtent2D SelectSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities);
+  };
+}

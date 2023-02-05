@@ -2,10 +2,13 @@
 
 #include <stdexcept>
 
-class VulkanException : public std::runtime_error
+namespace Copium
 {
-public:
-	VulkanException(const std::string& str)
-		: runtime_error{str.c_str()}
-	{}
-};
+	class VulkanException : public std::runtime_error
+	{
+	public:
+		VulkanException(const std::string& str)
+			: runtime_error{str.c_str()}
+		{}
+	};
+}

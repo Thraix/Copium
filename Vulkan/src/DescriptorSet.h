@@ -6,67 +6,70 @@
 #include "UniformBuffer.h"
 #include <vulkan/vulkan.hpp>
 
-class DescriptorSet final
+namespace Copium
 {
-  CP_DELETE_COPY_AND_MOVE_CTOR(DescriptorSet);
-private:
-  Instance& instance;
-  DescriptorPool& descriptorPool;
-  VkDescriptorSetLayout descriptorSetLayout;
-
-  std::vector<VkDescriptorSet> descriptorSets;
-
-public:
-  DescriptorSet(Instance& instance, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout)
-    : instance{instance}, descriptorPool{descriptorPool}, descriptorSetLayout{descriptorSetLayout}
+  class DescriptorSet final
   {
-    descriptorSets = descriptorPool.AllocateDescriptorSets(descriptorSetLayout);
-  }
+    CP_DELETE_COPY_AND_MOVE_CTOR(DescriptorSet);
+  private:
+    Instance& instance;
+    DescriptorPool& descriptorPool;
+    VkDescriptorSetLayout descriptorSetLayout;
 
-  ~DescriptorSet()
-  {
-    descriptorPool.FreeDescriptorSets(descriptorSets);
-  }
+    std::vector<VkDescriptorSet> descriptorSets;
 
-  void AddUniform(const UniformBuffer& uniformBuffer, uint32_t binding)
-  {
-    for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i) {
-      VkDescriptorBufferInfo bufferInfo = uniformBuffer.GetDescriptorBufferInfo(i);
-
-      VkWriteDescriptorSet descriptorWrite{};
-      descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      descriptorWrite.dstSet = descriptorSets[i];
-      descriptorWrite.dstBinding = binding;
-      descriptorWrite.dstArrayElement = 0;
-      descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-      descriptorWrite.descriptorCount = 1;
-      descriptorWrite.pBufferInfo = &bufferInfo;
-      descriptorWrite.pImageInfo = nullptr;
-      descriptorWrite.pTexelBufferView = nullptr;
-      vkUpdateDescriptorSets(instance.GetDevice(), 1, &descriptorWrite, 0, nullptr);
+  public:
+    DescriptorSet(Instance& instance, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout)
+      : instance{instance}, descriptorPool{descriptorPool}, descriptorSetLayout{descriptorSetLayout}
+    {
+      descriptorSets = descriptorPool.AllocateDescriptorSets(descriptorSetLayout);
     }
-  }
 
-  void AddTexture2D(const Texture2D& texture2D, uint32_t binding)
-  {
-    for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i) {
-      VkDescriptorImageInfo imageInfo = texture2D.GetDescriptorImageInfo(i);
-      VkWriteDescriptorSet descriptorWrite{};
-      descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      descriptorWrite.dstSet = descriptorSets[i];
-      descriptorWrite.dstBinding = binding;
-      descriptorWrite.dstArrayElement = 0;
-      descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-      descriptorWrite.descriptorCount = 1;
-      descriptorWrite.pBufferInfo = nullptr;
-      descriptorWrite.pImageInfo = &imageInfo;
-      descriptorWrite.pTexelBufferView = nullptr;
-      vkUpdateDescriptorSets(instance.GetDevice(), 1, &descriptorWrite, 0, nullptr);
+    ~DescriptorSet()
+    {
+      descriptorPool.FreeDescriptorSets(descriptorSets);
     }
-  }
 
-  VkDescriptorSet GetHandle() const
-  {
-    return descriptorSets[instance.GetFlightIndex()];
-  }
-};
+    void AddUniform(const UniformBuffer& uniformBuffer, uint32_t binding)
+    {
+      for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i) {
+        VkDescriptorBufferInfo bufferInfo = uniformBuffer.GetDescriptorBufferInfo(i);
+
+        VkWriteDescriptorSet descriptorWrite{};
+        descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrite.dstSet = descriptorSets[i];
+        descriptorWrite.dstBinding = binding;
+        descriptorWrite.dstArrayElement = 0;
+        descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        descriptorWrite.descriptorCount = 1;
+        descriptorWrite.pBufferInfo = &bufferInfo;
+        descriptorWrite.pImageInfo = nullptr;
+        descriptorWrite.pTexelBufferView = nullptr;
+        vkUpdateDescriptorSets(instance.GetDevice(), 1, &descriptorWrite, 0, nullptr);
+      }
+    }
+
+    void AddTexture2D(const Texture2D& texture2D, uint32_t binding)
+    {
+      for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i) {
+        VkDescriptorImageInfo imageInfo = texture2D.GetDescriptorImageInfo(i);
+        VkWriteDescriptorSet descriptorWrite{};
+        descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrite.dstSet = descriptorSets[i];
+        descriptorWrite.dstBinding = binding;
+        descriptorWrite.dstArrayElement = 0;
+        descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptorWrite.descriptorCount = 1;
+        descriptorWrite.pBufferInfo = nullptr;
+        descriptorWrite.pImageInfo = &imageInfo;
+        descriptorWrite.pTexelBufferView = nullptr;
+        vkUpdateDescriptorSets(instance.GetDevice(), 1, &descriptorWrite, 0, nullptr);
+      }
+    }
+
+    VkDescriptorSet GetHandle() const
+    {
+      return descriptorSets[instance.GetFlightIndex()];
+    }
+  };
+}
