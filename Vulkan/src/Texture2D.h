@@ -9,7 +9,7 @@
 
 namespace Copium
 {
-  class Texture2D : public Sampler
+  class Texture2D final : public Sampler
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Texture2D);
   private:

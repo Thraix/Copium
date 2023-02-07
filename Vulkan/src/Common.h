@@ -45,6 +45,9 @@
       throw VulkanException(Copium::StringFormat(format, __VA_ARGS__)); \
     } \
   } while(false)
+
+#define CP_STATIC_CLASS(ClassName)\
+  ClassName() = delete
 #define CP_DELETE_COPY_AND_MOVE_CTOR(ClassName) \
   ClassName(ClassName&&) = delete; \
   ClassName(const ClassName&) = delete; \

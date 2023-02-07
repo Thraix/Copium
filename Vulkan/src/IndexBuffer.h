@@ -1,27 +1,20 @@
 #pragma once
 
 #include "Buffer.h"
+#include "Common.h"
+#include "Instance.h"
 
 namespace Copium
 {
-  class IndexBuffer : public Buffer
+  class IndexBuffer final : public Buffer
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(IndexBuffer);
   private:
     int indexCount;
   public:
-    IndexBuffer(Instance& instance, int indexCount)
-      : Buffer{instance, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexCount * sizeof(uint16_t), 1}, indexCount{indexCount}
-    {}
+    IndexBuffer(Instance& instance, int indexCount);
 
-    void Bind(const CommandBuffer& commandBuffer) override
-    {
-      vkCmdBindIndexBuffer(commandBuffer, handle, 0, VK_INDEX_TYPE_UINT16);
-    }
-
-    void Draw(const CommandBuffer& commandBuffer)
-    {
-      vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
-    }
+    void Bind(const CommandBuffer& commandBuffer);
+    void Draw(const CommandBuffer& commandBuffer);
   };
 }

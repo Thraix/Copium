@@ -5,20 +5,12 @@
 
 namespace Copium
 {
-  class CommandBufferScoped : public CommandBuffer
+  class CommandBufferScoped final : public CommandBuffer
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(CommandBufferScoped);
   public:
-    CommandBufferScoped(Instance& instance)
-      : CommandBuffer{instance, Type::SingleUse}
-    {
-      CommandBuffer::Begin();
-    }
+    CommandBufferScoped(Instance& instance);
 
-    ~CommandBufferScoped()
-    {
-      CommandBuffer::End();
-      CommandBuffer::Submit();
-    }
+    ~CommandBufferScoped() override;
   };
 }

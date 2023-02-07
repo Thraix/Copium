@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Common.h"
 #include "VertexDescriptor.h"
 
-#include <vulkan/vulkan.hpp>
 #include <map>
+#include <string>
+#include <vulkan/vulkan.hpp>
 
 namespace Copium
 {
@@ -30,34 +30,12 @@ namespace Copium
 		VkRenderPass renderPass = VK_NULL_HANDLE;
 
 	public:
-		PipelineCreator(VkRenderPass renderPass, const std::string& vertexShader, const std::string& fragmentShader)
-			: vertexShader{vertexShader}, fragmentShader{fragmentShader}, renderPass{renderPass}
-		{}
+		PipelineCreator(VkRenderPass renderPass, const std::string& vertexShader, const std::string& fragmentShader);
 
-		void SetVertexDescriptor(const VertexDescriptor& descriptor)
-		{
-			vertexDescriptor = descriptor;
-		}
-
-		void AddDescriptorSetLayoutBinding(uint32_t set, uint32_t binding, VkDescriptorType type, uint32_t count, VkShaderStageFlags stageFlags)
-		{
-			CP_ASSERT(set <= descriptorSetLayouts.size(), "AddDescriptorSetLayoutBinding : Cannot add descriptor set with set number greater than the current set count");
-			descriptorSetLayouts[set].emplace_back(DescriptorSetBinding{binding, type, count, stageFlags});
-		}
-
-		void SetPrimitiveTopology(VkPrimitiveTopology primitiveTopology)
-		{
-			topology = primitiveTopology;
-		}
-
-		void SetCullMode(VkCullModeFlags flags)
-		{
-			cullMode = flags;
-		}
-
-		void SetCullFrontFace(VkFrontFace cullFrontFace)
-		{
-			frontFace = cullFrontFace;
-		}
+		void SetVertexDescriptor(const VertexDescriptor& descriptor);
+		void AddDescriptorSetLayoutBinding(uint32_t set, uint32_t binding, VkDescriptorType type, uint32_t count, VkShaderStageFlags stageFlags);
+		void SetPrimitiveTopology(VkPrimitiveTopology primitiveTopology);
+		void SetCullMode(VkCullModeFlags flags);
+		void SetCullFrontFace(VkFrontFace cullFrontFace);
 	};
 }

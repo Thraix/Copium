@@ -163,9 +163,34 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Buffer.cpp" />
+    <ClCompile Include="src\ColorAttachment.cpp" />
+    <ClCompile Include="src\CommandBuffer.cpp" />
+    <ClCompile Include="src\CommandBufferScoped.cpp" />
+    <ClCompile Include="src\DebugMessenger.cpp" />
+    <ClCompile Include="src\DepthAttachment.cpp" />
+    <ClCompile Include="src\DescriptorPool.cpp" />
+    <ClCompile Include="src\DescriptorSet.cpp" />
+    <ClCompile Include="src\FileSystem.cpp" />
+    <ClCompile Include="src\Framebuffer.cpp" />
+    <ClCompile Include="src\Image.cpp" />
+    <ClCompile Include="src\IndexBuffer.cpp" />
+    <ClCompile Include="src\Instance.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Pipeline.cpp" />
+    <ClCompile Include="src\PipelineCreator.cpp" />
+    <ClCompile Include="src\QueueFamilies.cpp" />
+    <ClCompile Include="src\Sampler.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\SwapChain.cpp" />
     <ClCompile Include="src\Texture2D.cpp" />
+    <ClCompile Include="src\Timer.cpp" />
+    <ClCompile Include="src\UniformBuffer.cpp" />
+    <ClCompile Include="src\Vertex.cpp" />
+    <ClCompile Include="src\VertexBuffer.cpp" />
+    <ClCompile Include="src\VertexDescriptor.cpp" />
+    <ClCompile Include="src\VertexPassthrough.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DepthAttachment.h" />
