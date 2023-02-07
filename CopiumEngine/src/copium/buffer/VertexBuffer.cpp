@@ -20,8 +20,8 @@ namespace Copium
     vkCmdBindVertexBuffers(commandBuffer, 0, bindingOffsets.size(), buffers.data(), bindingOffsets.data());
   }
 
-  void VertexBuffer::Update(uint32_t binding, void* data)
+  void VertexBuffer::UpdateStaging(uint32_t binding, void* data)
   {
-    UpdateStaging(data, bindingOffsets[binding], bindingSizes[binding]);
+    Buffer::UpdateStaging(data, bindingOffsets[binding], bindingSizes[binding]);
   }
 }

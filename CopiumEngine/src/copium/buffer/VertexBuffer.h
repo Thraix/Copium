@@ -21,6 +21,6 @@ namespace Copium
     VertexBuffer(Instance& instance, const VertexDescriptor& descriptor, int vertexCount);
 
     void Bind(const CommandBuffer& commandBuffer);
-    void Update(uint32_t binding, void* data);
+    void UpdateStaging(uint32_t binding, void* data);
   };
 }

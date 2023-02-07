@@ -50,8 +50,7 @@ namespace Copium
     InitializeTextureSampler();
     InitializeUniformBuffer();
     InitializeDescriptorSets();
-    InitializeVertexBuffer();
-    InitializeIndexBuffer();
+    InitializeMesh();
     InitializeCommandBuffer();
   }
 
@@ -126,22 +125,10 @@ namespace Copium
     graphicsPipelinePassthrough = std::make_unique<Pipeline>(*instance, creatorPassthrough);
   }
 
-  void Application::InitializeVertexBuffer()
+  void Application::InitializeMesh()
   {
-    vertexBuffer = std::make_unique<VertexBuffer>(*instance, Vertex::GetDescriptor(), vertices.size());
-    vertexBuffer->Update(0, (void*)vertices.data());
-
-    vertexBufferPassthrough = std::make_unique<VertexBuffer>(*instance, VertexPassthrough::GetDescriptor(), verticesPassthrough.size());
-    vertexBufferPassthrough->Update(0, (void*)verticesPassthrough.data());
-  }
-
-  void Application::InitializeIndexBuffer()
-  {
-    indexBuffer = std::make_unique<IndexBuffer>(*instance, indices.size());
-    indexBuffer->UpdateStaging((void*)indices.data());
-
-    indexBufferPassthrough = std::make_unique<IndexBuffer>(*instance, indicesPassthrough.size());
-    indexBufferPassthrough->UpdateStaging((void*)indicesPassthrough.data());
+    mesh = std::make_unique<Mesh>(*instance, vertices, indices);
+    meshPassthrough = std::make_unique<Mesh>(*instance, verticesPassthrough, indicesPassthrough);
   }
 
   void Application::InitializeCommandBuffer()
@@ -158,13 +145,12 @@ namespace Copium
 
     UpdateUniformBuffer();
 
-    vertexBuffer->Bind(*commandBuffer);
-    indexBuffer->Bind(*commandBuffer);
-
     graphicsPipeline->SetDescriptorSet(0, *descriptorSet);
     graphicsPipeline->BindDescriptorSets(*commandBuffer);
 
-    indexBuffer->Draw(*commandBuffer);
+    mesh->Bind(*commandBuffer);
+    mesh->Render(*commandBuffer);
+
     framebuffer->Unbind(*commandBuffer);
 
     instance->GetSwapChain().BeginFrameBuffer(*commandBuffer);
@@ -172,9 +158,9 @@ namespace Copium
     graphicsPipelinePassthrough->Bind(*commandBuffer);
     graphicsPipelinePassthrough->SetDescriptorSet(0, *descriptorSetPassthrough);
     graphicsPipelinePassthrough->BindDescriptorSets(*commandBuffer);
-    vertexBufferPassthrough->Bind(*commandBuffer);
-    indexBufferPassthrough->Bind(*commandBuffer);
-    indexBufferPassthrough->Draw(*commandBuffer);
+
+    meshPassthrough->Bind(*commandBuffer);
+    meshPassthrough->Render(*commandBuffer);
 
     instance->GetSwapChain().EndFrameBuffer(*commandBuffer);
     commandBuffer->End();

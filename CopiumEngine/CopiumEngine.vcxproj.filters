@@ -15,102 +15,189 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
+    <ClCompile Include="src\copium\core\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SwapChain.cpp">
+    <ClCompile Include="src\copium\buffer\Buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Texture2D.cpp">
+    <ClCompile Include="src\copium\sampler\ColorAttachment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Application.h">
+    <ClCompile Include="src\copium\buffer\CommandBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\buffer\CommandBufferScoped.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\core\DebugMessenger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\sampler\DepthAttachment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\pipeline\DescriptorPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\pipeline\DescriptorSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\util\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\buffer\Framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\sampler\Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\buffer\IndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\core\Instance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\pipeline\Pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\pipeline\PipelineCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\core\QueueFamilies.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\sampler\Sampler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\pipeline\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\core\SwapChain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\sampler\Texture2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\util\Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\buffer\UniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\mesh\Vertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\buffer\VertexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\pipeline\VertexDescriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\mesh\VertexPassthrough.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\mesh\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\DebugMessenger.h">
+    <ClInclude Include="src\copium\sampler\DepthAttachment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Common.h">
+    <ClInclude Include="src\copium\core\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\FileSystem.h">
+    <ClInclude Include="src\copium\sampler\ColorAttachment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SwapChain.h">
+    <ClInclude Include="src\copium\buffer\Buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\QueueFamilies.h">
+    <ClInclude Include="src\copium\buffer\CommandBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Buffer.h">
+    <ClInclude Include="src\copium\util\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\VulkanException.h">
+    <ClInclude Include="src\copium\core\DebugMessenger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Instance.h">
+    <ClInclude Include="src\copium\pipeline\DescriptorSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Timer.h">
+    <ClInclude Include="src\copium\pipeline\DescriptorPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\UniformBuffer.h">
+    <ClInclude Include="src\copium\util\FileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pipeline.h">
+    <ClInclude Include="src\copium\buffer\Framebuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\PipelineCreator.h">
+    <ClInclude Include="src\copium\sampler\Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Vertex.h">
+    <ClInclude Include="src\copium\buffer\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\IndexBuffer.h">
+    <ClInclude Include="src\copium\pipeline\Pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\VertexBuffer.h">
+    <ClInclude Include="src\copium\pipeline\PipelineCreator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\VertexDescriptor.h">
+    <ClInclude Include="src\copium\sampler\Sampler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Texture2D.h">
+    <ClInclude Include="src\copium\pipeline\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\DescriptorSet.h">
+    <ClInclude Include="src\copium\sampler\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\DescriptorPool.h">
+    <ClInclude Include="src\copium\buffer\CommandBufferScoped.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\CommandBuffer.h">
+    <ClInclude Include="src\copium\buffer\UniformBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\CommandBufferScoped.h">
+    <ClInclude Include="src\copium\core\Instance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Shader.h">
+    <ClInclude Include="src\copium\core\QueueFamilies.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Image.h">
+    <ClInclude Include="src\copium\core\SwapChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Framebuffer.h">
+    <ClInclude Include="src\copium\util\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\VertexPassthrough.h">
+    <ClInclude Include="src\copium\mesh\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\buffer\VertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\pipeline\VertexDescriptor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\util\VulkanException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\mesh\VertexPassthrough.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\mesh\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\shader.frag" />
     <None Include="res\shaders\shader.vert" />
-    <None Include="compile.bat">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="res\shaders\passthrough.frag" />
     <None Include="res\shaders\passthrough.vert" />
   </ItemGroup>
