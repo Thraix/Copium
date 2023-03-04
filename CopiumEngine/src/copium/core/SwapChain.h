@@ -1,5 +1,8 @@
 #pragma once
 
+#include "copium/buffer/CommandBuffer.h"
+#include "copium/core/Vulkan.h"
+#include "copium/sampler/DepthAttachment.h"
 #include "copium/util/Common.h"
 
 #include <GLFW/glfw3.h>
@@ -8,10 +11,6 @@
 
 namespace Copium
 {
-  class Instance;
-  class CommandBuffer;
-  class DepthAttachment;
-
   struct SwapChainSupportDetails
   {
     VkSurfaceCapabilitiesKHR capabilities;
@@ -25,8 +24,10 @@ namespace Copium
   class SwapChain final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(SwapChain);
+  public:
+    static const int MAX_FRAMES_IN_FLIGHT = 2;
   private:
-    Instance& instance;
+    Vulkan& vulkan;
 
     VkSwapchainKHR handle;
     VkRenderPass renderPass;
@@ -37,9 +38,15 @@ namespace Copium
     std::vector<VkImage> images;
     std::vector<VkFramebuffer> framebuffers;
     uint32_t  imageIndex;
+    bool resizeFramebuffer;
+
+    int flightIndex;
+    std::vector<VkSemaphore> imageAvailableSemaphores;
+    std::vector<VkSemaphore> renderFinishedSemaphores;
+    std::vector<VkFence> inFlightFences;
 
   public:
-    SwapChain(Instance& instance);
+    SwapChain(Vulkan& vulkan);
     ~SwapChain();
 
     void BeginFrameBuffer(const CommandBuffer& commandBuffer) const;
@@ -48,10 +55,13 @@ namespace Copium
     VkRenderPass GetRenderPass() const;
     VkExtent2D GetExtent() const;
     VkFramebuffer GetFramebuffer() const;
-    bool BeginPresent(VkSemaphore signalSemaphore);
-    void EndPresent(VkQueue presentQueue, VkSemaphore* waitSemaphore, bool framebufferResized);
+    bool BeginPresent();
+    void SubmitToGraphicsQueue(const CommandBuffer& commandBuffer);
+    void EndPresent();
+    void ResizeFramebuffer();
     void Recreate();
 
+    int GetFlightIndex() const;
 
   private:
     void Initialize();
@@ -59,6 +69,7 @@ namespace Copium
     void InitializeDepthAttachment();
     void InitializeRenderPass();
     void InitializeFramebuffers();
+    void InitializeSyncObjects();
     void Destroy();
 
     VkSurfaceFormatKHR SelectSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);

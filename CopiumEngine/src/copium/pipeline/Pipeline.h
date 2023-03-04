@@ -1,7 +1,7 @@
 #pragma once
 
 #include "copium/buffer/CommandBuffer.h"
-#include "copium/core/Instance.h"
+#include "copium/core/Vulkan.h"
 #include "copium/pipeline/DescriptorSet.h"
 #include "copium/pipeline/PipelineCreator.h"
 #include "copium/util/Common.h"
@@ -15,7 +15,7 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Pipeline);
   private:
-    Instance& instance;
+    Vulkan& vulkan;
 
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts{};
     std::vector<VkDescriptorSet> boundDescriptorSets;
@@ -23,7 +23,7 @@ namespace Copium
     VkPipeline graphicsPipeline;
 
   public:
-    Pipeline(Instance& instance, PipelineCreator creator);
+    Pipeline(Vulkan& vulkan, PipelineCreator creator);
     ~Pipeline();
     void Bind(const CommandBuffer& commandBuffer);
     void SetDescriptorSet(uint32_t setIndex, const DescriptorSet& descriptorSet);

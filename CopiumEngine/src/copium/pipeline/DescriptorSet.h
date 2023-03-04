@@ -13,14 +13,14 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(DescriptorSet);
   private:
-    Instance& instance;
+    Vulkan& vulkan;
     DescriptorPool& descriptorPool;
     VkDescriptorSetLayout descriptorSetLayout;
 
     std::vector<VkDescriptorSet> descriptorSets;
 
   public:
-    DescriptorSet(Instance& instance, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout);
+    DescriptorSet(Vulkan& vulkan, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout);
     ~DescriptorSet();
 
     void AddUniform(const UniformBuffer& uniformBuffer, uint32_t binding);

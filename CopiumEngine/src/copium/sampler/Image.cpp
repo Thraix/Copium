@@ -1,10 +1,11 @@
 #include "copium/sampler/Image.h"
 
 #include "copium/buffer/CommandBufferScoped.h"
+#include "copium/core/Device.h"
 
 namespace Copium
 {
-  void Image::InitializeImage(Instance& instance, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory)
+  void Image::InitializeImage(Vulkan& vulkan, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory)
   {
     VkImageCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -22,22 +23,22 @@ namespace Copium
     createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     createInfo.flags = 0;
 
-    CP_VK_ASSERT(vkCreateImage(instance.GetDevice(), &createInfo, nullptr, image), "InitializeImage : Failed to initialize image");
+    CP_VK_ASSERT(vkCreateImage(vulkan.GetDevice(), &createInfo, nullptr, image), "InitializeImage : Failed to initialize image");
 
     VkMemoryRequirements memoryRequirements;
-    vkGetImageMemoryRequirements(instance.GetDevice(), *image, &memoryRequirements);
+    vkGetImageMemoryRequirements(vulkan.GetDevice(), *image, &memoryRequirements);
 
     VkMemoryAllocateInfo allocateInfo{};
     allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocateInfo.allocationSize = memoryRequirements.size;
-    allocateInfo.memoryTypeIndex = instance.FindMemoryType(memoryRequirements.memoryTypeBits, properties);
+    allocateInfo.memoryTypeIndex = vulkan.GetDevice().FindMemoryType(memoryRequirements.memoryTypeBits, properties);
 
-    CP_VK_ASSERT(vkAllocateMemory(instance.GetDevice(), &allocateInfo, nullptr, imageMemory), "InitializeImage : Failed to initiallizse image memory");
+    CP_VK_ASSERT(vkAllocateMemory(vulkan.GetDevice(), &allocateInfo, nullptr, imageMemory), "InitializeImage : Failed to initiallizse image memory");
 
-    vkBindImageMemory(instance.GetDevice(), *image, *imageMemory, 0);
+    vkBindImageMemory(vulkan.GetDevice(), *image, *imageMemory, 0);
   }
 
-  VkImageView Image::InitializeImageView(Instance& instance, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
+  VkImageView Image::InitializeImageView(Vulkan& vulkan, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
   {
     VkImageView imageView;
     VkImageViewCreateInfo createInfo{};
@@ -54,13 +55,13 @@ namespace Copium
     createInfo.subresourceRange.levelCount = 1;
     createInfo.subresourceRange.baseArrayLayer = 0;
     createInfo.subresourceRange.layerCount = 1;
-    CP_VK_ASSERT(vkCreateImageView(instance.GetDevice(), &createInfo, nullptr, &imageView), "InitializeImageView : Failed to initialize image view");
+    CP_VK_ASSERT(vkCreateImageView(vulkan.GetDevice(), &createInfo, nullptr, &imageView), "InitializeImageView : Failed to initialize image view");
     return imageView;
   }
 
-  void Image::TransitionImageLayout(Instance& instance, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+  void Image::TransitionImageLayout(Vulkan& vulkan, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
   {
-    CommandBufferScoped commandBuffer{instance};
+    CommandBufferScoped commandBuffer{vulkan};
 
     VkImageMemoryBarrier barrier{};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -126,9 +127,9 @@ namespace Copium
     vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
   }
 
-  void Image::CopyBufferToImage(Instance& instance, const Buffer& buffer, VkImage image, uint32_t width, uint32_t height)
+  void Image::CopyBufferToImage(Vulkan& vulkan, const Buffer& buffer, VkImage image, uint32_t width, uint32_t height)
   {
-    CommandBufferScoped commandBuffer{instance};
+    CommandBufferScoped commandBuffer{vulkan};
 
     VkBufferImageCopy region{};
     region.bufferOffset = 0;
@@ -147,9 +148,9 @@ namespace Copium
   }
 
 
-  VkFormat Image::SelectDepthFormat(Instance& instance)
+  VkFormat Image::SelectDepthFormat(Vulkan& vulkan)
   {
-    return SelectSupportedFormat(instance, {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+    return SelectSupportedFormat(vulkan, {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
   }
 
   bool Image::HasStencilComponent(VkFormat format)
@@ -157,12 +158,12 @@ namespace Copium
     return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
   }
 
-  VkFormat Image::SelectSupportedFormat(Instance& instance, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+  VkFormat Image::SelectSupportedFormat(Vulkan& vulkan, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
   {
     for (VkFormat format : candidates)
     {
       VkFormatProperties properties;
-      vkGetPhysicalDeviceFormatProperties(instance.GetPhysicalDevice(), format, &properties);
+      vkGetPhysicalDeviceFormatProperties(vulkan.GetDevice().GetPhysicalDevice(), format, &properties);
       if (tiling == VK_IMAGE_TILING_LINEAR && (properties.linearTilingFeatures & features) == features)
       {
         return format;

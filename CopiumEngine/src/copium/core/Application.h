@@ -4,7 +4,9 @@
 #include "copium/buffer/IndexBuffer.h"
 #include "copium/buffer/UniformBuffer.h"
 #include "copium/buffer/VertexBuffer.h"
+#include "copium/core/Device.h"
 #include "copium/core/Instance.h"
+#include "copium/core/Vulkan.h"
 #include "copium/mesh/Mesh.h"
 #include "copium/pipeline/DescriptorPool.h"
 #include "copium/pipeline/DescriptorSet.h"
@@ -17,6 +19,7 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Application);
   private:
+    std::unique_ptr<Vulkan> vulkan;
     std::unique_ptr<Instance> instance;
     std::unique_ptr<Framebuffer> framebuffer;
     std::unique_ptr<Texture2D> texture2D;
@@ -30,14 +33,13 @@ namespace Copium
     std::unique_ptr<Mesh> meshPassthrough;
     std::unique_ptr<CommandBuffer> commandBuffer;
 
-
   public:
     Application();
     ~Application();
 
     bool Update();
   private:
-    void InitializeInstance();
+    void InitializeVulkan();
     void InitializeFrameBuffer();
     void InitializeTextureSampler();
     void InitializeUniformBuffer();

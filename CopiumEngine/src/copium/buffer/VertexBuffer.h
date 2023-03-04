@@ -2,7 +2,7 @@
 
 #include "copium/buffer/Buffer.h"
 #include "copium/buffer/CommandBuffer.h"
-#include "copium/core/Instance.h"
+#include "copium/core/Vulkan.h"
 #include "copium/pipeline/VertexDescriptor.h"
 #include "copium/util/Common.h"
 
@@ -18,7 +18,7 @@ namespace Copium
     std::vector<VkDeviceSize> bindingOffsets;
     std::vector<VkDeviceSize> bindingSizes;
   public:
-    VertexBuffer(Instance& instance, const VertexDescriptor& descriptor, int vertexCount);
+    VertexBuffer(Vulkan& vulkan, const VertexDescriptor& descriptor, int vertexCount);
 
     void Bind(const CommandBuffer& commandBuffer);
     void UpdateStaging(uint32_t binding, void* data);

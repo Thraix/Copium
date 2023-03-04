@@ -1,6 +1,6 @@
 #pragma once
 
-#include "copium/core/Instance.h"
+#include "copium/core/Vulkan.h"
 #include "copium/util/Common.h"
 
 #include <vulkan/vulkan.hpp>
@@ -11,10 +11,10 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Sampler);
   protected:
-    Instance& instance;
+    Vulkan& vulkan;
     VkSampler sampler;
   public:
-    Sampler(Instance& instance);
+    Sampler(Vulkan& vulkan);
     virtual ~Sampler();
 
     virtual VkDescriptorImageInfo GetDescriptorImageInfo(int index) const = 0;

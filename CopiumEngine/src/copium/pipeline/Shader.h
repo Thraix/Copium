@@ -1,9 +1,10 @@
 #pragma once
 
-#include "copium/core/Instance.h"
+#include "copium/core/Vulkan.h"
 #include "copium/util/Common.h"
 
 #include <shaderc/shaderc.hpp>
+#include <vulkan/vulkan.hpp>
 
 namespace Copium
 {
@@ -17,13 +18,13 @@ namespace Copium
     };
 
   private:
-    Instance& instance;
+    Vulkan& vulkan;
 
     VkShaderModule vertShaderModule;
     VkShaderModule fragShaderModule;
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
   public:
-    Shader(Instance& instance, Type type, const std::string& vertexInput, const std::string& fragmentInput);
+    Shader(Vulkan& vulkan, Type type, const std::string& vertexInput, const std::string& fragmentInput);
     ~Shader();
 
     const std::vector<VkPipelineShaderStageCreateInfo> GetShaderStages() const;

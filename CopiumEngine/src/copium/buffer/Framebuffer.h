@@ -1,6 +1,7 @@
 #pragma once
 
-#include "copium/core/Instance.h"
+#include "copium/buffer/CommandBuffer.h"
+#include "copium/core/Vulkan.h"
 #include "copium/sampler/ColorAttachment.h"
 #include "copium/sampler/DepthAttachment.h"
 #include "copium/util/Common.h"
@@ -13,7 +14,7 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Framebuffer);
   private:
-    Instance& instance;
+    Vulkan& vulkan;
 
     std::unique_ptr<ColorAttachment> colorAttachment;
     std::unique_ptr<DepthAttachment> depthAttachment;
@@ -23,7 +24,7 @@ namespace Copium
     uint32_t width;
     uint32_t height;
   public:
-    Framebuffer(Instance& instance, uint32_t width, uint32_t height);
+    Framebuffer(Vulkan& vulkan, uint32_t width, uint32_t height);
     ~Framebuffer();
 
     void Resize(uint32_t width, uint32_t height);

@@ -1,11 +1,12 @@
 #include "Shader.h"
 
 #include "copium/util/FileSystem.h"
+#include "copium/core/Device.h"
 
 namespace Copium
 {
-  Shader::Shader(Instance& instance, Type type, const std::string& vertexInput, const std::string& fragmentInput)
-    : instance{instance}
+  Shader::Shader(Vulkan& vulkan, Type type, const std::string& vertexInput, const std::string& fragmentInput)
+    : vulkan{vulkan}
   {
     switch (type)
     {
@@ -45,8 +46,8 @@ namespace Copium
 
   Shader::~Shader()
   {
-    vkDestroyShaderModule(instance.GetDevice(), vertShaderModule, nullptr);
-    vkDestroyShaderModule(instance.GetDevice(), fragShaderModule, nullptr);
+    vkDestroyShaderModule(vulkan.GetDevice(), vertShaderModule, nullptr);
+    vkDestroyShaderModule(vulkan.GetDevice(), fragShaderModule, nullptr);
   }
 
   const std::vector<VkPipelineShaderStageCreateInfo> Shader::GetShaderStages() const
@@ -126,7 +127,7 @@ namespace Copium
     createInfo.pCode = data;
 
     VkShaderModule shaderModule;
-    CP_VK_ASSERT(vkCreateShaderModule(instance.GetDevice(), &createInfo, nullptr, &shaderModule), "InitializeShaderModule : Failed to initialize shader module");
+    CP_VK_ASSERT(vkCreateShaderModule(vulkan.GetDevice(), &createInfo, nullptr, &shaderModule), "InitializeShaderModule : Failed to initialize shader module");
 
     return shaderModule;
   }

@@ -1,22 +1,24 @@
 #include "copium/sampler/Sampler.h"
 
+#include "copium/core/Device.h"
+
 namespace Copium
 {
-  Sampler::Sampler(Instance& instance)
-    : instance{instance}
+  Sampler::Sampler(Vulkan& vulkan)
+    : vulkan{vulkan}
   {
     InitializeSampler();
   }
 
   Sampler::~Sampler()
   {
-    vkDestroySampler(instance.GetDevice(), sampler, nullptr);
+    vkDestroySampler(vulkan.GetDevice(), sampler, nullptr);
   }
 
   void Sampler::InitializeSampler()
   {
     VkPhysicalDeviceProperties properties{};
-    vkGetPhysicalDeviceProperties(instance.GetPhysicalDevice(), &properties);
+    vkGetPhysicalDeviceProperties(vulkan.GetDevice().GetPhysicalDevice(), &properties);
 
     VkSamplerCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -35,6 +37,6 @@ namespace Copium
     createInfo.minLod = 0.0f;
     createInfo.maxLod = 0.0f;
 
-    CP_VK_ASSERT(vkCreateSampler(instance.GetDevice(), &createInfo, nullptr, &sampler), "InitializeSampler : Failed to initialize texture sampler");
+    CP_VK_ASSERT(vkCreateSampler(vulkan.GetDevice(), &createInfo, nullptr, &sampler), "InitializeSampler : Failed to initialize texture sampler");
   }
 }

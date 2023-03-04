@@ -2,8 +2,8 @@
 
 namespace Copium
 {
-  CommandBufferScoped::CommandBufferScoped(Instance& instance)
-    : CommandBuffer{instance, Type::SingleUse}
+  CommandBufferScoped::CommandBufferScoped(Vulkan& vulkan)
+    : CommandBuffer{vulkan, Type::SingleUse}
   {
     CommandBuffer::Begin();
   }

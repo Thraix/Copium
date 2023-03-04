@@ -1,9 +1,12 @@
 #include "copium/pipeline/DescriptorSet.h"
 
+#include "copium/core/Device.h"
+#include "copium/core/SwapChain.h"
+
 namespace Copium
 {
-  DescriptorSet::DescriptorSet(Instance& instance, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout)
-    : instance{instance}, descriptorPool{descriptorPool}, descriptorSetLayout{descriptorSetLayout}
+  DescriptorSet::DescriptorSet(Vulkan& vulkan, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout)
+    : vulkan{vulkan}, descriptorPool{descriptorPool}, descriptorSetLayout{descriptorSetLayout}
   {
     descriptorSets = descriptorPool.AllocateDescriptorSets(descriptorSetLayout);
   }
@@ -15,7 +18,7 @@ namespace Copium
 
   void DescriptorSet::AddUniform(const UniformBuffer& uniformBuffer, uint32_t binding)
   {
-    for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i) {
+    for (size_t i = 0; i < descriptorSets.size(); ++i) {
       VkDescriptorBufferInfo bufferInfo = uniformBuffer.GetDescriptorBufferInfo(i);
 
       VkWriteDescriptorSet descriptorWrite{};
@@ -28,13 +31,13 @@ namespace Copium
       descriptorWrite.pBufferInfo = &bufferInfo;
       descriptorWrite.pImageInfo = nullptr;
       descriptorWrite.pTexelBufferView = nullptr;
-      vkUpdateDescriptorSets(instance.GetDevice(), 1, &descriptorWrite, 0, nullptr);
+      vkUpdateDescriptorSets(vulkan.GetDevice(), 1, &descriptorWrite, 0, nullptr);
     }
   }
 
   void DescriptorSet::AddSampler(const Sampler& sampler, uint32_t binding)
   {
-    for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i) {
+    for (size_t i = 0; i < descriptorSets.size(); ++i) {
       VkDescriptorImageInfo imageInfo = sampler.GetDescriptorImageInfo(i);
       VkWriteDescriptorSet descriptorWrite{};
       descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -46,12 +49,12 @@ namespace Copium
       descriptorWrite.pBufferInfo = nullptr;
       descriptorWrite.pImageInfo = &imageInfo;
       descriptorWrite.pTexelBufferView = nullptr;
-      vkUpdateDescriptorSets(instance.GetDevice(), 1, &descriptorWrite, 0, nullptr);
+      vkUpdateDescriptorSets(vulkan.GetDevice(), 1, &descriptorWrite, 0, nullptr);
     }
   }
 
   DescriptorSet::operator VkDescriptorSet() const
   {
-    return descriptorSets[instance.GetFlightIndex()];
+    return descriptorSets[vulkan.GetSwapChain().GetFlightIndex()];
   }
 }

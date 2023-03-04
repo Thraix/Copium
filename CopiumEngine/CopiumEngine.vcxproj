@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -166,6 +166,9 @@
   <ItemGroup>
     <ClCompile Include="src\copium\core\Application.cpp" />
     <ClCompile Include="src\copium\buffer\Buffer.cpp" />
+    <ClCompile Include="src\copium\core\Device.cpp" />
+    <ClCompile Include="src\copium\core\Vulkan.cpp" />
+    <ClCompile Include="src\copium\core\Window.cpp" />
     <ClCompile Include="src\copium\mesh\Mesh.cpp" />
     <ClCompile Include="src\copium\sampler\ColorAttachment.cpp" />
     <ClCompile Include="src\copium\buffer\CommandBuffer.cpp" />
@@ -195,6 +198,10 @@
     <ClCompile Include="src\copium\mesh\VertexPassthrough.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\copium\core\VulkanCore.h" />
+    <ClInclude Include="src\copium\core\Device.h" />
+    <ClInclude Include="src\copium\core\Vulkan.h" />
+    <ClInclude Include="src\copium\core\Window.h" />
     <ClInclude Include="src\copium\mesh\Mesh.h" />
     <ClInclude Include="src\copium\sampler\DepthAttachment.h" />
     <ClInclude Include="src\copium\core\Application.h" />

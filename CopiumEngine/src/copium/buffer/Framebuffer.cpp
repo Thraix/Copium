@@ -1,12 +1,14 @@
 #include "copium/buffer/Framebuffer.h"
 
 #include "copium/buffer/CommandBuffer.h"
+#include "copium/core/Device.h"
+#include "copium/core/SwapChain.h"
 #include "copium/sampler/Image.h"
 
 namespace Copium
 {
-  Framebuffer::Framebuffer(Instance& instance, uint32_t width, uint32_t height)
-    : instance{instance}, width{width}, height{height}
+  Framebuffer::Framebuffer(Vulkan& vulkan, uint32_t width, uint32_t height)
+    : vulkan{vulkan}, width{width}, height{height}
   {
     InitializeImage();
     InitializeDepthBuffer();
@@ -17,19 +19,19 @@ namespace Copium
   Framebuffer::~Framebuffer()
   {
     for (auto& framebuffer : framebuffers)
-      vkDestroyFramebuffer(instance.GetDevice(), framebuffer, nullptr);
-    vkDestroyRenderPass(instance.GetDevice(), renderPass, nullptr);
+      vkDestroyFramebuffer(vulkan.GetDevice(), framebuffer, nullptr);
+    vkDestroyRenderPass(vulkan.GetDevice(), renderPass, nullptr);
   }
 
   void Framebuffer::Resize(uint32_t width, uint32_t height)
   {
-    vkDeviceWaitIdle(instance.GetDevice());
+    vkDeviceWaitIdle(vulkan.GetDevice());
     this->width = width;
     this->height = height;
     colorAttachment.reset();
     depthAttachment.reset();
     for (auto&& framebuffer : framebuffers)
-      vkDestroyFramebuffer(instance.GetDevice(), framebuffer, nullptr);
+      vkDestroyFramebuffer(vulkan.GetDevice(), framebuffer, nullptr);
     InitializeImage();
     InitializeDepthBuffer();
     InitializeFramebuffers();
@@ -44,7 +46,8 @@ namespace Copium
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.renderPass = renderPass;
-    renderPassBeginInfo.framebuffer = framebuffers[instance.GetFlightIndex()];
+    renderPassBeginInfo.framebuffer = framebuffers[vulkan.GetSwapChain().GetFlightIndex()];
+;
     renderPassBeginInfo.renderArea.offset = {0, 0};
     renderPassBeginInfo.renderArea.extent = {width, height};
     renderPassBeginInfo.clearValueCount = clearValues.size();
@@ -77,7 +80,7 @@ namespace Copium
 
   VkFramebuffer Framebuffer::GetFramebuffer() const
   {
-    return framebuffers[instance.GetFlightIndex()];
+    return framebuffers[vulkan.GetSwapChain().GetFlightIndex()];
   }
 
   const ColorAttachment& Framebuffer::GetColorAttachment() const
@@ -97,12 +100,12 @@ namespace Copium
 
   void Framebuffer::InitializeImage()
   {
-    colorAttachment = std::make_unique<ColorAttachment>(instance, width, height);
+    colorAttachment = std::make_unique<ColorAttachment>(vulkan, width, height);
   }
 
   void Framebuffer::InitializeDepthBuffer()
   {
-    depthAttachment  = std::make_unique<DepthAttachment>(instance, width, height);
+    depthAttachment  = std::make_unique<DepthAttachment>(vulkan, width, height);
   }
 
   void Framebuffer::InitializeRenderPass()
@@ -118,7 +121,7 @@ namespace Copium
     colorAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
     VkAttachmentDescription depthAttachment{};
-    depthAttachment.format = Image::SelectDepthFormat(instance);
+    depthAttachment.format = Image::SelectDepthFormat(vulkan);
     depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
     depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -166,14 +169,13 @@ namespace Copium
     renderPassCreateInfo.dependencyCount = dependencies.size();
     renderPassCreateInfo.pDependencies = dependencies.data();
 
-    CP_VK_ASSERT(vkCreateRenderPass(instance.GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "InitializeRenderPass : Failed to initialze render pass");
+    CP_VK_ASSERT(vkCreateRenderPass(vulkan.GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "InitializeRenderPass : Failed to initialze render pass");
   }
 
   void Framebuffer::InitializeFramebuffers()
   {
-    framebuffers.resize(instance.GetMaxFramesInFlight());
-
-    for (size_t i = 0; i < instance.GetMaxFramesInFlight(); ++i)
+    framebuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
+    for (size_t i = 0; i < framebuffers.size(); ++i)
     {
       std::vector<VkImageView> attachments{colorAttachment->GetImageView(i), depthAttachment->GetImageView()};
 
@@ -186,7 +188,7 @@ namespace Copium
       createInfo.height = height;
       createInfo.layers = 1;
 
-      CP_VK_ASSERT(vkCreateFramebuffer(instance.GetDevice(), &createInfo, nullptr, &framebuffers[i]), "InitializeFramebuffers : Failed to initialize framebuffer");
+      CP_VK_ASSERT(vkCreateFramebuffer(vulkan.GetDevice(), &createInfo, nullptr, &framebuffers[i]), "InitializeFramebuffers : Failed to initialize framebuffer");
     }
   }
 }

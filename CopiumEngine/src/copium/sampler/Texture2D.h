@@ -1,7 +1,7 @@
 #pragma once
 
 #include "copium/buffer/CommandBufferScoped.h"
-#include "copium/core/Instance.h"
+#include "copium/core/Vulkan.h"
 #include "copium/sampler/Image.h"
 #include "copium/sampler/Sampler.h"
 #include "copium/util/Common.h"
@@ -18,7 +18,7 @@ namespace Copium
     VkDeviceMemory imageMemory;
     VkImageView imageView;
   public:
-    Texture2D(Instance& instance, const std::string& filename);
+    Texture2D(Vulkan& vulkan, const std::string& filename);
     ~Texture2D() override;
 
     VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;

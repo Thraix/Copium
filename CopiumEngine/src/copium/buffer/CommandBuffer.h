@@ -1,6 +1,6 @@
 #pragma once
 
-#include "copium/core/Instance.h"
+#include "copium/core/Vulkan.h"
 #include "copium/util/Common.h"
 
 #include <vulkan/vulkan.hpp>
@@ -16,21 +16,18 @@ namespace Copium
       SingleUse, Dynamic
     };
   private:
-    Instance& instance;
+    Vulkan& vulkan;
 
     std::vector<VkCommandBuffer> commandBuffers;
     const Type type;
-    VkCommandBuffer currentCommandBuffer{VK_NULL_HANDLE};
 
   public:
-    CommandBuffer(Instance& instance, Type type);
-
+    CommandBuffer(Vulkan& vulkan, Type type);
     virtual ~CommandBuffer();
 
     void Begin();
     void End();
     void Submit();
-    void SubmitAsGraphicsQueue();
 
     operator VkCommandBuffer() const;
   };

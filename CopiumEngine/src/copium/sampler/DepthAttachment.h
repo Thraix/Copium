@@ -1,6 +1,6 @@
 #pragma once
 
-#include "copium/core/Instance.h"
+#include "copium/core/Vulkan.h"
 #include "copium/sampler/Sampler.h"
 #include "copium/util/Common.h"
 
@@ -16,7 +16,7 @@ namespace Copium
     VkDeviceMemory imageMemory;
     VkImageView imageView;
   public:
-    DepthAttachment(Instance& instance, int width, int height);
+    DepthAttachment(Vulkan& vulkan, int width, int height);
     ~DepthAttachment() override;
 
     VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "copium/buffer/CommandBuffer.h"
-#include "copium/core/Instance.h"
+#include "copium/core/Vulkan.h"
 #include "copium/util/Common.h"
 
 namespace Copium
@@ -10,7 +10,7 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(CommandBufferScoped);
   public:
-    CommandBufferScoped(Instance& instance);
+    CommandBufferScoped(Vulkan& vulkan);
 
     ~CommandBufferScoped() override;
   };

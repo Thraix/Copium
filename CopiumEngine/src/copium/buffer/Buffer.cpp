@@ -1,9 +1,12 @@
 #include "copium/buffer/Buffer.h"
 
+#include "copium/core/Device.h"
+#include "copium/core/Instance.h"
+
 namespace Copium
 {
-  Buffer::Buffer(Instance& instance, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkDeviceSize size, int count)
-    : instance{instance}, size{size}, count{count}
+  Buffer::Buffer(Vulkan& vulkan, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkDeviceSize size, int count)
+    : vulkan{vulkan}, size{size}, count{count}
   {
     VkBufferCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -11,25 +14,25 @@ namespace Copium
     createInfo.usage = usage;
     createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    CP_VK_ASSERT(vkCreateBuffer(instance.GetDevice(), &createInfo, nullptr, &handle), "Buffer : Failed to initialize buffer");
+    CP_VK_ASSERT(vkCreateBuffer(vulkan.GetDevice(), &createInfo, nullptr, &handle), "Buffer : Failed to initialize buffer");
 
     VkMemoryRequirements memoryRequirements;
-    vkGetBufferMemoryRequirements(instance.GetDevice(), handle, &memoryRequirements);
+    vkGetBufferMemoryRequirements(vulkan.GetDevice(), handle, &memoryRequirements);
 
     VkMemoryAllocateInfo allocateInfo{};
     allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocateInfo.allocationSize = memoryRequirements.size;
-    allocateInfo.memoryTypeIndex = instance.FindMemoryType(memoryRequirements.memoryTypeBits, properties);
+    allocateInfo.memoryTypeIndex = vulkan.GetDevice().FindMemoryType(memoryRequirements.memoryTypeBits, properties);
 
-    CP_VK_ASSERT(vkAllocateMemory(instance.GetDevice(), &allocateInfo, nullptr, &memory), "Buffer : Failed to allocate buffer memory");
+    CP_VK_ASSERT(vkAllocateMemory(vulkan.GetDevice(), &allocateInfo, nullptr, &memory), "Buffer : Failed to allocate buffer memory");
 
-    vkBindBufferMemory(instance.GetDevice(), handle, memory, 0);
+    vkBindBufferMemory(vulkan.GetDevice(), handle, memory, 0);
   }
 
   Buffer::~Buffer()
   {
-    vkFreeMemory(instance.GetDevice(), memory, nullptr);
-    vkDestroyBuffer(instance.GetDevice(), handle, nullptr);
+    vkFreeMemory(vulkan.GetDevice(), memory, nullptr);
+    vkDestroyBuffer(vulkan.GetDevice(), handle, nullptr);
   }
 
   void Buffer::Update(void* indexData, int index)
@@ -39,9 +42,9 @@ namespace Copium
     if (mappedData == nullptr)
     {
       void* data;
-      vkMapMemory(instance.GetDevice(), memory, index * size, size, 0, &data);
+      vkMapMemory(vulkan.GetDevice(), memory, index * size, size, 0, &data);
       memcpy(data, indexData, size);
-      vkUnmapMemory(instance.GetDevice(), memory);
+      vkUnmapMemory(vulkan.GetDevice(), memory);
     }
     else
     {
@@ -52,26 +55,26 @@ namespace Copium
   void Buffer::UpdateStaging(void* data)
   {
     VkDeviceSize bufferSize = size * count;
-    Buffer stagingBuffer{instance, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};
+    Buffer stagingBuffer{vulkan, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};
 
     stagingBuffer.Update(data, 0);
 
-    CopyBuffer(instance, stagingBuffer, *this, 0, bufferSize);
+    CopyBuffer(vulkan, stagingBuffer, *this, 0, bufferSize);
   }
 
   void Buffer::UpdateStaging(void* data, VkDeviceSize offset, VkDeviceSize size)
   {
-    Buffer stagingBuffer{instance, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, size, 1};
+    Buffer stagingBuffer{vulkan, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, size, 1};
 
     stagingBuffer.Update(data, 0);
 
-    CopyBuffer(instance, stagingBuffer, *this, offset, size);
+    CopyBuffer(vulkan, stagingBuffer, *this, offset, size);
   }
 
   void* Buffer::Map()
   {
     CP_ASSERT(mappedData == nullptr, "Map : Mapping an already mapped buffer");
-    vkMapMemory(instance.GetDevice(), memory, 0, size * count, 0, &mappedData);
+    vkMapMemory(vulkan.GetDevice(), memory, 0, size * count, 0, &mappedData);
     return mappedData;
   }
 
@@ -79,7 +82,7 @@ namespace Copium
   {
     CP_ASSERT(mappedData != nullptr, "Unmap : Unmapping an already unmapped buffer");
 
-    vkUnmapMemory(instance.GetDevice(), memory);
+    vkUnmapMemory(vulkan.GetDevice(), memory);
     mappedData = nullptr;
   }
 
@@ -99,17 +102,17 @@ namespace Copium
     return size * (VkDeviceSize)index;
   }
 
-  void Buffer::CopyBuffer(Instance& instance, const Buffer& srcBuffer, const Buffer& dstBuffer, VkDeviceSize offset, VkDeviceSize size)
+  void Buffer::CopyBuffer(Vulkan& vulkan, const Buffer& srcBuffer, const Buffer& dstBuffer, VkDeviceSize offset, VkDeviceSize size)
   {
     VkCommandBufferAllocateInfo allocateInfo{};
 
     allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocateInfo.commandPool = instance.GetCommandPool();
+    allocateInfo.commandPool = vulkan.GetDevice().GetCommandPool();
     allocateInfo.commandBufferCount = 1;
 
     VkCommandBuffer commandBuffer;
-    CP_VK_ASSERT(vkAllocateCommandBuffers(instance.GetDevice(), &allocateInfo, &commandBuffer), "CopyBuffer : Failed to initialize command buffer");
+    CP_VK_ASSERT(vkAllocateCommandBuffers(vulkan.GetDevice(), &allocateInfo, &commandBuffer), "CopyBuffer : Failed to initialize command buffer");
 
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -131,9 +134,9 @@ namespace Copium
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    vkQueueSubmit(instance.GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-    vkQueueWaitIdle(instance.GetGraphicsQueue());
+    vkQueueSubmit(vulkan.GetDevice().GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+    vkQueueWaitIdle(vulkan.GetDevice().GetGraphicsQueue());
 
-    vkFreeCommandBuffers(instance.GetDevice(), instance.GetCommandPool(), 1, &commandBuffer);
+    vkFreeCommandBuffers(vulkan.GetDevice(), vulkan.GetDevice().GetCommandPool(), 1, &commandBuffer);
   }
 }
