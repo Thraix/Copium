@@ -24,7 +24,9 @@ namespace Copium
     ~DescriptorSet();
 
     void AddUniform(const UniformBuffer& uniformBuffer, uint32_t binding);
-    void AddSampler(const Sampler& sampler, uint32_t binding);
+    void AddSampler(const Sampler& sampler, uint32_t binding, int arrayIndex = 0);
+    void AddSampler(const Sampler& sampler, uint32_t binding, int index, int arrayIndex = 0);
+    void AddSamplers(const std::vector<const Sampler*>& sampler, uint32_t binding);
     operator VkDescriptorSet() const;
   };
 }

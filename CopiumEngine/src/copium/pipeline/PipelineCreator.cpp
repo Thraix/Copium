@@ -35,4 +35,9 @@ namespace Copium
 	{
 		frontFace = cullFrontFace;
 	}
+
+	void PipelineCreator::SetDepthTest(bool depthTest)
+	{
+		this->depthTest = depthTest;
+	}
 }

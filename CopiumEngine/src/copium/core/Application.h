@@ -12,6 +12,7 @@
 #include "copium/pipeline/DescriptorSet.h"
 #include "copium/pipeline/Pipeline.h"
 #include "copium/sampler/Texture2D.h"
+#include "copium/renderer/Renderer.h"
 
 namespace Copium
 {
@@ -23,6 +24,7 @@ namespace Copium
     std::unique_ptr<Instance> instance;
     std::unique_ptr<Framebuffer> framebuffer;
     std::unique_ptr<Texture2D> texture2D;
+    std::unique_ptr<Texture2D> texture2D2;
     std::unique_ptr<UniformBuffer> shaderUniformBuffer;
     std::unique_ptr<DescriptorPool> descriptorPool;
     std::unique_ptr<DescriptorSet> descriptorSet;
@@ -32,6 +34,7 @@ namespace Copium
     std::unique_ptr<Mesh> mesh;
     std::unique_ptr<Mesh> meshPassthrough;
     std::unique_ptr<CommandBuffer> commandBuffer;
+    std::unique_ptr<Renderer> renderer;
 
   public:
     Application();
@@ -47,6 +50,7 @@ namespace Copium
     void InitializeGraphicsPipeline();
     void InitializeMesh();
     void InitializeCommandBuffer();
+    void InitializeRenderer();
 
     void RecordCommandBuffer();
     void UpdateUniformBuffer();

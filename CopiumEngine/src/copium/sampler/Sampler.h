@@ -18,6 +18,7 @@ namespace Copium
     virtual ~Sampler();
 
     virtual VkDescriptorImageInfo GetDescriptorImageInfo(int index) const = 0;
+    operator VkSampler() const;
   private:
     void InitializeSampler();
   };

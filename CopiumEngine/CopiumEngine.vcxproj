@@ -170,6 +170,7 @@
     <ClCompile Include="src\copium\core\Vulkan.cpp" />
     <ClCompile Include="src\copium\core\Window.cpp" />
     <ClCompile Include="src\copium\mesh\Mesh.cpp" />
+    <ClCompile Include="src\copium\renderer\Renderer.cpp" />
     <ClCompile Include="src\copium\sampler\ColorAttachment.cpp" />
     <ClCompile Include="src\copium\buffer\CommandBuffer.cpp" />
     <ClCompile Include="src\copium\buffer\CommandBufferScoped.cpp" />
@@ -198,11 +199,11 @@
     <ClCompile Include="src\copium\mesh\VertexPassthrough.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\copium\core\VulkanCore.h" />
     <ClInclude Include="src\copium\core\Device.h" />
     <ClInclude Include="src\copium\core\Vulkan.h" />
     <ClInclude Include="src\copium\core\Window.h" />
     <ClInclude Include="src\copium\mesh\Mesh.h" />
+    <ClInclude Include="src\copium\renderer\Renderer.h" />
     <ClInclude Include="src\copium\sampler\DepthAttachment.h" />
     <ClInclude Include="src\copium\core\Application.h" />
     <ClInclude Include="src\copium\sampler\ColorAttachment.h" />
@@ -236,6 +237,8 @@
   <ItemGroup>
     <None Include="res\shaders\passthrough.frag" />
     <None Include="res\shaders\passthrough.vert" />
+    <None Include="res\shaders\renderer.frag" />
+    <None Include="res\shaders\renderer.vert" />
     <None Include="res\shaders\shader.frag" />
     <None Include="res\shaders\shader.vert" />
   </ItemGroup>

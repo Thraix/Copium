@@ -56,6 +56,7 @@ namespace Copium
     InitializeDescriptorSets();
     InitializeMesh();
     InitializeCommandBuffer();
+    InitializeRenderer();
   }
 
   Application::~Application()
@@ -99,6 +100,7 @@ namespace Copium
   void Application::InitializeTextureSampler()
   {
     texture2D = std::make_unique<Texture2D>(*vulkan, "res/textures/texture.png");
+    texture2D2 = std::make_unique<Texture2D>(*vulkan, "res/textures/texture2.png");
   }
 
   void Application::InitializeUniformBuffer()
@@ -145,6 +147,11 @@ namespace Copium
     commandBuffer = std::make_unique<CommandBuffer>(*vulkan, CommandBuffer::Type::Dynamic);
   }
 
+  void Application::InitializeRenderer()
+  {
+    renderer = std::make_unique<Renderer>(*vulkan, framebuffer->GetRenderPass(), *descriptorPool);
+  }
+
   void Application::RecordCommandBuffer()
   {
     commandBuffer->Begin();
@@ -159,6 +166,18 @@ namespace Copium
 
     mesh->Bind(*commandBuffer);
     mesh->Render(*commandBuffer);
+
+    renderer->Begin(*commandBuffer);
+    for (int y = 0; y < 10; y++)
+    {
+      for (int x = 0; x < 10; x++)
+      {
+        renderer->Quad(glm::vec2(-1 + x * 0.2, -1 + y * 0.2), glm::vec2(-1 + (x + 0.5) * 0.2, -1 + (y + 0.5) * 0.2), glm::vec3{x * 0.1, y * 0.1, 1.0});
+      }
+    }
+    renderer->Quad(glm::vec2(-0.5, -0.5), glm::vec2{-0.1, 0.5}, *texture2D);
+    renderer->Quad(glm::vec2(0.1, -0.5), glm::vec2{0.5, 0.5}, *texture2D2);
+    renderer->End();
 
     framebuffer->Unbind(*commandBuffer);
 

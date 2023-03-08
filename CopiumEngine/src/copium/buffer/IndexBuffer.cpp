@@ -18,4 +18,10 @@ namespace Copium
   {
     vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
   }
+
+  void IndexBuffer::Draw(const CommandBuffer& commandBuffer, int indices)
+  {
+    CP_ASSERT(indices >= 0 && indices < indexCount, "Draw : amount of indices is out of range");
+    vkCmdDrawIndexed(commandBuffer, indices, 1, 0, 0, 0);
+  }
 }

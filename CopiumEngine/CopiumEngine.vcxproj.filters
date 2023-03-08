@@ -111,6 +111,9 @@
     <ClCompile Include="src\copium\core\Vulkan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\copium\renderer\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\copium\sampler\DepthAttachment.h">
@@ -212,7 +215,7 @@
     <ClInclude Include="src\copium\core\Device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\copium\core\VulkanCore.h">
+    <ClInclude Include="src\copium\renderer\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -221,5 +224,7 @@
     <None Include="res\shaders\shader.vert" />
     <None Include="res\shaders\passthrough.frag" />
     <None Include="res\shaders\passthrough.vert" />
+    <None Include="res\shaders\renderer.frag" />
+    <None Include="res\shaders\renderer.vert" />
   </ItemGroup>
 </Project>

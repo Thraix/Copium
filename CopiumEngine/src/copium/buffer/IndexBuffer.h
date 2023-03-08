@@ -17,5 +17,6 @@ namespace Copium
 
     void Bind(const CommandBuffer& commandBuffer);
     void Draw(const CommandBuffer& commandBuffer);
+    void Draw(const CommandBuffer& commandBuffer, int indices);
   };
 }

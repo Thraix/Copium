@@ -19,10 +19,12 @@ namespace Copium
     VkImageView imageView;
   public:
     Texture2D(Vulkan& vulkan, const std::string& filename);
+    Texture2D(Vulkan& vulkan, const std::vector<uint8_t>& rgbaData, int width, int height);
     ~Texture2D() override;
 
     VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;
   private:
-    void InitializeTextureImage(const std::string& filename);
+    void InitializeTextureImageFromFile(const std::string& filename);
+    void InitializeTextureImageFromData(void* rgbaData, int width, int height);
   };
 }

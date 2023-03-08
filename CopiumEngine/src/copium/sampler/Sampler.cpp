@@ -39,4 +39,9 @@ namespace Copium
 
     CP_VK_ASSERT(vkCreateSampler(vulkan.GetDevice(), &createInfo, nullptr, &sampler), "InitializeSampler : Failed to initialize texture sampler");
   }
+
+  Sampler::operator VkSampler() const
+  {
+    return sampler;
+  }
 }
