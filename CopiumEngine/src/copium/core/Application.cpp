@@ -172,11 +172,11 @@ namespace Copium
     {
       for (int x = 0; x < 10; x++)
       {
-        renderer->Quad(glm::vec2(-1 + x * 0.2, -1 + y * 0.2), glm::vec2(-1 + (x + 0.5) * 0.2, -1 + (y + 0.5) * 0.2), glm::vec3{x * 0.1, y * 0.1, 1.0});
+        renderer->Quad(glm::vec2{-1 + x * 0.2, -1 + y * 0.2}, glm::vec2{-1 + (x + 0.5) * 0.2, -1 + (y + 0.5) * 0.2}, glm::vec3{x * 0.1, y * 0.1, 1.0});
       }
     }
-    renderer->Quad(glm::vec2(-0.5, -0.5), glm::vec2{-0.1, 0.5}, *texture2D);
-    renderer->Quad(glm::vec2(0.1, -0.5), glm::vec2{0.5, 0.5}, *texture2D2);
+    renderer->Quad(glm::vec2{-0.5, -0.5}, glm::vec2{-0.1, 0.5}, *texture2D);
+    renderer->Quad(glm::vec2{0.1, -0.5}, glm::vec2{0.5, 0.5}, *texture2D2);
     renderer->End();
 
     framebuffer->Unbind(*commandBuffer);
