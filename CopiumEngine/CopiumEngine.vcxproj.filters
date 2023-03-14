@@ -123,6 +123,9 @@
     <ClCompile Include="src\copium\renderer\DrawCall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\copium\util\ShaderReflector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\copium\sampler\DepthAttachment.h">
@@ -234,6 +237,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\renderer\DrawCall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\util\ShaderReflector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

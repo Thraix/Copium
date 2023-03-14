@@ -25,10 +25,10 @@ namespace Copium
   void Renderer::Quad(const glm::vec2& from, const glm::vec2& to, const glm::vec3& color)
   {
     AllocateQuad();
-    AddVertex(from, color, -1, glm::vec2{0, 0});
-    AddVertex(glm::vec2{to.x, from.y}, color, -1, glm::vec2{0, 0});
-    AddVertex(to, color, -1, glm::vec2{0, 0});
     AddVertex(glm::vec2{from.x, to.y}, color, -1, glm::vec2{0, 0});
+    AddVertex(to, color, -1, glm::vec2{0, 0});
+    AddVertex(glm::vec2{to.x, from.y}, color, -1, glm::vec2{0, 0});
+    AddVertex(from, color, -1, glm::vec2{0, 0});
   }
 
 
@@ -36,10 +36,10 @@ namespace Copium
   {
     AllocateQuad();
     int texIndex = AllocateSampler(sampler);
-    AddVertex(from, glm::vec3{1,1,1}, texIndex, texCoord1);
-    AddVertex(glm::vec2{to.x, from.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord2.x, texCoord1.y});
-    AddVertex(to, glm::vec3{1,1,1}, texIndex, texCoord2);
     AddVertex(glm::vec2{from.x, to.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord1.x, texCoord2.y});
+    AddVertex(to, glm::vec3{1,1,1}, texIndex, texCoord2);
+    AddVertex(glm::vec2{to.x, from.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord2.x, texCoord1.y});
+    AddVertex(from, glm::vec3{1,1,1}, texIndex, texCoord1);
   }
 
   void Renderer::AddVertex(const glm::vec2& position, const glm::vec3& color, int texindex, const glm::vec2& texCoord)
@@ -88,7 +88,6 @@ namespace Copium
   {
     PipelineCreator creator{renderPass, "res/shaders/renderer.vert", "res/shaders/renderer.frag"};
     creator.SetVertexDescriptor(RendererVertex::GetDescriptor());
-    creator.AddDescriptorSetLayoutBinding(0, 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MAX_NUM_TEXTURES, VK_SHADER_STAGE_FRAGMENT_BIT);
     creator.SetDepthTest(false);
     graphicsPipeline = std::make_unique<Pipeline>(vulkan, creator);
   }
@@ -107,7 +106,7 @@ namespace Copium
       Flush();
       NextDrawCall();
     }
-    currentDrawCall->GetDescriptorSet().AddSampler(sampler, 0, vulkan.GetSwapChain().GetFlightIndex(), textureCount);
+    currentDrawCall->GetDescriptorSet().SetSampler(sampler, 0, vulkan.GetSwapChain().GetFlightIndex(), textureCount);
     samplers[textureCount] = &sampler;
     textureCount++;
     return textureCount - 1;
@@ -117,7 +116,6 @@ namespace Copium
   {
     if (quadCount + 1 > MAX_NUM_QUADS)
     {
-      CP_INFO("Flush");
       Flush();
       NextDrawCall();
     }

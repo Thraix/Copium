@@ -194,6 +194,7 @@
     <ClCompile Include="src\copium\pipeline\Shader.cpp" />
     <ClCompile Include="src\copium\core\SwapChain.cpp" />
     <ClCompile Include="src\copium\sampler\Texture2D.cpp" />
+    <ClCompile Include="src\copium\util\ShaderReflector.cpp" />
     <ClCompile Include="src\copium\util\Timer.cpp" />
     <ClCompile Include="src\copium\buffer\UniformBuffer.cpp" />
     <ClCompile Include="src\copium\mesh\Vertex.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="src\copium\core\Instance.h" />
     <ClInclude Include="src\copium\core\QueueFamilies.h" />
     <ClInclude Include="src\copium\core\SwapChain.h" />
+    <ClInclude Include="src\copium\util\ShaderReflector.h" />
     <ClInclude Include="src\copium\util\Timer.h" />
     <ClInclude Include="src\copium\mesh\Vertex.h" />
     <ClInclude Include="src\copium\buffer\VertexBuffer.h" />

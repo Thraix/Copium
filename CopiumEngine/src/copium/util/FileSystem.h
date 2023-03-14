@@ -14,6 +14,7 @@ namespace Copium
 		CP_STATIC_CLASS(FileSystem);
 	public:
 		static std::vector<char> ReadFile(const std::string& filename);
+		static std::vector<uint32_t> ReadFile32(const std::string& filename);
 		static std::string ReadFileStr(const std::string& filename);
 		static void WriteFile(const std::string& filename, const std::string& data);
 		static void WriteFile(const std::string& filename, const char* data, size_t size);

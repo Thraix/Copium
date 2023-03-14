@@ -10,7 +10,7 @@ namespace Copium
       vertexBuffer{vulkan, RendererVertex::GetDescriptor(), vertexCount},
       descriptorSet{vulkan, descriptorPool, pipeline.GetDescriptorSetLayout(0)}
   {
-    descriptorSet.AddSamplers(samplers, 0);
+    descriptorSet.SetSamplers(samplers, 0);
   }
 
   RendererVertexBuffer& DrawCall::GetVertexBuffer()

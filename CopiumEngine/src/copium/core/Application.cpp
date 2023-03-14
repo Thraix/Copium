@@ -29,9 +29,9 @@ namespace Copium
 
   const std::vector<VertexPassthrough> verticesPassthrough = {
     VertexPassthrough{{-1.0f, -1.0f}},
-    VertexPassthrough{{ 1.0f, -1.0f}},
-    VertexPassthrough{{ 1.0f,  1.0f}},
     VertexPassthrough{{-1.0f,  1.0f}},
+    VertexPassthrough{{ 1.0f,  1.0f}},
+    VertexPassthrough{{ 1.0f, -1.0f}},
   };
 
   const std::vector<uint16_t> indicesPassthrough = {
@@ -69,7 +69,7 @@ namespace Copium
     if (framebuffer->GetWidth() != vulkan->GetSwapChain().GetExtent().width || framebuffer->GetHeight() != vulkan->GetSwapChain().GetExtent().height)
     {
       framebuffer->Resize(vulkan->GetSwapChain().GetExtent().width / 8, vulkan->GetSwapChain().GetExtent().height / 8);
-      descriptorSetPassthrough->AddSampler(framebuffer->GetColorAttachment(), 0);
+      descriptorSetPassthrough->SetSampler(framebuffer->GetColorAttachment(), 0);
     }
 
     if (!vulkan->GetSwapChain().BeginPresent())
@@ -113,26 +113,21 @@ namespace Copium
     descriptorPool = std::make_unique<DescriptorPool>(*vulkan);
 
     descriptorSet = std::make_unique<DescriptorSet>(*vulkan, *descriptorPool, graphicsPipeline->GetDescriptorSetLayout(0));
-    descriptorSet->AddUniform(*shaderUniformBuffer, 0);
-    descriptorSet->AddSampler(*texture2D, 1);
+    descriptorSet->SetUniformBuffer(*shaderUniformBuffer, 0);
+    descriptorSet->SetSampler(*texture2D, 1);
 
     descriptorSetPassthrough = std::make_unique<DescriptorSet>(*vulkan, *descriptorPool, graphicsPipelinePassthrough->GetDescriptorSetLayout(0));
-    descriptorSetPassthrough->AddSampler(framebuffer->GetColorAttachment(), 0);
+    descriptorSetPassthrough->SetSampler(framebuffer->GetColorAttachment(), 0);
   }
 
   void Application::InitializeGraphicsPipeline()
   {
     PipelineCreator creator{framebuffer->GetRenderPass(), "res/shaders/shader.vert", "res/shaders/shader.frag"};
-    creator.AddDescriptorSetLayoutBinding(0, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);
-    creator.AddDescriptorSetLayoutBinding(0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
     creator.SetVertexDescriptor(Vertex::GetDescriptor());
-    creator.SetCullMode(VK_CULL_MODE_NONE);
     graphicsPipeline = std::make_unique<Pipeline>(*vulkan, creator);
 
     PipelineCreator creatorPassthrough{vulkan->GetSwapChain().GetRenderPass(), "res/shaders/passthrough.vert", "res/shaders/passthrough.frag"};
-    creatorPassthrough.AddDescriptorSetLayoutBinding(0, 0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
     creatorPassthrough.SetVertexDescriptor(VertexPassthrough::GetDescriptor());
-    creatorPassthrough.SetCullMode(VK_CULL_MODE_NONE);
     graphicsPipelinePassthrough = std::make_unique<Pipeline>(*vulkan, creatorPassthrough);
   }
 

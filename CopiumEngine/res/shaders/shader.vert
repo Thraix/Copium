@@ -12,15 +12,16 @@ layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inColor;
 layout(location = 2) in vec2 inTexCoord;
 
-layout(location = 0) out vec3 fragColor;
-layout(location = 1) out vec2 fragTexCoord;
-layout(location = 2) out vec3 fragPosition;
-layout(location = 3) out vec3 fragLightPos;
+layout(location = 0) out vec3 outColor;
+layout(location = 1) out vec2 outTexCoord;
+layout(location = 2) out vec3 outPosition;
+layout(location = 3) out vec3 outLightPos;
 
-void main() {
+void main()
+{
   gl_Position = ubo.projection * ubo.view * ubo.model * vec4(inPosition, 1.0);
-  fragColor = inColor;
-  fragTexCoord = inTexCoord;
-  fragPosition =  vec3(ubo.model * vec4(inPosition, 1.0));
-  fragLightPos = ubo.lightPos;
+  outColor = inColor;
+  outTexCoord = inTexCoord;
+  outPosition =  vec3(ubo.model * vec4(inPosition, 1.0));
+  outLightPos = ubo.lightPos;
 }

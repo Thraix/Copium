@@ -4,40 +4,71 @@
 
 namespace Copium
 {
-	PipelineCreator::PipelineCreator(VkRenderPass renderPass, const std::string& vertexShader, const std::string& fragmentShader)
-		: vertexShader{vertexShader}, 
-		  fragmentShader{fragmentShader}, 
-		  renderPass{renderPass}
-	{}
+  PipelineCreator::PipelineCreator(VkRenderPass renderPass, const std::string& vertexShader, const std::string& fragmentShader)
+    : vertexShader{vertexShader},
+      fragmentShader{fragmentShader},
+      renderPass{renderPass}
+  {
+    AddShaderDescription();
+  }
 
-	void PipelineCreator::SetVertexDescriptor(const VertexDescriptor& descriptor)
-	{
-		vertexDescriptor = descriptor;
-	}
+  void PipelineCreator::SetVertexDescriptor(const VertexDescriptor& descriptor)
+  {
+    vertexDescriptor = descriptor;
+  }
 
-	void PipelineCreator::AddDescriptorSetLayoutBinding(uint32_t set, uint32_t binding, VkDescriptorType type, uint32_t count, VkShaderStageFlags stageFlags)
-	{
-		CP_ASSERT(set <= descriptorSetLayouts.size(), "AddDescriptorSetLayoutBinding : Cannot add descriptor set with set number greater than the current set count");
-		descriptorSetLayouts[set].emplace_back(DescriptorSetBinding{binding, type, count, stageFlags});
-	}
+  void PipelineCreator::SetPrimitiveTopology(VkPrimitiveTopology primitiveTopology)
+  {
+    topology = primitiveTopology;
+  }
 
-	void PipelineCreator::SetPrimitiveTopology(VkPrimitiveTopology primitiveTopology)
-	{
-		topology = primitiveTopology;
-	}
+  void PipelineCreator::SetCullMode(VkCullModeFlags flags)
+  {
+    cullMode = flags;
+  }
 
-	void PipelineCreator::SetCullMode(VkCullModeFlags flags)
-	{
-		cullMode = flags;
-	}
+  void PipelineCreator::SetCullFrontFace(VkFrontFace cullFrontFace)
+  {
+    frontFace = cullFrontFace;
+  }
 
-	void PipelineCreator::SetCullFrontFace(VkFrontFace cullFrontFace)
-	{
-		frontFace = cullFrontFace;
-	}
+  void PipelineCreator::SetDepthTest(bool depthTest)
+  {
+    this->depthTest = depthTest;
+  }
 
-	void PipelineCreator::SetDepthTest(bool depthTest)
-	{
-		this->depthTest = depthTest;
-	}
+  void PipelineCreator::AddShaderDescription()
+  {
+    ShaderReflector reflector{vertexShader, fragmentShader};
+    for (auto& binding : reflector.bindings)
+    {
+      descriptorSetLayouts[binding.set].emplace_back(DescriptorSetBinding{binding.binding, GetDescriptorType(binding.bindingType), binding.arraySize, GetShaderStageFlags(binding.shaderType)});
+    }
+  }
+
+  VkDescriptorType PipelineCreator::GetDescriptorType(BindingType type)
+  {
+    switch (type)
+    {
+    case BindingType::Sampler2D:
+      return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    case BindingType::UniformBuffer:
+      return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    default:
+      CP_ABORT("GetDescriptorType : Unhandled switch case");
+    }
+  }
+
+  VkShaderStageFlags PipelineCreator::GetShaderStageFlags(ShaderType type)
+  {
+    switch (type)
+    {
+    case ShaderType::Vertex:
+      return VK_SHADER_STAGE_VERTEX_BIT;
+    case ShaderType::Fragment:
+      return VK_SHADER_STAGE_FRAGMENT_BIT;
+    default:
+      CP_ABORT("GetShaderStageFlags : Unhandled switch case");
+    }
+  }
 }

@@ -80,9 +80,8 @@ namespace Copium
         if (FileSystem::DateModified(filename) < FileSystem::DateModified(spvFilename))
         {
           CP_DEBUG("InitializeShaderModuleFromGlslFile : Loading cached shader file: %s", filename.c_str());
-          std::vector<char> data = FileSystem::ReadFile(spvFilename);
-          CP_ASSERT(data.size() % 4 == 0, "Spv data size is not a factor of 4");
-          return InitializeShaderModule((const uint32_t*)data.data(), data.size());
+          std::vector<uint32_t> data = FileSystem::ReadFile32(spvFilename);
+          return InitializeShaderModule(data.data(), data.size() * sizeof(uint32_t));
         }
       }
     }

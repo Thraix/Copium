@@ -16,7 +16,7 @@ namespace Copium
     descriptorPool.FreeDescriptorSets(descriptorSets);
   }
 
-  void DescriptorSet::AddUniform(const UniformBuffer& uniformBuffer, uint32_t binding)
+  void DescriptorSet::SetUniformBuffer(const UniformBuffer& uniformBuffer, uint32_t binding)
   {
     for (size_t i = 0; i < descriptorSets.size(); ++i) {
       VkDescriptorBufferInfo bufferInfo = uniformBuffer.GetDescriptorBufferInfo(i);
@@ -35,15 +35,15 @@ namespace Copium
     }
   }
 
-  void DescriptorSet::AddSampler(const Sampler& sampler, uint32_t binding, int arrayIndex)
+  void DescriptorSet::SetSampler(const Sampler& sampler, uint32_t binding, int arrayIndex)
   {
     for (size_t i = 0; i < descriptorSets.size(); ++i)
     {
-      AddSampler(sampler, binding, i, arrayIndex);
+      SetSampler(sampler, binding, i, arrayIndex);
     }
   }
 
-  void DescriptorSet::AddSampler(const Sampler& sampler, uint32_t binding, int index, int arrayIndex)
+  void DescriptorSet::SetSampler(const Sampler& sampler, uint32_t binding, int index, int arrayIndex)
   {
     CP_ASSERT(index >= 0 && index < descriptorSets.size(), "AddSampler : index is out of range");
     VkDescriptorImageInfo imageInfo = sampler.GetDescriptorImageInfo(index);
@@ -60,7 +60,7 @@ namespace Copium
     vkUpdateDescriptorSets(vulkan.GetDevice(), 1, &descriptorWrite, 0, nullptr);
   }
 
-  void DescriptorSet::AddSamplers(const std::vector<const Sampler*>& samplers, uint32_t binding)
+  void DescriptorSet::SetSamplers(const std::vector<const Sampler*>& samplers, uint32_t binding)
   {
     for (size_t i = 0; i < descriptorSets.size(); ++i) {
       std::vector<VkWriteDescriptorSet> descriptorWrites{samplers.size()};

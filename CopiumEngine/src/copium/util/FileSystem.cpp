@@ -16,6 +16,21 @@ namespace Copium
     return buffer;
   }
 
+  std::vector<uint32_t> FileSystem::ReadFile32(const std::string& filename)
+  {
+    std::ifstream file(filename, std::ios::ate | std::ios::binary);
+    CP_ASSERT(file.is_open(), "ReadFile32 : Failed to open file");
+
+    size_t fileSize = (size_t)file.tellg();
+    CP_ASSERT(fileSize % 4 == 0, "ReadFile32 : byte size is not divisible by 4");
+    std::vector<uint32_t> buffer(fileSize / 4);
+
+    file.seekg(0);
+    file.read((char*)buffer.data(), fileSize);
+
+    return buffer;
+  }
+
   std::string FileSystem::ReadFileStr(const std::string& filename)
   {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
