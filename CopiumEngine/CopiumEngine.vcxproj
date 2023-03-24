@@ -171,7 +171,8 @@
     <ClCompile Include="src\copium\core\Vulkan.cpp" />
     <ClCompile Include="src\copium\core\Window.cpp" />
     <ClCompile Include="src\copium\mesh\Mesh.cpp" />
-    <ClCompile Include="src\copium\renderer\DrawCall.cpp" />
+    <ClCompile Include="src\copium\pipeline\ShaderBinding.cpp" />
+    <ClCompile Include="src\copium\renderer\Batch.cpp" />
     <ClCompile Include="src\copium\renderer\Renderer.cpp" />
     <ClCompile Include="src\copium\renderer\RendererVertex.cpp" />
     <ClCompile Include="src\copium\sampler\ColorAttachment.cpp" />
@@ -194,7 +195,7 @@
     <ClCompile Include="src\copium\pipeline\Shader.cpp" />
     <ClCompile Include="src\copium\core\SwapChain.cpp" />
     <ClCompile Include="src\copium\sampler\Texture2D.cpp" />
-    <ClCompile Include="src\copium\util\ShaderReflector.cpp" />
+    <ClCompile Include="src\copium\pipeline\ShaderReflector.cpp" />
     <ClCompile Include="src\copium\util\Timer.cpp" />
     <ClCompile Include="src\copium\buffer\UniformBuffer.cpp" />
     <ClCompile Include="src\copium\mesh\Vertex.cpp" />
@@ -208,7 +209,8 @@
     <ClInclude Include="src\copium\core\Vulkan.h" />
     <ClInclude Include="src\copium\core\Window.h" />
     <ClInclude Include="src\copium\mesh\Mesh.h" />
-    <ClInclude Include="src\copium\renderer\DrawCall.h" />
+    <ClInclude Include="src\copium\pipeline\ShaderBinding.h" />
+    <ClInclude Include="src\copium\renderer\Batch.h" />
     <ClInclude Include="src\copium\renderer\Renderer.h" />
     <ClInclude Include="src\copium\renderer\RendererVertex.h" />
     <ClInclude Include="src\copium\sampler\DepthAttachment.h" />
@@ -234,7 +236,7 @@
     <ClInclude Include="src\copium\core\Instance.h" />
     <ClInclude Include="src\copium\core\QueueFamilies.h" />
     <ClInclude Include="src\copium\core\SwapChain.h" />
-    <ClInclude Include="src\copium\util\ShaderReflector.h" />
+    <ClInclude Include="src\copium\pipeline\ShaderReflector.h" />
     <ClInclude Include="src\copium\util\Timer.h" />
     <ClInclude Include="src\copium\mesh\Vertex.h" />
     <ClInclude Include="src\copium\buffer\VertexBuffer.h" />

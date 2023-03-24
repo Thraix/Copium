@@ -4,9 +4,11 @@
 
 namespace Copium
 {
-  UniformBuffer::UniformBuffer(Vulkan& vulkan, VkDeviceSize size)
-    : Buffer{vulkan, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, size, SwapChain::MAX_FRAMES_IN_FLIGHT}
-  {}
+  UniformBuffer::UniformBuffer(Vulkan& vulkan, ShaderBinding binding)
+    : Buffer{vulkan, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, binding.GetUniformBufferSize(), SwapChain::MAX_FRAMES_IN_FLIGHT}, binding{binding}
+  {
+    buffer.resize(Buffer::GetSize());
+  }
 
   VkDescriptorBufferInfo UniformBuffer::GetDescriptorBufferInfo(int index) const
   {
@@ -15,5 +17,59 @@ namespace Copium
     bufferInfo.offset = (VkDeviceSize)index * size;
     bufferInfo.range = size;
     return bufferInfo;
+  }
+
+  void UniformBuffer::Set(const std::string& str, const glm::mat3& data)
+  {
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Mat3, "Set : Uniform type missmatch = %s", str.c_str());
+    uint32_t offset = binding.GetUniformOffset(str);
+    memcpy(buffer.data() + offset, &data, sizeof(glm::mat3));
+  }
+
+  void UniformBuffer::Set(const std::string& str, const glm::mat4& data)
+  {
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Mat4, "Set : Uniform type missmatch = %s", str.c_str());
+    uint32_t offset = binding.GetUniformOffset(str);
+    memcpy(buffer.data() + offset, &data, sizeof(glm::mat4));
+  }
+
+  void UniformBuffer::Set(const std::string& str, const glm::vec2& data)
+  {
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Vec2, "Set : Uniform type missmatch = %s", str.c_str());
+    uint32_t offset = binding.GetUniformOffset(str);
+    memcpy(buffer.data() + offset, &data, sizeof(glm::vec2));
+  }
+
+  void UniformBuffer::Set(const std::string& str, const glm::vec3& data)
+  {
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Vec3, "Set : Uniform type missmatch = %s", str.c_str());
+    uint32_t offset = binding.GetUniformOffset(str);
+    memcpy(buffer.data() + offset, &data, sizeof(glm::vec3));
+  }
+
+  void UniformBuffer::Set(const std::string& str, const glm::vec4& data)
+  {
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Vec4, "Set : Uniform type missmatch = %s", str.c_str());
+    uint32_t offset = binding.GetUniformOffset(str);
+    memcpy(buffer.data() + offset, &data, sizeof(glm::vec4));
+  }
+
+  void UniformBuffer::Set(const std::string& str, float data)
+  {
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Float, "Set : Uniform type missmatch = %s", str.c_str());
+    uint32_t offset = binding.GetUniformOffset(str);
+    memcpy(buffer.data() + offset, &data, sizeof(float));
+  }
+
+  void UniformBuffer::Set(const std::string& str, int data)
+  {
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Int, "Set : Uniform type missmatch = %s", str.c_str());
+    uint32_t offset = binding.GetUniformOffset(str);
+    memcpy(buffer.data() + offset, &data, sizeof(int));
+  }
+
+  void UniformBuffer::Update()
+  {
+    Buffer::Update(buffer.data(), vulkan.GetSwapChain().GetFlightIndex());
   }
 }

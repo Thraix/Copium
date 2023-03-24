@@ -1,7 +1,7 @@
 #pragma once
 
 #include "copium/pipeline/VertexDescriptor.h"
-#include "copium/util/ShaderReflector.h"
+#include "copium/pipeline/ShaderReflector.h"
 
 #include <map>
 #include <string>
@@ -24,6 +24,8 @@ namespace Copium
 
     std::string vertexShader;
     std::string fragmentShader;
+
+    ShaderReflector shaderReflector;
     VertexDescriptor vertexDescriptor{};
     VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     VkCullModeFlags cullMode = VK_CULL_MODE_FRONT_BIT;

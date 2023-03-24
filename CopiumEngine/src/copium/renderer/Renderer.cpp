@@ -22,24 +22,24 @@ namespace Copium
     InitializeGraphicsPipeline(renderPass);
   }
 
-  void Renderer::Quad(const glm::vec2& from, const glm::vec2& to, const glm::vec3& color)
+  void Renderer::Quad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color)
   {
     AllocateQuad();
-    AddVertex(glm::vec2{from.x, to.y}, color, -1, glm::vec2{0, 0});
-    AddVertex(to, color, -1, glm::vec2{0, 0});
-    AddVertex(glm::vec2{to.x, from.y}, color, -1, glm::vec2{0, 0});
-    AddVertex(from, color, -1, glm::vec2{0, 0});
+    AddVertex(glm::vec2{pos.x, pos.y + size.y}, color, -1, glm::vec2{0, 0});
+    AddVertex(pos + size, color, -1, glm::vec2{0, 0});
+    AddVertex(glm::vec2{pos.x + size.x, pos.y}, color, -1, glm::vec2{0, 0});
+    AddVertex(pos, color, -1, glm::vec2{0, 0});
   }
 
 
-  void Renderer::Quad(const glm::vec2& from, const glm::vec2& to, const Sampler& sampler, const glm::vec2& texCoord1, const glm::vec2& texCoord2)
+  void Renderer::Quad(const glm::vec2& pos, const glm::vec2& size, const Sampler& sampler, const glm::vec2& texCoord1, const glm::vec2& texCoord2)
   {
     AllocateQuad();
     int texIndex = AllocateSampler(sampler);
-    AddVertex(glm::vec2{from.x, to.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord1.x, texCoord2.y});
-    AddVertex(to, glm::vec3{1,1,1}, texIndex, texCoord2);
-    AddVertex(glm::vec2{to.x, from.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord2.x, texCoord1.y});
-    AddVertex(from, glm::vec3{1,1,1}, texIndex, texCoord1);
+    AddVertex(glm::vec2{pos.x, pos.y + size.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord1.x, texCoord2.y});
+    AddVertex(pos + size, glm::vec3{1,1,1}, texIndex, texCoord2);
+    AddVertex(glm::vec2{pos.x + size.x, pos.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord2.x, texCoord1.y});
+    AddVertex(pos, glm::vec3{1,1,1}, texIndex, texCoord1);
   }
 
   void Renderer::AddVertex(const glm::vec2& position, const glm::vec3& color, int texindex, const glm::vec2& texCoord)
@@ -56,14 +56,24 @@ namespace Copium
   {
     graphicsPipeline->Bind(commandBuffer);
     ibo.Bind(commandBuffer);
-    drawCallIndex = -1;
-    NextDrawCall();
+    batchIndex = -1;
+    NextBatch();
     currentCommandBuffer = &commandBuffer;
   }
 
   void Renderer::End()
   {
     Flush();
+  }
+
+  Pipeline& Renderer::GetGraphicsPipeline()
+  {
+    return *graphicsPipeline;
+  }
+
+  void Renderer::SetDescriptorSet(const DescriptorSet& descriptorSet)
+  {
+    graphicsPipeline->SetDescriptorSet(descriptorSet);
   }
 
   void Renderer::InitializeIndexBuffer() 
@@ -104,9 +114,9 @@ namespace Copium
     if (textureCount == MAX_NUM_TEXTURES)
     {
       Flush();
-      NextDrawCall();
+      NextBatch();
     }
-    currentDrawCall->GetDescriptorSet().SetSampler(sampler, 0, vulkan.GetSwapChain().GetFlightIndex(), textureCount);
+    batches[batchIndex]->GetDescriptorSet().SetSamplerDynamic(sampler, 0, textureCount);
     samplers[textureCount] = &sampler;
     textureCount++;
     return textureCount - 1;
@@ -117,30 +127,30 @@ namespace Copium
     if (quadCount + 1 > MAX_NUM_QUADS)
     {
       Flush();
-      NextDrawCall();
+      NextBatch();
     }
     quadCount++;
   }
 
   void Renderer::Flush()
   {
-    currentDrawCall->GetVertexBuffer().Unmap();
-    currentDrawCall->GetVertexBuffer().Bind(*currentCommandBuffer);
-    graphicsPipeline->SetDescriptorSet(0, currentDrawCall->GetDescriptorSet());
+    batches[batchIndex]->GetVertexBuffer().Unmap();
+    batches[batchIndex]->GetVertexBuffer().Bind(*currentCommandBuffer);
+    graphicsPipeline->SetDescriptorSet(batches[batchIndex]->GetDescriptorSet());
     graphicsPipeline->BindDescriptorSets(*currentCommandBuffer);
     ibo.Draw(*currentCommandBuffer, quadCount * 6);
   }
 
-  void Renderer::NextDrawCall()
+  void Renderer::NextBatch()
   {
-    drawCallIndex++;
-    if (drawCallIndex >= drawCalls.size())
+    batchIndex++;
+    if (batchIndex >= batches.size())
     {
-      drawCalls.emplace_back(std::make_unique<DrawCall>(vulkan, *graphicsPipeline, descriptorPool, MAX_NUM_VERTICES, samplers));
+      batches.emplace_back(std::make_unique<Batch>(vulkan, *graphicsPipeline, descriptorPool, MAX_NUM_VERTICES, samplers));
     }
-    currentDrawCall = drawCalls[drawCallIndex].get();
-    mappedVertexBuffer = (char*)currentDrawCall->GetVertexBuffer().Map() + currentDrawCall->GetVertexBuffer().GetPosition(vulkan.GetSwapChain().GetFlightIndex());
+    mappedVertexBuffer = (char*)batches[batchIndex]->GetVertexBuffer().Map() + batches[batchIndex]->GetVertexBuffer().GetPosition(vulkan.GetSwapChain().GetFlightIndex());
     quadCount = 0;
     textureCount = 0;
+    std::fill(samplers.begin(), samplers.end(), &emptyTexture);
   }
 }

@@ -22,19 +22,19 @@ namespace Copium
   private:
     std::unique_ptr<Vulkan> vulkan;
     std::unique_ptr<Instance> instance;
+    std::unique_ptr<Renderer> renderer;
     std::unique_ptr<Framebuffer> framebuffer;
     std::unique_ptr<Texture2D> texture2D;
     std::unique_ptr<Texture2D> texture2D2;
-    std::unique_ptr<UniformBuffer> shaderUniformBuffer;
     std::unique_ptr<DescriptorPool> descriptorPool;
     std::unique_ptr<DescriptorSet> descriptorSet;
     std::unique_ptr<DescriptorSet> descriptorSetPassthrough;
+    std::unique_ptr<DescriptorSet> descriptorSetRenderer;
     std::unique_ptr<Pipeline> graphicsPipeline;
     std::unique_ptr<Pipeline> graphicsPipelinePassthrough;
     std::unique_ptr<Mesh> mesh;
     std::unique_ptr<Mesh> meshPassthrough;
     std::unique_ptr<CommandBuffer> commandBuffer;
-    std::unique_ptr<Renderer> renderer;
 
   public:
     Application();
@@ -44,13 +44,12 @@ namespace Copium
   private:
     void InitializeVulkan();
     void InitializeFrameBuffer();
+    void InitializeRenderer();
     void InitializeTextureSampler();
-    void InitializeUniformBuffer();
     void InitializeDescriptorSets();
     void InitializeGraphicsPipeline();
     void InitializeMesh();
     void InitializeCommandBuffer();
-    void InitializeRenderer();
 
     void RecordCommandBuffer();
     void UpdateUniformBuffer();

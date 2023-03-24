@@ -1,4 +1,4 @@
-#include "copium/util/ShaderReflector.h"
+#include "copium/pipeline/ShaderReflector.h"
 
 #include "copium/util/FileSystem.h"
 
@@ -82,7 +82,7 @@ namespace Copium
 
     std::string_view type = ParseWord(str, index);
     ParseWhitespace(str, index);
-    if (str[index] == '{') ParseUniformBuffer(str, index);
+    if (str[index] == '{') ParseUniformBuffer(str, index, shaderBinding);
     ParseWhitespace(str, index);
     std::string_view name = ParseWord(str, index);
     shaderBinding.name = name;
@@ -117,9 +117,35 @@ namespace Copium
     return std::string_view(&str[start], index - start);
   }
 
-  void ShaderReflector::ParseUniformBuffer(const std::string& str, int& index) 
+  void ShaderReflector::ParseUniformBuffer(const std::string& str, int& index, ShaderBinding& binding)
   {
-    while (str[index] != '}' && index < str.size()) index++;
+    index++;
+    ParseWhitespace(str, index);
+    while (str[index] != '}')
+    {
+      std::string_view type = ParseWord(str, index);
+      ParseWhitespace(str, index);
+      std::string_view name = ParseWord(str, index); // uniform name
+      if (type == "mat3")
+        binding.uniforms.emplace_back(UniformType::Mat3, std::string(name));
+      else if (type == "mat4")
+        binding.uniforms.emplace_back(UniformType::Mat4, std::string(name));
+      else if (type == "vec2")
+        binding.uniforms.emplace_back(UniformType::Vec2, std::string(name));
+      else if (type == "vec3")
+        binding.uniforms.emplace_back(UniformType::Vec3, std::string(name));
+      else if (type == "vec4")
+        binding.uniforms.emplace_back(UniformType::Vec4, std::string(name));
+      else if (type == "float")
+        binding.uniforms.emplace_back(UniformType::Float, std::string(name));
+      else if (type == "int")
+        binding.uniforms.emplace_back(UniformType::Int, std::string(name));
+      else
+        CP_ABORT("Unsupported uniform type=%s", std::string(type).c_str());
+      ParseWhitespace(str, index);
+      index++; // ";"
+      ParseWhitespace(str, index);
+    }
     if (index < str.size()) index++; // go past "}"
   }
 }

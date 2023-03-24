@@ -17,6 +17,7 @@ namespace Copium
   private:
     Vulkan& vulkan;
 
+    ShaderReflector shaderReflector;
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts{};
     std::vector<VkDescriptorSet> boundDescriptorSets;
     VkPipelineLayout pipelineLayout;
@@ -26,9 +27,10 @@ namespace Copium
     Pipeline(Vulkan& vulkan, PipelineCreator creator);
     ~Pipeline();
     void Bind(const CommandBuffer& commandBuffer);
-    void SetDescriptorSet(uint32_t setIndex, const DescriptorSet& descriptorSet);
+    void SetDescriptorSet(const DescriptorSet& descriptorSet);
     void BindDescriptorSets(const CommandBuffer& commandBuffer);
-    VkDescriptorSetLayout GetDescriptorSetLayout(uint32_t setIndex) const;
+
+    std::unique_ptr<DescriptorSet> CreateDescriptorSet(DescriptorPool& descriptorPool, int setIndex) const;
 
   private:
     void InitializeDescriptorSetLayout(const PipelineCreator& creator);

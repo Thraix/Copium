@@ -2,10 +2,17 @@
 
 #include "copium/buffer/UniformBuffer.h"
 #include "copium/pipeline/DescriptorPool.h"
+#include "copium/pipeline/ShaderBinding.h"
+#include "copium/pipeline/ShaderReflector.h"
 #include "copium/sampler/Sampler.h"
 #include "copium/util/Common.h"
 
+#include <glm/glm.hpp>
 #include <vulkan/vulkan.hpp>
+
+#include <map>
+#include <set>
+#include <vector>
 
 namespace Copium
 {
@@ -17,16 +24,21 @@ namespace Copium
     DescriptorPool& descriptorPool;
     VkDescriptorSetLayout descriptorSetLayout;
 
+    std::set<ShaderBinding> bindings;
     std::vector<VkDescriptorSet> descriptorSets;
+    std::map<std::string, std::unique_ptr<UniformBuffer>> uniformBuffers;
 
   public:
-    DescriptorSet(Vulkan& vulkan, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout);
+    DescriptorSet(Vulkan& vulkan, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout, const std::set<ShaderBinding>& bindings);
     ~DescriptorSet();
 
     void SetUniformBuffer(const UniformBuffer& uniformBuffer, uint32_t binding);
     void SetSampler(const Sampler& sampler, uint32_t binding, int arrayIndex = 0);
-    void SetSampler(const Sampler& sampler, uint32_t binding, int index, int arrayIndex = 0);
+    void SetSamplerDynamic(const Sampler& sampler, uint32_t binding, int arrayIndex = 0);
     void SetSamplers(const std::vector<const Sampler*>& sampler, uint32_t binding);
+    UniformBuffer& GetUniformBuffer(const std::string& uniformBuffer);
+    uint32_t GetSetIndex() const;
+
     operator VkDescriptorSet() const;
   };
 }

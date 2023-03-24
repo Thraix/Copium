@@ -38,25 +38,16 @@ namespace Copium
       0, 1, 2, 2, 3, 0,
   };
 
-  struct alignas(64) ShaderUniform
-  {
-    alignas(16) glm::mat4 projection;
-    alignas(16) glm::mat4 view;
-    alignas(16) glm::mat4 model;
-    alignas(16) glm::vec3 lightPos;
-  };
-
   Application::Application()
   {
     InitializeVulkan();
     InitializeFrameBuffer();
+    InitializeRenderer();
     InitializeGraphicsPipeline();
     InitializeTextureSampler();
-    InitializeUniformBuffer();
     InitializeDescriptorSets();
     InitializeMesh();
     InitializeCommandBuffer();
-    InitializeRenderer();
   }
 
   Application::~Application()
@@ -97,27 +88,28 @@ namespace Copium
     framebuffer = std::make_unique<Framebuffer>(*vulkan, vulkan->GetSwapChain().GetExtent().width, vulkan->GetSwapChain().GetExtent().height);
   }
 
+  void Application::InitializeRenderer()
+  {
+    renderer = std::make_unique<Renderer>(*vulkan, framebuffer->GetRenderPass(), *descriptorPool);
+  }
+
   void Application::InitializeTextureSampler()
   {
     texture2D = std::make_unique<Texture2D>(*vulkan, "res/textures/texture.png");
     texture2D2 = std::make_unique<Texture2D>(*vulkan, "res/textures/texture2.png");
   }
 
-  void Application::InitializeUniformBuffer()
-  {
-    shaderUniformBuffer = std::make_unique<UniformBuffer>(*vulkan, sizeof(ShaderUniform));
-  }
-
   void Application::InitializeDescriptorSets()
   {
     descriptorPool = std::make_unique<DescriptorPool>(*vulkan);
 
-    descriptorSet = std::make_unique<DescriptorSet>(*vulkan, *descriptorPool, graphicsPipeline->GetDescriptorSetLayout(0));
-    descriptorSet->SetUniformBuffer(*shaderUniformBuffer, 0);
+    descriptorSet = graphicsPipeline->CreateDescriptorSet(*descriptorPool, 0);
     descriptorSet->SetSampler(*texture2D, 1);
 
-    descriptorSetPassthrough = std::make_unique<DescriptorSet>(*vulkan, *descriptorPool, graphicsPipelinePassthrough->GetDescriptorSetLayout(0));
+    descriptorSetPassthrough = graphicsPipelinePassthrough->CreateDescriptorSet(*descriptorPool, 0);
     descriptorSetPassthrough->SetSampler(framebuffer->GetColorAttachment(), 0);
+
+    descriptorSetRenderer = renderer->GetGraphicsPipeline().CreateDescriptorSet(*descriptorPool, 1);
   }
 
   void Application::InitializeGraphicsPipeline()
@@ -142,11 +134,6 @@ namespace Copium
     commandBuffer = std::make_unique<CommandBuffer>(*vulkan, CommandBuffer::Type::Dynamic);
   }
 
-  void Application::InitializeRenderer()
-  {
-    renderer = std::make_unique<Renderer>(*vulkan, framebuffer->GetRenderPass(), *descriptorPool);
-  }
-
   void Application::RecordCommandBuffer()
   {
     commandBuffer->Begin();
@@ -156,22 +143,23 @@ namespace Copium
 
     UpdateUniformBuffer();
 
-    graphicsPipeline->SetDescriptorSet(0, *descriptorSet);
+    graphicsPipeline->SetDescriptorSet(*descriptorSet);
     graphicsPipeline->BindDescriptorSets(*commandBuffer);
 
     mesh->Bind(*commandBuffer);
     mesh->Render(*commandBuffer);
 
+    renderer->SetDescriptorSet(*descriptorSetRenderer);
     renderer->Begin(*commandBuffer);
     for (int y = 0; y < 10; y++)
     {
       for (int x = 0; x < 10; x++)
       {
-        renderer->Quad(glm::vec2{-1 + x * 0.2, -1 + y * 0.2}, glm::vec2{-1 + (x + 0.5) * 0.2, -1 + (y + 0.5) * 0.2}, glm::vec3{x * 0.1, y * 0.1, 1.0});
+        renderer->Quad(glm::vec2{-1 + x * 0.2 + 0.05, -1 + y * 0.2 + 0.05}, glm::vec2{0.1, 0.1}, glm::vec3{x * 0.1, y * 0.1, 1.0});
       }
     }
-    renderer->Quad(glm::vec2{-0.5, -0.5}, glm::vec2{-0.1, 0.5}, *texture2D);
-    renderer->Quad(glm::vec2{0.1, -0.5}, glm::vec2{0.5, 0.5}, *texture2D2);
+    renderer->Quad(glm::vec2{-0.9, -0.4}, glm::vec2{0.8, 0.8}, *texture2D);
+    renderer->Quad(glm::vec2{ 0.1, -0.4}, glm::vec2{0.8, 0.8}, *texture2D2);
     renderer->End();
 
     framebuffer->Unbind(*commandBuffer);
@@ -179,7 +167,7 @@ namespace Copium
     vulkan->GetSwapChain().BeginFrameBuffer(*commandBuffer);
 
     graphicsPipelinePassthrough->Bind(*commandBuffer);
-    graphicsPipelinePassthrough->SetDescriptorSet(0, *descriptorSetPassthrough);
+    graphicsPipelinePassthrough->SetDescriptorSet(*descriptorSetPassthrough);
     graphicsPipelinePassthrough->BindDescriptorSets(*commandBuffer);
 
     meshPassthrough->Bind(*commandBuffer);
@@ -194,13 +182,25 @@ namespace Copium
     static Timer startTimer;
 
     float time = startTimer.Elapsed();
-    ShaderUniform shaderUniform;
-    shaderUniform.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    shaderUniform.projection = glm::perspective(glm::radians(45.0f), framebuffer->GetWidth() / (float)framebuffer->GetHeight(), 0.1f, 10.0f);
-    shaderUniform.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    shaderUniform.projection[1][1] *= -1;
-    shaderUniform.lightPos = glm::rotate(glm::mat4{1.0f}, time * glm::radians(45.0f), glm::vec3(0, 1, 0)) * glm::vec4{0.3, 0.1, 0, 1};
+    float aspect = framebuffer->GetWidth() / (float)framebuffer->GetHeight();
 
-    shaderUniformBuffer->Update(shaderUniform);
+    {
+      glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f);
+      projection[1][1] *= -1;
+
+      UniformBuffer& uniformBuffer = descriptorSet->GetUniformBuffer("ubo");
+      uniformBuffer.Set("projection", projection);
+      uniformBuffer.Set("view", glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+      uniformBuffer.Set("model", glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+      uniformBuffer.Set("lightPos", (glm::vec3)(glm::rotate(glm::mat4{1.0f}, time * glm::radians(45.0f), glm::vec3(0, 1, 0)) * glm::vec4{0.3, 0.1, 0, 1}));
+      uniformBuffer.Update();
+    }
+
+    {
+      UniformBuffer& uniformBuffer = descriptorSetRenderer->GetUniformBuffer("ubo");
+      uniformBuffer.Set("projection", glm::ortho(-aspect, aspect, -1.0f, 1.0f));
+      uniformBuffer.Set("view", glm::translate(glm::mat4(1), glm::vec3(0.1 * glm::sin(4 * time), 0.1 * glm::cos(4 * time), 0.0)));
+      uniformBuffer.Update();
+    }
   }
 }

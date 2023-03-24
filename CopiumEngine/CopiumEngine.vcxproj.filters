@@ -120,10 +120,13 @@
     <ClCompile Include="src\copium\buffer\RendererVertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\copium\renderer\DrawCall.cpp">
+    <ClCompile Include="src\copium\renderer\Batch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\copium\util\ShaderReflector.cpp">
+    <ClCompile Include="src\copium\pipeline\ShaderReflector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\pipeline\ShaderBinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -236,10 +239,13 @@
     <ClInclude Include="src\copium\buffer\RendererVertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\copium\renderer\DrawCall.h">
+    <ClInclude Include="src\copium\renderer\Batch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\copium\util\ShaderReflector.h">
+    <ClInclude Include="src\copium\pipeline\ShaderReflector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\pipeline\ShaderBinding.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

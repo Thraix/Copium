@@ -5,7 +5,7 @@
 #include "copium/buffer/RendererVertexBuffer.h"
 #include "copium/core/Vulkan.h"
 #include "copium/pipeline/Pipeline.h"
-#include "copium/renderer/DrawCall.h"
+#include "copium/renderer/Batch.h"
 #include "copium/sampler/Texture2D.h"
 #include "copium/util/Common.h"
 
@@ -24,13 +24,12 @@ namespace Copium
     IndexBuffer ibo;
     Texture2D emptyTexture;
     std::unique_ptr<Pipeline> graphicsPipeline;
-    std::vector<std::unique_ptr<DrawCall>> drawCalls;
+    std::vector<std::unique_ptr<Batch>> batches;
 
     // Temporary data during a render
     CommandBuffer* currentCommandBuffer;
-    DrawCall* currentDrawCall;
     std::vector<const Sampler*> samplers;
-    int drawCallIndex;
+    int batchIndex;
     int quadCount;
     int textureCount;
     void* mappedVertexBuffer;
@@ -42,6 +41,9 @@ namespace Copium
 
     void Begin(CommandBuffer& commandBuffer);
     void End();
+
+    Pipeline& GetGraphicsPipeline();
+    void SetDescriptorSet(const DescriptorSet& descriptorSet);
   private:
     void InitializeIndexBuffer();
     void InitializeGraphicsPipeline(VkRenderPass renderPass);
@@ -49,7 +51,7 @@ namespace Copium
     int AllocateSampler(const Sampler& sampler);
     void AllocateQuad();
     void Flush();
-    void NextDrawCall();
+    void NextBatch();
 
     void AddVertex(const glm::vec2& position, const glm::vec3& color, int texindex, const glm::vec2& texCoord);
   };

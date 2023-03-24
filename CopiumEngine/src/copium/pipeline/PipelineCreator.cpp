@@ -7,6 +7,7 @@ namespace Copium
   PipelineCreator::PipelineCreator(VkRenderPass renderPass, const std::string& vertexShader, const std::string& fragmentShader)
     : vertexShader{vertexShader},
       fragmentShader{fragmentShader},
+      shaderReflector{vertexShader, fragmentShader},
       renderPass{renderPass}
   {
     AddShaderDescription();
@@ -39,8 +40,7 @@ namespace Copium
 
   void PipelineCreator::AddShaderDescription()
   {
-    ShaderReflector reflector{vertexShader, fragmentShader};
-    for (auto& binding : reflector.bindings)
+    for (auto& binding : shaderReflector.bindings)
     {
       descriptorSetLayouts[binding.set].emplace_back(DescriptorSetBinding{binding.binding, GetDescriptorType(binding.bindingType), binding.arraySize, GetShaderStageFlags(binding.shaderType)});
     }

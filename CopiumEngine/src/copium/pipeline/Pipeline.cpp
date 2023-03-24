@@ -7,7 +7,7 @@
 namespace Copium
 {
   Pipeline::Pipeline(Vulkan& vulkan, PipelineCreator creator)
-    : vulkan{vulkan}
+    : vulkan{vulkan}, shaderReflector{creator.shaderReflector}
   {
     InitializeDescriptorSetLayout(creator);
     InitializePipeline(creator);
@@ -28,10 +28,10 @@ namespace Copium
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
   }
 
-  void Pipeline::SetDescriptorSet(uint32_t setIndex, const DescriptorSet& descriptorSet)
+  void Pipeline::SetDescriptorSet(const DescriptorSet& descriptorSet)
   {
-    CP_ASSERT(setIndex < boundDescriptorSets.size(), "SetDescriptorSet : DescriptorSet index is out of bounds");
-    boundDescriptorSets[setIndex] = descriptorSet;
+    CP_ASSERT(descriptorSet.GetSetIndex() < boundDescriptorSets.size(), "SetDescriptorSet : DescriptorSet index is out of bounds");
+    boundDescriptorSets[descriptorSet.GetSetIndex()] = descriptorSet;
   }
 
   void Pipeline::BindDescriptorSets(const CommandBuffer& commandBuffer)
@@ -39,9 +39,17 @@ namespace Copium
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, boundDescriptorSets.size(), boundDescriptorSets.data(), 0, nullptr);
   }
 
-  VkDescriptorSetLayout Pipeline::GetDescriptorSetLayout(uint32_t setIndex) const
+  std::unique_ptr<DescriptorSet> Pipeline::CreateDescriptorSet(DescriptorPool& descriptorPool, int setIndex) const
   {
-    return descriptorSetLayouts[setIndex];
+    std::set<ShaderBinding> bindings;
+    for (auto& binding : shaderReflector.bindings)
+    {
+      if (binding.set != setIndex)
+        continue;
+      bindings.emplace(binding);
+    }
+
+    return std::make_unique<DescriptorSet>(vulkan, descriptorPool, descriptorSetLayouts[setIndex], bindings);
   }
 
   void Pipeline::InitializeDescriptorSetLayout(const PipelineCreator& creator)

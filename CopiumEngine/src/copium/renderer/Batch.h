@@ -7,17 +7,17 @@
 
 namespace Copium
 {
-  class DrawCall
+  class Batch
   {
-    CP_DELETE_COPY_AND_MOVE_CTOR(DrawCall);
+    CP_DELETE_COPY_AND_MOVE_CTOR(Batch);
   private:
     Vulkan& vulkan;
     Pipeline& pipeline;
 
     RendererVertexBuffer vertexBuffer;
-    DescriptorSet descriptorSet;
+    std::unique_ptr<DescriptorSet> descriptorSet;
   public:
-    DrawCall(Vulkan& vulkan, Pipeline& pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers);
+    Batch(Vulkan& vulkan, Pipeline& pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers);
     RendererVertexBuffer& GetVertexBuffer();
     DescriptorSet& GetDescriptorSet();
   };
