@@ -1,13 +1,11 @@
 #include "Device.h"
 
-#include "copium/core/Instance.h"
-#include "copium/core/SwapChain.h"
+#include "copium/core/Vulkan.h"
 #include "copium/core/Window.h"
 
 namespace Copium
 {
-  Device::Device(Vulkan& vulkan)
-    : vulkan{vulkan}
+  Device::Device()
   {
     SelectPhysicalDevice();
     InitializeLogicalDevice();
@@ -60,11 +58,11 @@ namespace Copium
   void Device::SelectPhysicalDevice()
   {
     uint32_t deviceCount;
-    vkEnumeratePhysicalDevices(vulkan.GetInstance(), &deviceCount, nullptr);
+    vkEnumeratePhysicalDevices(Vulkan::GetInstance(), &deviceCount, nullptr);
     CP_ASSERT(deviceCount != 0, "SelectPhysicaDevice : No available devices support Vulkan");
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
-    vkEnumeratePhysicalDevices(vulkan.GetInstance(), &deviceCount, devices.data());
+    vkEnumeratePhysicalDevices(Vulkan::GetInstance(), &deviceCount, devices.data());
     CP_INFO("SelectPhysicaDevice : Available devices:");
     for (auto&& device : devices)
     {
@@ -88,7 +86,7 @@ namespace Copium
 
   void Device::InitializeLogicalDevice()
   {
-    QueueFamiliesQuery query{vulkan.GetWindow().GetSurface(), physicalDevice};
+    QueueFamiliesQuery query{Vulkan::GetWindow().GetSurface(), physicalDevice};
 
     float queuePriority = 1.0f;
 
@@ -144,14 +142,14 @@ namespace Copium
     if (!deviceFeatures.fillModeNonSolid || !deviceFeatures.samplerAnisotropy)
       return false;
 
-    QueueFamiliesQuery query{vulkan.GetWindow().GetSurface(), device};
+    QueueFamiliesQuery query{Vulkan::GetWindow().GetSurface(), device};
     if (!query.AllRequiredFamiliesSupported())
       return false;
 
     if (!CheckDeviceExtensionSupport(device))
       return false;
 
-    SwapChainSupportDetails details{vulkan.GetWindow().GetSurface(), device};
+    SwapChainSupportDetails details{Vulkan::GetWindow().GetSurface(), device};
     if (!details.Valid())
       return false;
 

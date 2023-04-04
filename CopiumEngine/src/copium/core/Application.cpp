@@ -1,11 +1,8 @@
 #include "copium/core/Application.h"
 
+#include "copium/core/Vulkan.h"
 #include "copium/mesh/Vertex.h"
 #include "copium/mesh/VertexPassthrough.h"
-#include "copium/core/Device.h"
-#include "copium/core/Instance.h"
-#include "copium/core/SwapChain.h"
-#include "copium/core/Window.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -40,7 +37,6 @@ namespace Copium
 
   Application::Application()
   {
-    InitializeVulkan();
     InitializeFrameBuffer();
     InitializeRenderer();
     InitializeGraphicsPipeline();
@@ -52,56 +48,46 @@ namespace Copium
 
   Application::~Application()
   {
-    vkDeviceWaitIdle(vulkan->GetDevice());
+    vkDeviceWaitIdle(Vulkan::GetDevice());
   }
 
   bool Application::Update()
   {
-    if (framebuffer->GetWidth() != vulkan->GetSwapChain().GetExtent().width || framebuffer->GetHeight() != vulkan->GetSwapChain().GetExtent().height)
+    if (framebuffer->GetWidth() != Vulkan::GetSwapChain().GetExtent().width || framebuffer->GetHeight() != Vulkan::GetSwapChain().GetExtent().height)
     {
-      framebuffer->Resize(vulkan->GetSwapChain().GetExtent().width / 8, vulkan->GetSwapChain().GetExtent().height / 8);
+      framebuffer->Resize(Vulkan::GetSwapChain().GetExtent().width / 8, Vulkan::GetSwapChain().GetExtent().height / 8);
       descriptorSetPassthrough->SetSampler(framebuffer->GetColorAttachment(), 0);
     }
 
-    if (!vulkan->GetSwapChain().BeginPresent())
+    if (!Vulkan::GetSwapChain().BeginPresent())
       return true;
 
     RecordCommandBuffer();
-    vulkan->GetSwapChain().SubmitToGraphicsQueue(*commandBuffer);
+    Vulkan::GetSwapChain().SubmitToGraphicsQueue(*commandBuffer);
 
-    vulkan->GetSwapChain().EndPresent();
-    return !glfwWindowShouldClose(vulkan->GetWindow().GetWindow());
-  }
-
-  void Application::InitializeVulkan()
-  {
-    vulkan = std::make_unique<Vulkan>();
-    vulkan->SetInstance(std::make_unique<Instance>("Copium Engine"));
-    vulkan->SetWindow(std::make_unique<Window>(*vulkan, "Copium Engine", 1920, 1080, Window::Mode::Windowed));
-    vulkan->SetDevice(std::make_unique<Device>(*vulkan));
-    vulkan->SetSwapChain(std::make_unique<SwapChain>(*vulkan));
-    CP_ASSERT(vulkan->Valid(), "Vulkan Manager was not initialized correctly");
+    Vulkan::GetSwapChain().EndPresent();
+    return !glfwWindowShouldClose(Vulkan::GetWindow().GetWindow());
   }
 
   void Application::InitializeFrameBuffer()
   {
-    framebuffer = std::make_unique<Framebuffer>(*vulkan, vulkan->GetSwapChain().GetExtent().width, vulkan->GetSwapChain().GetExtent().height);
+    framebuffer = std::make_unique<Framebuffer>(Vulkan::GetSwapChain().GetExtent().width, Vulkan::GetSwapChain().GetExtent().height);
   }
 
   void Application::InitializeRenderer()
   {
-    renderer = std::make_unique<Renderer>(*vulkan, framebuffer->GetRenderPass(), *descriptorPool);
+    renderer = std::make_unique<Renderer>(framebuffer->GetRenderPass());
   }
 
   void Application::InitializeTextureSampler()
   {
-    texture2D = std::make_unique<Texture2D>(*vulkan, "res/textures/texture.png");
-    texture2D2 = std::make_unique<Texture2D>(*vulkan, "res/textures/texture2.png");
+    texture2D = std::make_unique<Texture2D>("res/textures/texture.png");
+    texture2D2 = std::make_unique<Texture2D>("res/textures/texture2.png");
   }
 
   void Application::InitializeDescriptorSets()
   {
-    descriptorPool = std::make_unique<DescriptorPool>(*vulkan);
+    descriptorPool = std::make_unique<DescriptorPool>();
 
     descriptorSet = graphicsPipeline->CreateDescriptorSet(*descriptorPool, 0);
     descriptorSet->SetSampler(*texture2D, 1);
@@ -116,22 +102,22 @@ namespace Copium
   {
     PipelineCreator creator{framebuffer->GetRenderPass(), "res/shaders/shader.vert", "res/shaders/shader.frag"};
     creator.SetVertexDescriptor(Vertex::GetDescriptor());
-    graphicsPipeline = std::make_unique<Pipeline>(*vulkan, creator);
+    graphicsPipeline = std::make_unique<Pipeline>(creator);
 
-    PipelineCreator creatorPassthrough{vulkan->GetSwapChain().GetRenderPass(), "res/shaders/passthrough.vert", "res/shaders/passthrough.frag"};
+    PipelineCreator creatorPassthrough{Vulkan::GetSwapChain().GetRenderPass(), "res/shaders/passthrough.vert", "res/shaders/passthrough.frag"};
     creatorPassthrough.SetVertexDescriptor(VertexPassthrough::GetDescriptor());
-    graphicsPipelinePassthrough = std::make_unique<Pipeline>(*vulkan, creatorPassthrough);
+    graphicsPipelinePassthrough = std::make_unique<Pipeline>(creatorPassthrough);
   }
 
   void Application::InitializeMesh()
   {
-    mesh = std::make_unique<Mesh>(*vulkan, vertices, indices);
-    meshPassthrough = std::make_unique<Mesh>(*vulkan, verticesPassthrough, indicesPassthrough);
+    mesh = std::make_unique<Mesh>(vertices, indices);
+    meshPassthrough = std::make_unique<Mesh>(verticesPassthrough, indicesPassthrough);
   }
 
   void Application::InitializeCommandBuffer()
   {
-    commandBuffer = std::make_unique<CommandBuffer>(*vulkan, CommandBuffer::Type::Dynamic);
+    commandBuffer = std::make_unique<CommandBuffer>(CommandBuffer::Type::Dynamic);
   }
 
   void Application::RecordCommandBuffer()
@@ -164,7 +150,7 @@ namespace Copium
 
     framebuffer->Unbind(*commandBuffer);
 
-    vulkan->GetSwapChain().BeginFrameBuffer(*commandBuffer);
+    Vulkan::GetSwapChain().BeginFrameBuffer(*commandBuffer);
 
     graphicsPipelinePassthrough->Bind(*commandBuffer);
     graphicsPipelinePassthrough->SetDescriptorSet(*descriptorSetPassthrough);
@@ -173,7 +159,7 @@ namespace Copium
     meshPassthrough->Bind(*commandBuffer);
     meshPassthrough->Render(*commandBuffer);
 
-    vulkan->GetSwapChain().EndFrameBuffer(*commandBuffer);
+    Vulkan::GetSwapChain().EndFrameBuffer(*commandBuffer);
     commandBuffer->End();
   }
 

@@ -2,8 +2,8 @@
 
 #include "copium/pipeline/ShaderBinding.h"
 
-#include <string>
 #include <set>
+#include <string>
 
 namespace Copium
 {

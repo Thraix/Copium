@@ -1,12 +1,10 @@
 #include "copium/pipeline/DescriptorPool.h"
 
-#include "copium/core/Device.h"
-#include "copium/core/SwapChain.h"
+#include "copium/core/Vulkan.h"
 
 namespace Copium
 {
-  DescriptorPool::DescriptorPool(Vulkan& vulkan)
-    : vulkan{vulkan}
+  DescriptorPool::DescriptorPool()
   {
     std::vector<VkDescriptorPoolSize> poolSizes{2};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -22,12 +20,12 @@ namespace Copium
     createInfo.maxSets = DESCRIPTOR_SET_COUNT * SwapChain::MAX_FRAMES_IN_FLIGHT;
     createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
-    CP_VK_ASSERT(vkCreateDescriptorPool(vulkan.GetDevice(), &createInfo, nullptr, &descriptorPool), "DescriptorPool : Failed to initialize descriptor pool");
+    CP_VK_ASSERT(vkCreateDescriptorPool(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorPool), "DescriptorPool : Failed to initialize descriptor pool");
   }
 
   DescriptorPool::~DescriptorPool()
   {
-    vkDestroyDescriptorPool(vulkan.GetDevice(), descriptorPool, nullptr);
+    vkDestroyDescriptorPool(Vulkan::GetDevice(), descriptorPool, nullptr);
   }
 
   std::vector<VkDescriptorSet> DescriptorPool::AllocateDescriptorSets(VkDescriptorSetLayout descriptorSetLayout)
@@ -40,13 +38,13 @@ namespace Copium
     allocateInfo.descriptorSetCount = descriptorSets.size();
     allocateInfo.pSetLayouts = layouts.data();
 
-    CP_VK_ASSERT(vkAllocateDescriptorSets(vulkan.GetDevice(), &allocateInfo, descriptorSets.data()), "AllocateDescriptorSets : Failed to allocate descriptor sets");
+    CP_VK_ASSERT(vkAllocateDescriptorSets(Vulkan::GetDevice(), &allocateInfo, descriptorSets.data()), "AllocateDescriptorSets : Failed to allocate descriptor sets");
 
     return descriptorSets;
   }
 
   void DescriptorPool::FreeDescriptorSets(const std::vector<VkDescriptorSet>& descriptorSets)
   {
-    vkFreeDescriptorSets(vulkan.GetDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
+    vkFreeDescriptorSets(Vulkan::GetDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
   }
 }

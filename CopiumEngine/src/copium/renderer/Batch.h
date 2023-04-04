@@ -11,13 +11,12 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Batch);
   private:
-    Vulkan& vulkan;
     Pipeline& pipeline;
 
     RendererVertexBuffer vertexBuffer;
     std::unique_ptr<DescriptorSet> descriptorSet;
   public:
-    Batch(Vulkan& vulkan, Pipeline& pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers);
+    Batch(Pipeline& pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers);
     RendererVertexBuffer& GetVertexBuffer();
     DescriptorSet& GetDescriptorSet();
   };

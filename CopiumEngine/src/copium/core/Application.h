@@ -1,18 +1,12 @@
 #pragma once
 
 #include "copium/buffer/Framebuffer.h"
-#include "copium/buffer/IndexBuffer.h"
-#include "copium/buffer/UniformBuffer.h"
-#include "copium/buffer/VertexBuffer.h"
-#include "copium/core/Device.h"
-#include "copium/core/Instance.h"
-#include "copium/core/Vulkan.h"
 #include "copium/mesh/Mesh.h"
 #include "copium/pipeline/DescriptorPool.h"
 #include "copium/pipeline/DescriptorSet.h"
 #include "copium/pipeline/Pipeline.h"
-#include "copium/sampler/Texture2D.h"
 #include "copium/renderer/Renderer.h"
+#include "copium/sampler/Texture2D.h"
 
 namespace Copium
 {
@@ -20,8 +14,6 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Application);
   private:
-    std::unique_ptr<Vulkan> vulkan;
-    std::unique_ptr<Instance> instance;
     std::unique_ptr<Renderer> renderer;
     std::unique_ptr<Framebuffer> framebuffer;
     std::unique_ptr<Texture2D> texture2D;
@@ -42,7 +34,6 @@ namespace Copium
 
     bool Update();
   private:
-    void InitializeVulkan();
     void InitializeFrameBuffer();
     void InitializeRenderer();
     void InitializeTextureSampler();

@@ -1,7 +1,6 @@
 #include "Instance.h"
 
 #include "copium/core/QueueFamilies.h"
-#include "copium/core/SwapChain.h"
 #include "copium/util/Common.h"
 
 namespace Copium
@@ -109,13 +108,5 @@ namespace Copium
         return false;
     }
     return true;
-  }
-
-  void Instance::FramebufferResizeCallback(GLFWwindow* window, int width, int height)
-  {
-    Instance* instance = static_cast<Instance*>(glfwGetWindowUserPointer(window));
-    // TODO: Fix swap chain resizing again
-    // instance->swapChain->ResizeFramebuffer(); // TODO: Should maybe be handled by an event system?
-    CP_UNIMPLEMENTED("Framebuffer resizing currently not supported");
   }
 }

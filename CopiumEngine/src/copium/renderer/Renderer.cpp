@@ -1,6 +1,6 @@
 #include "copium/renderer/Renderer.h"
 
-#include "copium/core/SwapChain.h"
+#include "copium/core/Vulkan.h"
 #include "copium/pipeline/PipelineCreator.h"
 #include "copium/renderer/RendererVertex.h"
 
@@ -11,11 +11,10 @@ namespace Copium
   static constexpr int MAX_NUM_INDICES = 6 * MAX_NUM_QUADS;
   static constexpr int MAX_NUM_TEXTURES = 32;
 
-  Renderer::Renderer(Vulkan& vulkan, VkRenderPass renderPass, DescriptorPool& descriptorPool)
-    : vulkan{vulkan}, 
-      descriptorPool{vulkan},
-      ibo{vulkan, MAX_NUM_INDICES}, 
-      emptyTexture{vulkan, {1, 0, 0, 0}, 1, 1},
+  Renderer::Renderer(VkRenderPass renderPass)
+    : descriptorPool{},
+      ibo{MAX_NUM_INDICES}, 
+      emptyTexture{{0, 0, 0, 255}, 1, 1},
       samplers{MAX_NUM_TEXTURES, &emptyTexture}
   {
     InitializeIndexBuffer();
@@ -99,7 +98,7 @@ namespace Copium
     PipelineCreator creator{renderPass, "res/shaders/renderer.vert", "res/shaders/renderer.frag"};
     creator.SetVertexDescriptor(RendererVertex::GetDescriptor());
     creator.SetDepthTest(false);
-    graphicsPipeline = std::make_unique<Pipeline>(vulkan, creator);
+    graphicsPipeline = std::make_unique<Pipeline>(creator);
   }
 
   int Renderer::AllocateSampler(const Sampler& sampler)
@@ -117,6 +116,7 @@ namespace Copium
       NextBatch();
     }
     batches[batchIndex]->GetDescriptorSet().SetSamplerDynamic(sampler, 0, textureCount);
+
     samplers[textureCount] = &sampler;
     textureCount++;
     return textureCount - 1;
@@ -144,13 +144,13 @@ namespace Copium
   void Renderer::NextBatch()
   {
     batchIndex++;
+    std::fill(samplers.begin(), samplers.end(), &emptyTexture);
     if (batchIndex >= batches.size())
     {
-      batches.emplace_back(std::make_unique<Batch>(vulkan, *graphicsPipeline, descriptorPool, MAX_NUM_VERTICES, samplers));
+      batches.emplace_back(std::make_unique<Batch>(*graphicsPipeline, descriptorPool, MAX_NUM_VERTICES, samplers));
     }
-    mappedVertexBuffer = (char*)batches[batchIndex]->GetVertexBuffer().Map() + batches[batchIndex]->GetVertexBuffer().GetPosition(vulkan.GetSwapChain().GetFlightIndex());
+    mappedVertexBuffer = (char*)batches[batchIndex]->GetVertexBuffer().Map() + batches[batchIndex]->GetVertexBuffer().GetPosition(Vulkan::GetSwapChain().GetFlightIndex());
     quadCount = 0;
     textureCount = 0;
-    std::fill(samplers.begin(), samplers.end(), &emptyTexture);
   }
 }

@@ -1,48 +1,44 @@
 #include "copium/core/Vulkan.h"
 
-#include "copium/core/Device.h"
-#include "copium/core/Instance.h"
-#include "copium/core/SwapChain.h"
-#include "copium/core/Window.h"
-
 namespace Copium
 {
-  void Vulkan::SetInstance(std::unique_ptr<Instance>&& instance)
+  std::unique_ptr<Instance> Vulkan::instance;
+  std::unique_ptr<Window> Vulkan::window;
+  std::unique_ptr<Device> Vulkan::device;
+  std::unique_ptr<SwapChain> Vulkan::swapChain;
+
+  void Vulkan::Initialize()
   {
-    this->instance = std::move(instance);
+    instance = std::make_unique<Instance>("Copium Engine");
+    window = std::make_unique<Window>( "Copium Engine", 1920, 1080, Window::Mode::Windowed);
+    device = std::make_unique<Device>();
+    swapChain = std::make_unique<SwapChain>();
   }
 
-  void Vulkan::SetWindow(std::unique_ptr<Window>&& window)
+  void Vulkan::Destroy()
   {
-    this->window = std::move(window);
+    swapChain.reset();
+    device.reset();
+    window.reset();
+    instance.reset();
   }
 
-  void Vulkan::SetDevice(std::unique_ptr<Device>&& device)
-  {
-    this->device = std::move(device);
-  }
-
-  void Vulkan::SetSwapChain(std::unique_ptr<SwapChain>&& swapChain)
-  {
-    this->swapChain = std::move(swapChain);
-  }
-
-  Instance& Vulkan::GetInstance() const
+  Instance& Vulkan::GetInstance()
   {
     return *instance;
   }
 
-  Window& Vulkan::GetWindow() const
+  Window& Vulkan::GetWindow()
   {
     return *window;
   }
 
-  Device& Vulkan::GetDevice() const
+  Device& Vulkan::GetDevice()
   {
     return *device;
   }
 
-  SwapChain& Vulkan::GetSwapChain() const
+  SwapChain& Vulkan::GetSwapChain()
   {
     return *swapChain;
   }

@@ -13,6 +13,7 @@ namespace Copium
     CP_DELETE_COPY_AND_MOVE_CTOR(DebugMessenger);
   private:
     Instance& instance;
+
     VkDebugUtilsMessengerEXT debugMessenger;
   public:
     DebugMessenger(Instance& instance);

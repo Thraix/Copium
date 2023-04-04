@@ -1,6 +1,5 @@
 #pragma once
 
-#include "copium/core/Vulkan.h"
 #include "copium/util/Common.h"
 
 #include <GLFW/glfw3.h>
@@ -16,13 +15,11 @@ namespace Copium
       Fullscreen, BorderlessWindowed, Windowed
     };
   private:
-    Vulkan& vulkan;
-
     GLFWwindow* window;
     VkSurfaceKHR surface;
 
   public:
-    Window(Vulkan& vulkan, const std::string& windowName, int width, int height, Mode mode);
+    Window(const std::string& windowName, int width, int height, Mode mode);
     ~Window();
 
     VkSurfaceKHR GetSurface() const;

@@ -4,8 +4,8 @@
 
 namespace Copium
 {
-  IndexBuffer::IndexBuffer(Vulkan& vulkan, int indexCount)
-    : Buffer{vulkan, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexCount * sizeof(uint16_t), 1}, 
+  IndexBuffer::IndexBuffer(int indexCount)
+    : Buffer{VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexCount * sizeof(uint16_t), 1}, 
       indexCount{indexCount}
   {}
 

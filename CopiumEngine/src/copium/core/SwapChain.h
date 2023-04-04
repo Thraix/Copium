@@ -1,7 +1,6 @@
 #pragma once
 
 #include "copium/buffer/CommandBuffer.h"
-#include "copium/core/Vulkan.h"
 #include "copium/sampler/DepthAttachment.h"
 #include "copium/util/Common.h"
 
@@ -27,8 +26,6 @@ namespace Copium
   public:
     static const int MAX_FRAMES_IN_FLIGHT = 2;
   private:
-    Vulkan& vulkan;
-
     VkSwapchainKHR handle;
     VkRenderPass renderPass;
     VkFormat imageFormat;
@@ -46,7 +43,7 @@ namespace Copium
     std::vector<VkFence> inFlightFences;
 
   public:
-    SwapChain(Vulkan& vulkan);
+    SwapChain();
     ~SwapChain();
 
     void BeginFrameBuffer(const CommandBuffer& commandBuffer) const;

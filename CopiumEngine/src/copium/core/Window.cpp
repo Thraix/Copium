@@ -1,12 +1,10 @@
 #include "copium/core/Window.h"
 
-#include "copium/core/Instance.h"
-#include "copium/core/SwapChain.h"
+#include "copium/core/Vulkan.h"
 
 namespace Copium
 {
-    Window::Window(Vulkan& vulkan, const std::string& windowName, int width, int height, Mode mode)
-      : vulkan{vulkan}
+    Window::Window(const std::string& windowName, int width, int height, Mode mode)
     {
       InitializeWindow(windowName, width, height, mode);
       InitializeSurface();
@@ -14,7 +12,7 @@ namespace Copium
 
     Window::~Window()
     {
-      vkDestroySurfaceKHR(vulkan.GetInstance(), surface, nullptr);
+      vkDestroySurfaceKHR(Vulkan::GetInstance(), surface, nullptr);
       glfwDestroyWindow(window);
     }
 
@@ -66,13 +64,12 @@ namespace Copium
 
     void Window::InitializeSurface()
     {
-      CP_VK_ASSERT(glfwCreateWindowSurface(vulkan.GetInstance(), window, nullptr, &surface), "InitializeSurface : Failed to create Vulkan surface");
+      CP_VK_ASSERT(glfwCreateWindowSurface(Vulkan::GetInstance(), window, nullptr, &surface), "InitializeSurface : Failed to create Vulkan surface");
     }
 
     void Window::FramebufferResizeCallback(GLFWwindow* glfwWindow, int width, int height)
     {
-      Window* window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-      window->vulkan.GetSwapChain().ResizeFramebuffer(); // TODO: Should maybe be handled by an event system?
+      Vulkan::GetSwapChain().ResizeFramebuffer(); // TODO: Should maybe be handled by an event system?
     }
 
 }

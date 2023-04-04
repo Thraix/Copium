@@ -1,12 +1,11 @@
 #include "copium/pipeline/DescriptorSet.h"
 
-#include "copium/core/Device.h"
-#include "copium/core/SwapChain.h"
+#include "copium/core/Vulkan.h"
 
 namespace Copium
 {
-  DescriptorSet::DescriptorSet(Vulkan& vulkan, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout, const std::set<ShaderBinding>& bindings)
-    : vulkan{vulkan}, descriptorPool{descriptorPool}, descriptorSetLayout{descriptorSetLayout}, bindings{bindings}
+  DescriptorSet::DescriptorSet(DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout, const std::set<ShaderBinding>& bindings)
+    : descriptorPool{descriptorPool}, descriptorSetLayout{descriptorSetLayout}, bindings{bindings}
   {
     CP_ASSERT(!bindings.empty(), "DescriptorSet : cannot initialize DescriptorSet with empty ShaderBindings");
 
@@ -15,7 +14,7 @@ namespace Copium
     {
       if (binding.bindingType == BindingType::UniformBuffer)
       {
-        std::unique_ptr<UniformBuffer> uniformBuffer = std::make_unique<UniformBuffer>(vulkan, binding);
+        std::unique_ptr<UniformBuffer> uniformBuffer = std::make_unique<UniformBuffer>(binding);
         SetUniformBuffer(*uniformBuffer, binding.binding);
         uniformBuffers.emplace(binding.name, std::move(uniformBuffer));
       }
@@ -26,25 +25,6 @@ namespace Copium
   DescriptorSet::~DescriptorSet()
   {
     descriptorPool.FreeDescriptorSets(descriptorSets);
-  }
-
-  void DescriptorSet::SetUniformBuffer(const UniformBuffer& uniformBuffer, uint32_t binding)
-  {
-    for (size_t i = 0; i < descriptorSets.size(); ++i) {
-      VkDescriptorBufferInfo bufferInfo = uniformBuffer.GetDescriptorBufferInfo(i);
-
-      VkWriteDescriptorSet descriptorWrite{};
-      descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      descriptorWrite.dstSet = descriptorSets[i];
-      descriptorWrite.dstBinding = binding;
-      descriptorWrite.dstArrayElement = 0;
-      descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-      descriptorWrite.descriptorCount = 1;
-      descriptorWrite.pBufferInfo = &bufferInfo;
-      descriptorWrite.pImageInfo = nullptr;
-      descriptorWrite.pTexelBufferView = nullptr;
-      vkUpdateDescriptorSets(vulkan.GetDevice(), 1, &descriptorWrite, 0, nullptr);
-    }
   }
 
   void DescriptorSet::SetSampler(const Sampler& sampler, uint32_t binding, int arrayIndex)
@@ -62,16 +42,16 @@ namespace Copium
       descriptorWrite.pBufferInfo = nullptr;
       descriptorWrite.pImageInfo = &imageInfo;
       descriptorWrite.pTexelBufferView = nullptr;
-      vkUpdateDescriptorSets(vulkan.GetDevice(), 1, &descriptorWrite, 0, nullptr);
+      vkUpdateDescriptorSets(Vulkan::GetDevice(), 1, &descriptorWrite, 0, nullptr);
     }
   }
 
   void DescriptorSet::SetSamplerDynamic(const Sampler& sampler, uint32_t binding, int arrayIndex)
   {
-    VkDescriptorImageInfo imageInfo = sampler.GetDescriptorImageInfo(vulkan.GetSwapChain().GetFlightIndex());
+    VkDescriptorImageInfo imageInfo = sampler.GetDescriptorImageInfo(Vulkan::GetSwapChain().GetFlightIndex());
     VkWriteDescriptorSet descriptorWrite{};
     descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrite.dstSet = descriptorSets[vulkan.GetSwapChain().GetFlightIndex()];
+    descriptorWrite.dstSet = descriptorSets[Vulkan::GetSwapChain().GetFlightIndex()];
     descriptorWrite.dstBinding = binding;
     descriptorWrite.dstArrayElement = arrayIndex;
     descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -79,7 +59,7 @@ namespace Copium
     descriptorWrite.pBufferInfo = nullptr;
     descriptorWrite.pImageInfo = &imageInfo;
     descriptorWrite.pTexelBufferView = nullptr;
-    vkUpdateDescriptorSets(vulkan.GetDevice(), 1, &descriptorWrite, 0, nullptr);
+    vkUpdateDescriptorSets(Vulkan::GetDevice(), 1, &descriptorWrite, 0, nullptr);
   }
 
   void DescriptorSet::SetSamplers(const std::vector<const Sampler*>& samplers, uint32_t binding)
@@ -99,7 +79,7 @@ namespace Copium
         descriptorWrites[j].pImageInfo = &imageInfo;
         descriptorWrites[j].pTexelBufferView = nullptr;
       }
-      vkUpdateDescriptorSets(vulkan.GetDevice(), descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+      vkUpdateDescriptorSets(Vulkan::GetDevice(), descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
     }
   }
 
@@ -117,6 +97,26 @@ namespace Copium
 
   DescriptorSet::operator VkDescriptorSet() const
   {
-    return descriptorSets[vulkan.GetSwapChain().GetFlightIndex()];
+    return descriptorSets[Vulkan::GetSwapChain().GetFlightIndex()];
   }
+
+  void DescriptorSet::SetUniformBuffer(const UniformBuffer& uniformBuffer, uint32_t binding)
+  {
+    for (size_t i = 0; i < descriptorSets.size(); ++i) {
+      VkDescriptorBufferInfo bufferInfo = uniformBuffer.GetDescriptorBufferInfo(i);
+
+      VkWriteDescriptorSet descriptorWrite{};
+      descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      descriptorWrite.dstSet = descriptorSets[i];
+      descriptorWrite.dstBinding = binding;
+      descriptorWrite.dstArrayElement = 0;
+      descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+      descriptorWrite.descriptorCount = 1;
+      descriptorWrite.pBufferInfo = &bufferInfo;
+      descriptorWrite.pImageInfo = nullptr;
+      descriptorWrite.pTexelBufferView = nullptr;
+      vkUpdateDescriptorSets(Vulkan::GetDevice(), 1, &descriptorWrite, 0, nullptr);
+    }
+  }
+
 }

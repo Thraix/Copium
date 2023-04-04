@@ -1,9 +1,7 @@
 #include "copium/core/SwapChain.h"
 
-#include "copium/core/Device.h"
-#include "copium/core/Instance.h"
 #include "copium/core/QueueFamilies.h"
-#include "copium/core/Window.h"
+#include "copium/core/Vulkan.h"
 #include "copium/sampler/Image.h"
 
 namespace Copium
@@ -34,8 +32,7 @@ namespace Copium
     return !formats.empty() && !presentModes.empty();
   }
 
-  SwapChain::SwapChain(Vulkan& vulkan)
-    : vulkan{vulkan}
+  SwapChain::SwapChain()
   {
     Initialize();
     InitializeImageViews();
@@ -49,12 +46,12 @@ namespace Copium
   {
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
     {
-      vkDestroyFence(vulkan.GetDevice(), inFlightFences[i], nullptr);
-      vkDestroySemaphore(vulkan.GetDevice(), renderFinishedSemaphores[i], nullptr);
-      vkDestroySemaphore(vulkan.GetDevice(), imageAvailableSemaphores[i], nullptr);
+      vkDestroyFence(Vulkan::GetDevice(), inFlightFences[i], nullptr);
+      vkDestroySemaphore(Vulkan::GetDevice(), renderFinishedSemaphores[i], nullptr);
+      vkDestroySemaphore(Vulkan::GetDevice(), imageAvailableSemaphores[i], nullptr);
     }
     Destroy();
-    vkDestroyRenderPass(vulkan.GetDevice(), renderPass, nullptr);
+    vkDestroyRenderPass(Vulkan::GetDevice(), renderPass, nullptr);
   }
 
   void SwapChain::BeginFrameBuffer(const CommandBuffer& commandBuffer) const
@@ -114,15 +111,15 @@ namespace Copium
 
   bool SwapChain::BeginPresent()
   {
-    vkWaitForFences(vulkan.GetDevice(), 1, &inFlightFences[flightIndex], VK_TRUE, UINT64_MAX);
+    vkWaitForFences(Vulkan::GetDevice(), 1, &inFlightFences[flightIndex], VK_TRUE, UINT64_MAX);
 
-    VkResult result = vkAcquireNextImageKHR(vulkan.GetDevice(), handle, UINT64_MAX, imageAvailableSemaphores[flightIndex], VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(Vulkan::GetDevice(), handle, UINT64_MAX, imageAvailableSemaphores[flightIndex], VK_NULL_HANDLE, &imageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
       Recreate();
       return false;
     }
-    vkResetFences(vulkan.GetDevice(), 1, &inFlightFences[flightIndex]);
+    vkResetFences(Vulkan::GetDevice(), 1, &inFlightFences[flightIndex]);
     return true;
   }
 
@@ -140,7 +137,7 @@ namespace Copium
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = &renderFinishedSemaphores[flightIndex];
 
-    CP_VK_ASSERT(vkQueueSubmit(vulkan.GetDevice().GetGraphicsQueue(), 1, &submitInfo, inFlightFences[flightIndex]), "SubmitGraphicsQueue : Failed to submit command buffer");
+    CP_VK_ASSERT(vkQueueSubmit(Vulkan::GetDevice().GetGraphicsQueue(), 1, &submitInfo, inFlightFences[flightIndex]), "SubmitGraphicsQueue : Failed to submit command buffer");
   }
 
   void SwapChain::EndPresent()
@@ -154,7 +151,7 @@ namespace Copium
     presentInfo.pImageIndices = &imageIndex;
     presentInfo.pResults = nullptr;
 
-    VkResult result = vkQueuePresentKHR(vulkan.GetDevice().GetPresentQueue(), &presentInfo);
+    VkResult result = vkQueuePresentKHR(Vulkan::GetDevice().GetPresentQueue(), &presentInfo);
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || resizeFramebuffer)
     {
       Recreate();
@@ -173,14 +170,14 @@ namespace Copium
   {
     int width = 0;
     int height = 0;
-    glfwGetFramebufferSize(vulkan.GetWindow().GetWindow(), &width, &height);
+    glfwGetFramebufferSize(Vulkan::GetWindow().GetWindow(), &width, &height);
     while (width == 0 || height == 0)
     {
-      glfwGetFramebufferSize(vulkan.GetWindow().GetWindow(), &width, &height);
+      glfwGetFramebufferSize(Vulkan::GetWindow().GetWindow(), &width, &height);
       glfwWaitEvents();
     }
 
-    vkDeviceWaitIdle(vulkan.GetDevice());
+    vkDeviceWaitIdle(Vulkan::GetDevice());
 
     Destroy();
 
@@ -197,11 +194,11 @@ namespace Copium
 
   void SwapChain::Initialize()
   {
-    SwapChainSupportDetails swapChainSupport{vulkan.GetWindow().GetSurface(), vulkan.GetDevice().GetPhysicalDevice()};
+    SwapChainSupportDetails swapChainSupport{Vulkan::GetWindow().GetSurface(), Vulkan::GetDevice().GetPhysicalDevice()};
 
     VkSurfaceFormatKHR format = SelectSwapSurfaceFormat(swapChainSupport.formats);
     VkPresentModeKHR presentMode = SelectSwapPresentMode(swapChainSupport.presentModes);
-    extent = SelectSwapExtent(vulkan.GetWindow().GetWindow(), swapChainSupport.capabilities);
+    extent = SelectSwapExtent(Vulkan::GetWindow().GetWindow(), swapChainSupport.capabilities);
     imageFormat = format.format;
     uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
     if (swapChainSupport.capabilities.maxImageCount != 0)
@@ -209,12 +206,12 @@ namespace Copium
       imageCount = std::min(imageCount, swapChainSupport.capabilities.maxImageCount);
     }
 
-    QueueFamiliesQuery queueFamilies{vulkan.GetWindow().GetSurface(), vulkan.GetDevice().GetPhysicalDevice()};
+    QueueFamiliesQuery queueFamilies{Vulkan::GetWindow().GetSurface(), Vulkan::GetDevice().GetPhysicalDevice()};
     std::vector<uint32_t> queueFamilyIndices{queueFamilies.graphicsFamily.value(), queueFamilies.presentFamily.value()};
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = vulkan.GetWindow().GetSurface();
+    createInfo.surface = Vulkan::GetWindow().GetSurface();
     createInfo.minImageCount = imageCount;
     createInfo.imageFormat = format.format;
     createInfo.imageColorSpace = format.colorSpace;
@@ -239,11 +236,11 @@ namespace Copium
       createInfo.pQueueFamilyIndices = nullptr;
     }
 
-    CP_VK_ASSERT(vkCreateSwapchainKHR(vulkan.GetDevice(), &createInfo, nullptr, &handle), "Initialize : Failed to initialize the swapchain");
+    CP_VK_ASSERT(vkCreateSwapchainKHR(Vulkan::GetDevice(), &createInfo, nullptr, &handle), "Initialize : Failed to initialize the swapchain");
 
-    vkGetSwapchainImagesKHR(vulkan.GetDevice(), handle, &imageCount, nullptr);
+    vkGetSwapchainImagesKHR(Vulkan::GetDevice(), handle, &imageCount, nullptr);
     images.resize(imageCount);
-    vkGetSwapchainImagesKHR(vulkan.GetDevice(), handle, &imageCount, images.data());
+    vkGetSwapchainImagesKHR(Vulkan::GetDevice(), handle, &imageCount, images.data());
   }
 
   void SwapChain::InitializeImageViews()
@@ -251,13 +248,13 @@ namespace Copium
     imageViews.resize(images.size());
     for (size_t i = 0; i < images.size(); i++)
     {
-      imageViews[i] = Image::InitializeImageView(vulkan, images[i], imageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+      imageViews[i] = Image::InitializeImageView(images[i], imageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
     }
   }
 
   void SwapChain::InitializeDepthAttachment()
   {
-    depthAttachment = std::make_unique<DepthAttachment>(vulkan, extent.width, extent.height);
+    depthAttachment = std::make_unique<DepthAttachment>(extent.width, extent.height);
   }
 
   void SwapChain::InitializeRenderPass()
@@ -273,7 +270,7 @@ namespace Copium
     colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
     VkAttachmentDescription depthAttachment{};
-    depthAttachment.format = Image::SelectDepthFormat(vulkan);
+    depthAttachment.format = Image::SelectDepthFormat();
     depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
     depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -314,7 +311,7 @@ namespace Copium
     renderPassCreateInfo.dependencyCount = 1;
     renderPassCreateInfo.pDependencies = &dependency;
 
-    CP_VK_ASSERT(vkCreateRenderPass(vulkan.GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "InitializeRenderPass : Failed to initialze render pass");
+    CP_VK_ASSERT(vkCreateRenderPass(Vulkan::GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "InitializeRenderPass : Failed to initialze render pass");
   }
 
   void SwapChain::InitializeFramebuffers()
@@ -334,7 +331,7 @@ namespace Copium
       createInfo.height = extent.height;
       createInfo.layers = 1;
 
-      CP_VK_ASSERT(vkCreateFramebuffer(vulkan.GetDevice(), &createInfo, nullptr, &framebuffers[i]), "InitializeFramebuffers : Failed to initialize swap chain framebuffer");
+      CP_VK_ASSERT(vkCreateFramebuffer(Vulkan::GetDevice(), &createInfo, nullptr, &framebuffers[i]), "InitializeFramebuffers : Failed to initialize swap chain framebuffer");
     }
   }
 
@@ -347,14 +344,14 @@ namespace Copium
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
     {
-      CP_VK_ASSERT(vkCreateSemaphore(vulkan.GetDevice(), &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]), "InitializeSyncObjects : Failed to initialize available image semaphore");
-      CP_VK_ASSERT(vkCreateSemaphore(vulkan.GetDevice(), &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]), "InitializeSyncObjects : Failed to initialize render finished semaphore");
+      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]), "InitializeSyncObjects : Failed to initialize available image semaphore");
+      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]), "InitializeSyncObjects : Failed to initialize render finished semaphore");
 
       VkFenceCreateInfo fenceCreateInfo{};
       fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
       fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-      CP_VK_ASSERT(vkCreateFence(vulkan.GetDevice(), &fenceCreateInfo, nullptr, &inFlightFences[i]), "InitializeSyncObjects : Failed to initialize in flight fence");
+      CP_VK_ASSERT(vkCreateFence(Vulkan::GetDevice(), &fenceCreateInfo, nullptr, &inFlightFences[i]), "InitializeSyncObjects : Failed to initialize in flight fence");
     }
   }
 
@@ -362,13 +359,13 @@ namespace Copium
   {
     for (auto&& framebuffer : framebuffers)
     {
-      vkDestroyFramebuffer(vulkan.GetDevice(), framebuffer, nullptr);
+      vkDestroyFramebuffer(Vulkan::GetDevice(), framebuffer, nullptr);
     }
     for (auto&& swapChainImageView : imageViews)
     {
-      vkDestroyImageView(vulkan.GetDevice(), swapChainImageView, nullptr);
+      vkDestroyImageView(Vulkan::GetDevice(), swapChainImageView, nullptr);
     }
-    vkDestroySwapchainKHR(vulkan.GetDevice(), handle, nullptr);
+    vkDestroySwapchainKHR(Vulkan::GetDevice(), handle, nullptr);
   }
 
   VkSurfaceFormatKHR SwapChain::SelectSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)

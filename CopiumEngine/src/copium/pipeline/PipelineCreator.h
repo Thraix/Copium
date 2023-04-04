@@ -1,11 +1,12 @@
 #pragma once
 
-#include "copium/pipeline/VertexDescriptor.h"
 #include "copium/pipeline/ShaderReflector.h"
+#include "copium/pipeline/VertexDescriptor.h"
+
+#include <vulkan/vulkan.hpp>
 
 #include <map>
 #include <string>
-#include <vulkan/vulkan.hpp>
 
 namespace Copium
 {

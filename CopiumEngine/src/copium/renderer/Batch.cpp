@@ -4,10 +4,9 @@
 
 namespace Copium
 {
-  Batch::Batch(Vulkan& vulkan, Pipeline& pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers)
-    : vulkan{vulkan},
-      pipeline{pipeline},
-      vertexBuffer{vulkan, RendererVertex::GetDescriptor(), vertexCount},
+  Batch::Batch(Pipeline& pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers)
+    : pipeline{pipeline},
+      vertexBuffer{RendererVertex::GetDescriptor(), vertexCount},
       descriptorSet{pipeline.CreateDescriptorSet(descriptorPool, 0)}
   {
     descriptorSet->SetSamplers(samplers, 0);

@@ -1,13 +1,11 @@
 #include "copium/buffer/CommandBuffer.h"
 
-#include "copium/core/Device.h"
-#include "copium/core/Instance.h"
-#include "copium/core/SwapChain.h"
+#include "copium/core/Vulkan.h"
 
 namespace Copium
 {
-  CommandBuffer::CommandBuffer(Vulkan& vulkan, Type type)
-    : vulkan{vulkan}, type{type}
+  CommandBuffer::CommandBuffer(Type type)
+    : type{type}
   {
     switch (type)
     {
@@ -24,14 +22,14 @@ namespace Copium
     VkCommandBufferAllocateInfo allocateInfo{};
     allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocateInfo.commandPool = vulkan.GetDevice().GetCommandPool();
+    allocateInfo.commandPool = Vulkan::GetDevice().GetCommandPool();
     allocateInfo.commandBufferCount = commandBuffers.size();
-    CP_VK_ASSERT(vkAllocateCommandBuffers(vulkan.GetDevice(), &allocateInfo, commandBuffers.data()), "CommandBuffer : Failed to allocate CommandBuffer");
+    CP_VK_ASSERT(vkAllocateCommandBuffers(Vulkan::GetDevice(), &allocateInfo, commandBuffers.data()), "CommandBuffer : Failed to allocate CommandBuffer");
   }
 
   CommandBuffer::~CommandBuffer()
   {
-    vkFreeCommandBuffers(vulkan.GetDevice(), vulkan.GetDevice().GetCommandPool(), commandBuffers.size(), commandBuffers.data());
+    vkFreeCommandBuffers(Vulkan::GetDevice(), Vulkan::GetDevice().GetCommandPool(), commandBuffers.size(), commandBuffers.data());
   }
 
   // TODO: Test as constexpr function to see if it avoids the switch case
@@ -53,13 +51,13 @@ namespace Copium
       CP_ABORT("Begin : Unreachable switch case");
     }
 
-    vkResetCommandBuffer(commandBuffers[vulkan.GetSwapChain().GetFlightIndex()], 0);
-    CP_VK_ASSERT(vkBeginCommandBuffer(commandBuffers[vulkan.GetSwapChain().GetFlightIndex()], &beginInfo), "Begin : Failed to begin command buffer");
+    vkResetCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()], 0);
+    CP_VK_ASSERT(vkBeginCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()], &beginInfo), "Begin : Failed to begin command buffer");
   }
 
   void CommandBuffer::End()
   {
-    vkEndCommandBuffer(commandBuffers[vulkan.GetSwapChain().GetFlightIndex()]);
+    vkEndCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()]);
   }
 
   void CommandBuffer::Submit()
@@ -67,15 +65,15 @@ namespace Copium
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffers[vulkan.GetSwapChain().GetFlightIndex()];
+    submitInfo.pCommandBuffers = &commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()];
 
-    vkQueueSubmit(vulkan.GetDevice().GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+    vkQueueSubmit(Vulkan::GetDevice().GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
     // TODO: if singleUse?
-    vkQueueWaitIdle(vulkan.GetDevice().GetGraphicsQueue());
+    vkQueueWaitIdle(Vulkan::GetDevice().GetGraphicsQueue());
   }
 
   CommandBuffer::operator VkCommandBuffer() const
   {
-    return commandBuffers[vulkan.GetSwapChain().GetFlightIndex()];
+    return commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()];
   }
 }

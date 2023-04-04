@@ -1,21 +1,21 @@
 #include "copium/sampler/Texture2D.h"
 
-#include "copium/core/Device.h"
+#include "copium/core/Vulkan.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
 namespace Copium
 {
-  Texture2D::Texture2D(Vulkan& vulkan, const std::string& filename)
-    : Sampler{vulkan}
+  Texture2D::Texture2D(const std::string& filename)
+    : Sampler{}
   {
     CP_DEBUG("Texture2D : Loading texture file: %s", filename.c_str());
     InitializeTextureImageFromFile(filename);
   }
 
-  Texture2D::Texture2D(Vulkan& vulkan, const std::vector<uint8_t>& rgbaData, int width, int height)
-    : Sampler{vulkan}
+  Texture2D::Texture2D(const std::vector<uint8_t>& rgbaData, int width, int height)
+    : Sampler{}
   {
     CP_ASSERT(rgbaData.size() == width * height * 4, "rgbaData has invalid size, should be equal to width * height * 4 (%d) actually is %d", width * height * 4, rgbaData.size());
     InitializeTextureImageFromData((void*)rgbaData.data(), width, height);
@@ -23,9 +23,9 @@ namespace Copium
 
   Texture2D::~Texture2D()
   {
-    vkDestroyImage(vulkan.GetDevice(), image, nullptr);
-    vkFreeMemory(vulkan.GetDevice(), imageMemory, nullptr);
-    vkDestroyImageView(vulkan.GetDevice(), imageView, nullptr);
+    vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
+    vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
+    vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
   }
 
   VkDescriptorImageInfo Texture2D::GetDescriptorImageInfo(int index) const
@@ -55,15 +55,15 @@ namespace Copium
   void Texture2D::InitializeTextureImageFromData(void* rgbaData, int width, int height)
   {
     VkDeviceSize bufferSize = width * height * 4;
-    Buffer stagingBuffer{vulkan, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};
+    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};
     void* data = stagingBuffer.Map();
     memcpy(data, rgbaData, bufferSize);
     stagingBuffer.Unmap();
 
-    Image::InitializeImage(vulkan, width, height, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &image, &imageMemory);
-    Image::TransitionImageLayout(vulkan, image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    Image::CopyBufferToImage(vulkan, stagingBuffer, image, width, height);
-    Image::TransitionImageLayout(vulkan, image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    imageView = Image::InitializeImageView(vulkan, image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+    Image::InitializeImage(width, height, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &image, &imageMemory);
+    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    Image::CopyBufferToImage(stagingBuffer, image, width, height);
+    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    imageView = Image::InitializeImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
   }
 }

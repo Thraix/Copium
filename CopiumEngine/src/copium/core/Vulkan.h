@@ -1,31 +1,31 @@
 #pragma once
 
+#include "copium/core/Device.h"
+#include "copium/core/Instance.h"
+#include "copium/core/SwapChain.h"
+#include "copium/core/Window.h"
+#include "copium/util/Common.h"
+
 #include <memory>
 
 namespace Copium
 {
-  class Instance;
-  class Window;
-  class Device;
-  class SwapChain;
-
   class Vulkan
   {
+    CP_STATIC_CLASS(Vulkan);
   private:
-    std::unique_ptr<Instance> instance;
-    std::unique_ptr<Window> window;
-    std::unique_ptr<Device> device;
-    std::unique_ptr<SwapChain> swapChain;
+    static std::unique_ptr<Instance> instance;
+    static std::unique_ptr<Window> window;
+    static std::unique_ptr<Device> device;
+    static std::unique_ptr<SwapChain> swapChain;
   public:
-    void SetInstance(std::unique_ptr<Instance>&& instance);
-    void SetWindow(std::unique_ptr<Window>&& window);
-    void SetDevice(std::unique_ptr<Device>&& device);
-    void SetSwapChain(std::unique_ptr<SwapChain>&& swapChain);
-    Instance& GetInstance() const;
-    Window& GetWindow() const;
-    Device& GetDevice() const;
-    SwapChain& GetSwapChain() const;
-    bool Valid();
+    static void Initialize();
+    static void Destroy();
+    static Instance& GetInstance();
+    static Window& GetWindow();
+    static Device& GetDevice();
+    static SwapChain& GetSwapChain();
+    static bool Valid();
  
   };
 }

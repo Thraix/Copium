@@ -3,7 +3,6 @@
 #include "copium/core/DebugMessenger.h"
 #include "copium/util/Timer.h"
 
-#include <vulkan/vulkan.hpp>
 #include <GLFW/glfw3.h>
 #include <set>
 
@@ -36,6 +35,5 @@ namespace Copium
     void InitializeDebugMessenger();
     std::vector<const char*> GetRequiredExtensions();
     bool CheckLayerSupport(const std::vector<const char*>& layers);
-    static void FramebufferResizeCallback(GLFWwindow* window, int width, int height);
   };
 }

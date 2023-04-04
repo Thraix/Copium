@@ -2,7 +2,6 @@
 
 #include "copium/buffer/Buffer.h"
 #include "copium/buffer/CommandBuffer.h"
-#include "copium/core/Vulkan.h"
 #include "copium/util/Common.h"
 
 namespace Copium
@@ -13,7 +12,7 @@ namespace Copium
   private:
     int indexCount;
   public:
-    IndexBuffer(Vulkan& vulkan, int indexCount);
+    IndexBuffer(int indexCount);
 
     void Bind(const CommandBuffer& commandBuffer);
     void Draw(const CommandBuffer& commandBuffer);

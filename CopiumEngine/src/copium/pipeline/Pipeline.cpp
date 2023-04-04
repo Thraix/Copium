@@ -1,13 +1,13 @@
 #include "copium/pipeline/Pipeline.h"
 
-#include "copium/core/Device.h"
+#include "copium/core/Vulkan.h"
 #include "copium/pipeline/Shader.h"
 #include "copium/util/FileSystem.h"
 
 namespace Copium
 {
-  Pipeline::Pipeline(Vulkan& vulkan, PipelineCreator creator)
-    : vulkan{vulkan}, shaderReflector{creator.shaderReflector}
+  Pipeline::Pipeline(PipelineCreator creator)
+    : shaderReflector{creator.shaderReflector}
   {
     InitializeDescriptorSetLayout(creator);
     InitializePipeline(creator);
@@ -15,11 +15,11 @@ namespace Copium
 
   Pipeline::~Pipeline()
   {
-    vkDestroyPipeline(vulkan.GetDevice(), graphicsPipeline, nullptr);
-    vkDestroyPipelineLayout(vulkan.GetDevice(), pipelineLayout, nullptr);
+    vkDestroyPipeline(Vulkan::GetDevice(), graphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(Vulkan::GetDevice(), pipelineLayout, nullptr);
     for (auto&& descriptorSetLayout : descriptorSetLayouts)
     {
-      vkDestroyDescriptorSetLayout(vulkan.GetDevice(), descriptorSetLayout, nullptr);
+      vkDestroyDescriptorSetLayout(Vulkan::GetDevice(), descriptorSetLayout, nullptr);
     }
   }
 
@@ -49,7 +49,7 @@ namespace Copium
       bindings.emplace(binding);
     }
 
-    return std::make_unique<DescriptorSet>(vulkan, descriptorPool, descriptorSetLayouts[setIndex], bindings);
+    return std::make_unique<DescriptorSet>(descriptorPool, descriptorSetLayouts[setIndex], bindings);
   }
 
   void Pipeline::InitializeDescriptorSetLayout(const PipelineCreator& creator)
@@ -76,13 +76,13 @@ namespace Copium
       createInfo.bindingCount = layoutBindings.size();
       createInfo.pBindings = layoutBindings.data();
 
-      CP_VK_ASSERT(vkCreateDescriptorSetLayout(vulkan.GetDevice(), &createInfo, nullptr, &descriptorSetLayouts[i++]), "InitializeDescriptorSetLayout : Failed to initialize descriptor set layout");
+      CP_VK_ASSERT(vkCreateDescriptorSetLayout(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorSetLayouts[i++]), "InitializeDescriptorSetLayout : Failed to initialize descriptor set layout");
     }
   }
 
   void Pipeline::InitializePipeline(const PipelineCreator& creator)
   {
-    Shader shader{vulkan, Shader::Type::GlslFile, creator.vertexShader, creator.fragmentShader};
+    Shader shader{Shader::Type::GlslFile, creator.vertexShader, creator.fragmentShader};
 
     VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
     vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -192,7 +192,7 @@ namespace Copium
     pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
     pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
-    CP_VK_ASSERT(vkCreatePipelineLayout(vulkan.GetDevice(), &pipelineLayoutCreateInfo, nullptr, &pipelineLayout), "InitializePipeline : Failed to initialize pipeline layout");
+    CP_VK_ASSERT(vkCreatePipelineLayout(Vulkan::GetDevice(), &pipelineLayoutCreateInfo, nullptr, &pipelineLayout), "InitializePipeline : Failed to initialize pipeline layout");
 
     const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages = shader.GetShaderStages();
     VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo{};
@@ -213,6 +213,6 @@ namespace Copium
     graphicsPipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
     graphicsPipelineCreateInfo.basePipelineIndex = -1;
 
-    CP_VK_ASSERT(vkCreateGraphicsPipelines(vulkan.GetDevice(), VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo, nullptr, &graphicsPipeline), "InitializePipeline : Failed to initialize graphics pipeline");
+    CP_VK_ASSERT(vkCreateGraphicsPipelines(Vulkan::GetDevice(), VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo, nullptr, &graphicsPipeline), "InitializePipeline : Failed to initialize graphics pipeline");
   }
 }

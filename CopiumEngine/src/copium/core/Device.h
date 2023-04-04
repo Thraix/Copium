@@ -1,7 +1,6 @@
 #pragma once
 
 #include "copium/core/QueueFamilies.h"
-#include "copium/core/Vulkan.h"
 #include "copium/util/Common.h"
 
 #include <vulkan/vulkan.hpp>
@@ -13,8 +12,6 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Device);
   private:
-    Vulkan& vulkan;
-
     VkPhysicalDevice physicalDevice;
     VkDevice device;
     VkCommandPool commandPool;
@@ -27,7 +24,7 @@ namespace Copium
     // TODO end
 
   public:
-    Device(Vulkan& vulkan);
+    Device();
     ~Device();
     
     VkQueue GetGraphicsQueue() const;

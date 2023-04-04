@@ -20,7 +20,6 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(DescriptorSet);
   private:
-    Vulkan& vulkan;
     DescriptorPool& descriptorPool;
     VkDescriptorSetLayout descriptorSetLayout;
 
@@ -29,10 +28,9 @@ namespace Copium
     std::map<std::string, std::unique_ptr<UniformBuffer>> uniformBuffers;
 
   public:
-    DescriptorSet(Vulkan& vulkan, DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout, const std::set<ShaderBinding>& bindings);
+    DescriptorSet(DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout, const std::set<ShaderBinding>& bindings);
     ~DescriptorSet();
 
-    void SetUniformBuffer(const UniformBuffer& uniformBuffer, uint32_t binding);
     void SetSampler(const Sampler& sampler, uint32_t binding, int arrayIndex = 0);
     void SetSamplerDynamic(const Sampler& sampler, uint32_t binding, int arrayIndex = 0);
     void SetSamplers(const std::vector<const Sampler*>& sampler, uint32_t binding);
@@ -40,5 +38,7 @@ namespace Copium
     uint32_t GetSetIndex() const;
 
     operator VkDescriptorSet() const;
+  private:
+    void SetUniformBuffer(const UniformBuffer& uniformBuffer, uint32_t binding);
   };
 }

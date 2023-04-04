@@ -1,7 +1,6 @@
 #pragma once
 
 #include "copium/buffer/Buffer.h"
-#include "copium/core/Vulkan.h"
 #include "copium/pipeline/ShaderBinding.h"
 #include "copium/util/Common.h"
 
@@ -13,12 +12,12 @@ namespace Copium
   class UniformBuffer final : public Buffer
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(UniformBuffer);
-
+  private:
     ShaderBinding binding;
     std::vector<uint8_t> buffer;
 
   public:
-    UniformBuffer(Vulkan& vulkan, ShaderBinding binding);
+    UniformBuffer(ShaderBinding binding);
 
     VkDescriptorBufferInfo GetDescriptorBufferInfo(int index) const;
 

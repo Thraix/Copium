@@ -1,6 +1,5 @@
 #pragma once
 
-#include "copium/core/Vulkan.h"
 #include "copium/util/Common.h"
 
 #include <vulkan/vulkan.hpp>
@@ -11,8 +10,6 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Buffer);
   protected:
-    Vulkan& vulkan;
-
     VkDeviceMemory memory;
     VkBuffer handle;
     VkDeviceSize size;
@@ -21,7 +18,7 @@ namespace Copium
     void* mappedData = nullptr;
 
   public:
-    Buffer(Vulkan& vulkan, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkDeviceSize size, int count);
+    Buffer(VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkDeviceSize size, int count);
     virtual ~Buffer();
 
     void Update(void* indexData, int index);
@@ -35,6 +32,6 @@ namespace Copium
     VkDeviceSize GetSize() const;
     VkDeviceSize GetPosition(int index) const;
 
-    static void CopyBuffer(Vulkan& vulkan, const Buffer& srcBuffer, const Buffer& dstBuffer, VkDeviceSize offset, VkDeviceSize size);
+    static void CopyBuffer(const Buffer& srcBuffer, const Buffer& dstBuffer, VkDeviceSize offset, VkDeviceSize size);
   };
 }

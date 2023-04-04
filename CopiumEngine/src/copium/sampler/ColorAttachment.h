@@ -1,6 +1,5 @@
 #pragma once
 
-#include "copium/core/Vulkan.h"
 #include "copium/sampler/Sampler.h"
 #include "copium/util/Common.h"
 
@@ -16,7 +15,7 @@ namespace Copium
     std::vector<VkDeviceMemory> imageMemories;
     std::vector<VkImageView> imageViews;
   public:
-    ColorAttachment(Vulkan& vulkan, int width, int height);
+    ColorAttachment(int width, int height);
     ~ColorAttachment() override;
 
     VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;

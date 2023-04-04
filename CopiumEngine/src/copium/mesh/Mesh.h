@@ -3,7 +3,6 @@
 #include "copium/buffer/IndexBuffer.h"
 #include "copium/buffer/VertexBuffer.h"
 #include "copium/buffer/CommandBuffer.h"
-#include "copium/core/Vulkan.h"
 #include "copium/util/Common.h"
 
 #include <vector>
@@ -19,18 +18,18 @@ namespace Copium
     std::unique_ptr<VertexBuffer> vertexBuffer;
   public:
     template <typename T>
-    Mesh(Vulkan& vulkan, const std::vector<T>& vertices, const std::vector<uint16_t>& indices);
+    Mesh(const std::vector<T>& vertices, const std::vector<uint16_t>& indices);
 
     void Bind(const CommandBuffer& commandBuffer);
     void Render(const CommandBuffer& commandBuffer);
   };
 
   template <typename T>
-  Mesh::Mesh(Vulkan& vulkan, const std::vector<T>& vertices, const std::vector<uint16_t>& indices)
+  Mesh::Mesh(const std::vector<T>& vertices, const std::vector<uint16_t>& indices)
   {
-    indexBuffer = std::make_unique<IndexBuffer>(vulkan, indices.size());
+    indexBuffer = std::make_unique<IndexBuffer>(indices.size());
     indexBuffer->UpdateStaging((void*)indices.data());
-    vertexBuffer = std::make_unique<VertexBuffer>(vulkan, T::GetDescriptor(), vertices.size());
+    vertexBuffer = std::make_unique<VertexBuffer>(T::GetDescriptor(), vertices.size());
     vertexBuffer ->UpdateStaging(0, (void*)vertices.data());
   }
 }

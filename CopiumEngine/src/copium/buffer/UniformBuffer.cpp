@@ -1,11 +1,11 @@
 #include "copium/buffer/UniformBuffer.h"
 
-#include "copium/core/SwapChain.h"
+#include "copium/core/Vulkan.h"
 
 namespace Copium
 {
-  UniformBuffer::UniformBuffer(Vulkan& vulkan, ShaderBinding binding)
-    : Buffer{vulkan, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, binding.GetUniformBufferSize(), SwapChain::MAX_FRAMES_IN_FLIGHT}, binding{binding}
+  UniformBuffer::UniformBuffer(ShaderBinding binding)
+    : Buffer{VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, binding.GetUniformBufferSize(), SwapChain::MAX_FRAMES_IN_FLIGHT}, binding{binding}
   {
     buffer.resize(Buffer::GetSize());
   }
@@ -70,6 +70,6 @@ namespace Copium
 
   void UniformBuffer::Update()
   {
-    Buffer::Update(buffer.data(), vulkan.GetSwapChain().GetFlightIndex());
+    Buffer::Update(buffer.data(), Vulkan::GetSwapChain().GetFlightIndex());
   }
 }
