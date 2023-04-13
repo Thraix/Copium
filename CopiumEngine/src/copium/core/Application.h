@@ -1,12 +1,12 @@
 #pragma once
 
+#include "copium/asset/AssetMeta.h"
 #include "copium/buffer/Framebuffer.h"
 #include "copium/mesh/Mesh.h"
 #include "copium/pipeline/DescriptorPool.h"
 #include "copium/pipeline/DescriptorSet.h"
 #include "copium/pipeline/Pipeline.h"
 #include "copium/renderer/Renderer.h"
-#include "copium/sampler/Texture2D.h"
 
 namespace Copium
 {
@@ -16,8 +16,8 @@ namespace Copium
   private:
     std::unique_ptr<Renderer> renderer;
     std::unique_ptr<Framebuffer> framebuffer;
-    std::unique_ptr<Texture2D> texture2D;
-    std::unique_ptr<Texture2D> texture2D2;
+    AssetHandle texture2D;
+    AssetHandle texture2D2;
     std::unique_ptr<DescriptorPool> descriptorPool;
     std::unique_ptr<DescriptorSet> descriptorSet;
     std::unique_ptr<DescriptorSet> descriptorSetPassthrough;

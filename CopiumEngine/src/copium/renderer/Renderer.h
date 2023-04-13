@@ -19,7 +19,7 @@ namespace Copium
   private:
     DescriptorPool descriptorPool;
     IndexBuffer ibo;
-    Texture2D emptyTexture;
+    AssetHandle emptyTexture;
     std::unique_ptr<Pipeline> graphicsPipeline;
     std::vector<std::unique_ptr<Batch>> batches;
 
@@ -32,6 +32,7 @@ namespace Copium
     void* mappedVertexBuffer;
   public:
     Renderer(VkRenderPass renderPass);
+    ~Renderer();
 
     void Quad(const glm::vec2& from, const glm::vec2& to, const glm::vec3& color = glm::vec3{1, 1, 1});
     void Quad(const glm::vec2& from, const glm::vec2& to, const Sampler& sampler, const glm::vec2& texCoord1 = glm::vec2{0, 0}, const glm::vec2& texCoord2 = glm::vec2{1, 1});

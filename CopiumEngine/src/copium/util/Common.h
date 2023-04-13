@@ -1,5 +1,6 @@
 #pragma once
 
+#include "copium/util/RuntimeException.h"
 #include "copium/util/VulkanException.h"
 
 #include <iostream>
@@ -11,30 +12,31 @@
 #define CP_TERM_CLEAR  "\033[0m"
 
 #define CP_DEBUG(format, ...)      std::cout << CP_TERM_GRAY   << "[DBG] " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_INFO(format, ...)       std::cout <<                   "[INF] " << Copium::String::Format(format, __VA_ARGS__) <<               std::endl
+#define CP_INFO(format, ...)       std::cout <<                   "[INF] " << Copium::String::Format(format, __VA_ARGS__) <<                  std::endl
 #define CP_WARN(format, ...)       std::cout << CP_TERM_YELLOW << "[WRN] " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
 #define CP_ERR(format, ...)        std::cout << CP_TERM_RED    << "[ERR] " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
 
 // Continue traces, will not print the [XXX] tag before the log
 #define CP_DEBUG_CONT(format, ...) std::cout << CP_TERM_GRAY   << "      " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_INFO_CONT(format, ...)  std::cout <<                   "      " << Copium::String::Format(format, __VA_ARGS__) <<               std::endl
+#define CP_INFO_CONT(format, ...)  std::cout <<                   "      " << Copium::String::Format(format, __VA_ARGS__) <<                  std::endl
 #define CP_WARN_CONT(format, ...)  std::cout << CP_TERM_YELLOW << "      " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
 #define CP_ERR_CONT(format, ...)   std::cout << CP_TERM_RED    << "      " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
 
-#define CP_UNIMPLEMENTED() CP_WARN("%s is unimplemented", __FUNCTION__)
 #define CP_ABORT(format, ...) \
   do \
   { \
-    CP_ERR(format, __VA_ARGS__); \
-    throw std::runtime_error(Copium::String::Format(format, __VA_ARGS__)); \
+    CP_ERR("Aborted at %s:%d", __FILE__, __LINE__); \
+    CP_ERR_CONT(format, __VA_ARGS__); \
+    throw Copium::RuntimeException(Copium::String::Format(format, __VA_ARGS__)); \
   } while(false)
 #define CP_ASSERT(Function, format, ...) \
   do \
   { \
     if(!(Function)) \
     { \
-      CP_ERR(format, __VA_ARGS__); \
-      throw std::runtime_error(Copium::String::Format(format, __VA_ARGS__)); \
+      CP_ERR("Assertion failed at %s:%d", __FILE__, __LINE__); \
+      CP_ERR_CONT(format, __VA_ARGS__); \
+      throw Copium::RuntimeException(Copium::String::Format(format, __VA_ARGS__)); \
     } \
   } while(false)
 #define CP_VK_ASSERT(Function, format, ...) \
@@ -42,10 +44,14 @@
   { \
     if(Function != VK_SUCCESS) \
     { \
-      CP_ERR(format, __VA_ARGS__); \
-      throw VulkanException(Copium::String::Format(format, __VA_ARGS__)); \
+      CP_ERR("Assertion failed at %s:%d", __FILE__, __LINE__); \
+      CP_ERR_CONT(format, __VA_ARGS__); \
+      throw Copium::VulkanException(Copium::String::Format(format, __VA_ARGS__)); \
     } \
   } while(false)
+
+#define CP_UNIMPLEMENTED() CP_WARN("%s is unimplemented", __FUNCTION__)
+#define CP_ABORT_UNIMPLEMENTED() CP_ABORT("%s is unimplemented", __FUNCTION__)
 
 #define CP_STATIC_CLASS(ClassName)\
   ClassName() = delete

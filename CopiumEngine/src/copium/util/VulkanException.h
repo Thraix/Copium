@@ -1,14 +1,16 @@
 #pragma once
 
+#include "copium/util/RuntimeException.h"
+
 #include <stdexcept>
 
 namespace Copium
 {
-	class VulkanException : public std::runtime_error
-	{
-	public:
-		VulkanException(const std::string& str)
-			: runtime_error{str.c_str()}
-		{}
-	};
+  class VulkanException : public RuntimeException
+  {
+  public:
+    VulkanException(const std::string& str)
+      : RuntimeException{str}
+    {}
+  };
 }

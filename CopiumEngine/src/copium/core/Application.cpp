@@ -3,6 +3,7 @@
 #include "copium/core/Vulkan.h"
 #include "copium/mesh/Vertex.h"
 #include "copium/mesh/VertexPassthrough.h"
+#include "copium/asset/AssetManager.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -49,6 +50,8 @@ namespace Copium
   Application::~Application()
   {
     vkDeviceWaitIdle(Vulkan::GetDevice());
+    AssetManager::UnloadAsset(texture2D);
+    AssetManager::UnloadAsset(texture2D2);
   }
 
   bool Application::Update()
@@ -81,8 +84,8 @@ namespace Copium
 
   void Application::InitializeTextureSampler()
   {
-    texture2D = std::make_unique<Texture2D>("res/textures/texture.png");
-    texture2D2 = std::make_unique<Texture2D>("res/textures/texture2.png");
+    texture2D = AssetManager::LoadAsset("fox.meta");
+    texture2D2 = AssetManager::LoadAsset("fox2.meta");
   }
 
   void Application::InitializeDescriptorSets()
@@ -90,7 +93,7 @@ namespace Copium
     descriptorPool = std::make_unique<DescriptorPool>();
 
     descriptorSet = graphicsPipeline->CreateDescriptorSet(*descriptorPool, 0);
-    descriptorSet->SetSampler(*texture2D, 1);
+    descriptorSet->SetSampler(AssetManager::GetAsset<Texture2D>(texture2D), 1);
 
     descriptorSetPassthrough = graphicsPipelinePassthrough->CreateDescriptorSet(*descriptorPool, 0);
     descriptorSetPassthrough->SetSampler(framebuffer->GetColorAttachment(), 0);
@@ -144,8 +147,8 @@ namespace Copium
         renderer->Quad(glm::vec2{-1 + x * 0.2 + 0.05, -1 + y * 0.2 + 0.05}, glm::vec2{0.1, 0.1}, glm::vec3{x * 0.1, y * 0.1, 1.0});
       }
     }
-    renderer->Quad(glm::vec2{-0.9, -0.4}, glm::vec2{0.8, 0.8}, *texture2D);
-    renderer->Quad(glm::vec2{ 0.1, -0.4}, glm::vec2{0.8, 0.8}, *texture2D2);
+    renderer->Quad(glm::vec2{-0.9, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D));
+    renderer->Quad(glm::vec2{ 0.1, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D2));
     renderer->End();
 
     framebuffer->Unbind(*commandBuffer);

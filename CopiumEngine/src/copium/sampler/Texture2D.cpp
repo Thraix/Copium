@@ -5,17 +5,20 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
+#include <fstream>
+
 namespace Copium
 {
-  Texture2D::Texture2D(const std::string& filename)
-    : Sampler{}
+  Texture2D::Texture2D(const MetaFile& metaFile)
+    : Sampler{}, Asset{AssetType::Texture2D}
   {
-    CP_DEBUG("Texture2D : Loading texture file: %s", filename.c_str());
-    InitializeTextureImageFromFile(filename);
+    const std::string& filepath = metaFile.GetMetaClass("Texture2D").GetValue("filepath");
+    CP_DEBUG("Texture2D : Loading texture file: %s", filepath.c_str());
+    InitializeTextureImageFromFile(filepath);
   }
 
   Texture2D::Texture2D(const std::vector<uint8_t>& rgbaData, int width, int height)
-    : Sampler{}
+    : Sampler{}, Asset{AssetType::Texture2D}
   {
     CP_ASSERT(rgbaData.size() == width * height * 4, "rgbaData has invalid size, should be equal to width * height * 4 (%d) actually is %d", width * height * 4, rgbaData.size());
     InitializeTextureImageFromData((void*)rgbaData.data(), width, height);

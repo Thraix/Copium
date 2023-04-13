@@ -1,5 +1,6 @@
 #include "copium/renderer/Renderer.h"
 
+#include "copium/asset/AssetManager.h"
 #include "copium/core/Vulkan.h"
 #include "copium/pipeline/PipelineCreator.h"
 #include "copium/renderer/RendererVertex.h"
@@ -14,11 +15,16 @@ namespace Copium
   Renderer::Renderer(VkRenderPass renderPass)
     : descriptorPool{},
       ibo{MAX_NUM_INDICES}, 
-      emptyTexture{{0, 0, 0, 255}, 1, 1},
-      samplers{MAX_NUM_TEXTURES, &emptyTexture}
+      emptyTexture{AssetManager::RegisterRuntimeAsset("empty", std::make_unique<Texture2D>(std::vector<uint8_t>{0, 0, 0, 255}, 1, 1))},
+      samplers{MAX_NUM_TEXTURES, &AssetManager::GetAsset<Texture2D>(emptyTexture)}
   {
     InitializeIndexBuffer();
     InitializeGraphicsPipeline(renderPass);
+  }
+
+  Renderer::~Renderer()
+  {
+    AssetManager::UnloadAsset(emptyTexture);
   }
 
   void Renderer::Quad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color)
@@ -144,7 +150,7 @@ namespace Copium
   void Renderer::NextBatch()
   {
     batchIndex++;
-    std::fill(samplers.begin(), samplers.end(), &emptyTexture);
+    std::fill(samplers.begin(), samplers.end(), &AssetManager::GetAsset<Texture2D>(emptyTexture));
     if (batchIndex >= batches.size())
     {
       batches.emplace_back(std::make_unique<Batch>(*graphicsPipeline, descriptorPool, MAX_NUM_VERTICES, samplers));

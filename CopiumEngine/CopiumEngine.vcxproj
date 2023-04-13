@@ -166,6 +166,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\copium\asset\Asset.cpp" />
+    <ClCompile Include="src\copium\asset\AssetFile.cpp" />
+    <ClCompile Include="src\copium\asset\AssetManager.cpp" />
     <ClCompile Include="src\copium\buffer\RendererVertexBuffer.cpp" />
     <ClCompile Include="src\copium\core\Application.cpp" />
     <ClCompile Include="src\copium\buffer\Buffer.cpp" />
@@ -184,6 +187,7 @@
     <ClCompile Include="src\copium\sampler\DepthAttachment.cpp" />
     <ClCompile Include="src\copium\pipeline\DescriptorPool.cpp" />
     <ClCompile Include="src\copium\pipeline\DescriptorSet.cpp" />
+    <ClCompile Include="src\copium\util\RuntimeException.cpp" />
     <ClCompile Include="src\copium\util\FileSystem.cpp" />
     <ClCompile Include="src\copium\buffer\Framebuffer.cpp" />
     <ClCompile Include="src\copium\sampler\Image.cpp" />
@@ -198,14 +202,21 @@
     <ClCompile Include="src\copium\core\SwapChain.cpp" />
     <ClCompile Include="src\copium\sampler\Texture2D.cpp" />
     <ClCompile Include="src\copium\pipeline\ShaderReflector.cpp" />
+    <ClCompile Include="src\copium\util\MetaFile.cpp" />
+    <ClCompile Include="src\copium\util\StringUtil.cpp" />
     <ClCompile Include="src\copium\util\Timer.cpp" />
     <ClCompile Include="src\copium\buffer\UniformBuffer.cpp" />
     <ClCompile Include="src\copium\mesh\Vertex.cpp" />
     <ClCompile Include="src\copium\buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\copium\pipeline\VertexDescriptor.cpp" />
     <ClCompile Include="src\copium\mesh\VertexPassthrough.cpp" />
+    <ClCompile Include="src\copium\util\UUID.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\copium\asset\Asset.h" />
+    <ClInclude Include="src\copium\asset\AssetFile.h" />
+    <ClInclude Include="src\copium\asset\AssetManager.h" />
+    <ClInclude Include="src\copium\asset\AssetMeta.h" />
     <ClInclude Include="src\copium\buffer\RendererVertexBuffer.h" />
     <ClInclude Include="src\copium\core\Device.h" />
     <ClInclude Include="src\copium\core\Vulkan.h" />
@@ -224,6 +235,7 @@
     <ClInclude Include="src\copium\core\DebugMessenger.h" />
     <ClInclude Include="src\copium\pipeline\DescriptorSet.h" />
     <ClInclude Include="src\copium\pipeline\DescriptorPool.h" />
+    <ClInclude Include="src\copium\util\RuntimeException.h" />
     <ClInclude Include="src\copium\util\FileSystem.h" />
     <ClInclude Include="src\copium\buffer\Framebuffer.h" />
     <ClInclude Include="src\copium\sampler\Image.h" />
@@ -239,14 +251,19 @@
     <ClInclude Include="src\copium\core\QueueFamilies.h" />
     <ClInclude Include="src\copium\core\SwapChain.h" />
     <ClInclude Include="src\copium\pipeline\ShaderReflector.h" />
+    <ClInclude Include="src\copium\util\MetaFile.h" />
+    <ClInclude Include="src\copium\util\StringUtil.h" />
     <ClInclude Include="src\copium\util\Timer.h" />
     <ClInclude Include="src\copium\mesh\Vertex.h" />
     <ClInclude Include="src\copium\buffer\VertexBuffer.h" />
     <ClInclude Include="src\copium\pipeline\VertexDescriptor.h" />
+    <ClInclude Include="src\copium\util\UUID.h" />
     <ClInclude Include="src\copium\util\VulkanException.h" />
     <ClInclude Include="src\copium\mesh\VertexPassthrough.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\fox.meta" />
+    <None Include="assets\fox2.meta" />
     <None Include="res\shaders\passthrough.frag" />
     <None Include="res\shaders\passthrough.vert" />
     <None Include="res\shaders\renderer.frag" />
