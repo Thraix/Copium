@@ -51,13 +51,13 @@ namespace Copium
   Asset& AssetManager::GetAsset(AssetHandle handle)
   {
     auto it = assets.find(handle);
-    CP_ASSERT(it != assets.end(), "GetAsset : Asset not loaded");
+    CP_ASSERT(it != assets.end(), "Asset not loaded");
     return *it->second.get();
   }
 
   Asset& AssetManager::LoadAsset(const std::string& assetPath)
   {
-    CP_DEBUG("LoadAsset : Loading Asset: %s", assetPath.c_str());
+    CP_DEBUG("Loading Asset: %s", assetPath.c_str());
 
     for (auto& dir : assetDirs)
     {
@@ -75,15 +75,15 @@ namespace Copium
       {
         return CreateAsset<Texture2D>(metaFile, "Texture2D");
       }
-      CP_ABORT("LoadAsset : Unknown Asset type: %s/%s", dir.c_str(), assetPath.c_str());
+      CP_ABORT("Unknown Asset type: %s/%s", dir.c_str(), assetPath.c_str());
     }
-    CP_ABORT("LoadAsset : Unknown Asset: %s", assetPath.c_str());
+    CP_ABORT("Unknown Asset: %s", assetPath.c_str());
   }
 
 
   Asset& AssetManager::LoadAsset(const UUID& uuid) 
   {
-    CP_DEBUG("LoadAsset : Loading uuid Asset: %s", uuid.ToString().c_str());
+    CP_DEBUG("Loading uuid Asset: %s", uuid.ToString().c_str());
     for (auto&& assetFile : cachedAssetFiles)
     {
       if (assetFile.GetUUID() != uuid)
@@ -95,7 +95,7 @@ namespace Copium
       if (assetFile.GetUUID() != uuid)
         continue;
 
-      CP_DEBUG("LoadAsset : Loading Asset: %s", assetFile.GetPath().c_str());
+      CP_DEBUG("Loading Asset: %s", assetFile.GetPath().c_str());
       auto it = pathToAssetCache.find(assetFile.GetPath());
       if (it != pathToAssetCache.end())
         return *assets.find(it->second)->second.get();
@@ -105,16 +105,16 @@ namespace Copium
       {
         return CreateAsset<Texture2D>(metaFile, "Texture2D");
       }
-      CP_ABORT("LoadAsset : Unknown Asset type: %s", assetFile.GetPath().c_str());
+      CP_ABORT("Unknown Asset type: %s", assetFile.GetPath().c_str());
     }
-    CP_ABORT("LoadAsset : Asset not found with uuid=%s", uuid.ToString().c_str());
+    CP_ABORT("Asset not found with uuid=%s", uuid.ToString().c_str());
     // TODO: Reload the assetCache to see if a new file has appeared with that uuid
   }
 
   void AssetManager::UnloadAsset(AssetHandle handle)
   {
     auto it = assets.find(handle);
-    CP_ASSERT(it != assets.end(), "UnloadAsset : Asset not loaded");
+    CP_ASSERT(it != assets.end(), "Asset not loaded");
 
     if (it->second->isRuntime())
       nameToAssetCache.erase(it->second->GetName());
@@ -127,7 +127,7 @@ namespace Copium
   {
     if (assets.empty())
       return;
-    CP_WARN("Cleanup : Cleaning up %d loaded assets", assets.size());
+    CP_WARN("Cleaning up %d loaded assets", assets.size());
     assets.clear();
     nameToAssetCache.clear();
     pathToAssetCache.clear();
@@ -136,7 +136,7 @@ namespace Copium
   Asset& AssetManager::RegisterRuntimeAsset(const std::string& name, std::unique_ptr<Asset>&& asset)
   {
     auto it = nameToAssetCache.find(name);
-    CP_ASSERT(it == nameToAssetCache.end(), "RegistedRuntimeAsset : Asset already exists: %s", name);
+    CP_ASSERT(it == nameToAssetCache.end(), "Asset already exists: %s", name);
 
     AssetHandle  handle = runtimeAssetHandle++;
     Asset* asset2 = assets.emplace(handle, std::move(asset)).first->second.get();

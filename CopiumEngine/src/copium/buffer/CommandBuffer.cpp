@@ -16,7 +16,7 @@ namespace Copium
       commandBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
       break;
     default:
-      CP_ABORT("CommandBuffer : Unreachable switch case");
+      CP_ABORT("Unreachable switch case");
     }
 
     VkCommandBufferAllocateInfo allocateInfo{};
@@ -24,7 +24,7 @@ namespace Copium
     allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocateInfo.commandPool = Vulkan::GetDevice().GetCommandPool();
     allocateInfo.commandBufferCount = commandBuffers.size();
-    CP_VK_ASSERT(vkAllocateCommandBuffers(Vulkan::GetDevice(), &allocateInfo, commandBuffers.data()), "CommandBuffer : Failed to allocate CommandBuffer");
+    CP_VK_ASSERT(vkAllocateCommandBuffers(Vulkan::GetDevice(), &allocateInfo, commandBuffers.data()), "Failed to allocate CommandBuffer");
   }
 
   CommandBuffer::~CommandBuffer()
@@ -48,11 +48,11 @@ namespace Copium
     case Type::Dynamic:
       break;
     default:
-      CP_ABORT("Begin : Unreachable switch case");
+      CP_ABORT("Unreachable switch case");
     }
 
     vkResetCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()], 0);
-    CP_VK_ASSERT(vkBeginCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()], &beginInfo), "Begin : Failed to begin command buffer");
+    CP_VK_ASSERT(vkBeginCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()], &beginInfo), "Failed to begin command buffer");
   }
 
   void CommandBuffer::End()

@@ -36,7 +36,7 @@ namespace Copium
     static AssetT& LoadAsset(const std::string& assetPath)
     {
       AssetT* asset = dynamic_cast<AssetT*>(&LoadAsset(assetPath));
-      CP_ASSERT(asset, "LoadAsset : Invalid Asset cast");
+      CP_ASSERT(asset, "Invalid Asset cast");
       return *asset;
     }
 
@@ -44,7 +44,7 @@ namespace Copium
     static AssetT& LoadAsset(const UUID& uuid)
     {
       AssetT* asset = dynamic_cast<AssetT*>(&LoadAsset(uuid));
-      CP_ASSERT(asset, "LoadAsset : Invalid Asset cast");
+      CP_ASSERT(asset, "Invalid Asset cast");
       return *asset;
     }
 
@@ -53,7 +53,7 @@ namespace Copium
     {
       Asset& asset = GetAsset(handle);
       AssetT* assetT = dynamic_cast<AssetT*>(&asset);
-      CP_ASSERT(assetT, "GetAsset : Invalid Asset cast");
+      CP_ASSERT(assetT, "Invalid Asset cast");
       return *assetT;
     }
 

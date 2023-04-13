@@ -53,10 +53,10 @@ namespace Copium
         break;
       }
       default:
-        CP_ABORT("Window : Unreachable switch case");
+        CP_ABORT("Unreachable switch case");
       }
 
-      CP_ASSERT(window, "InitializeWindow : Failed to initialize glfw window");
+      CP_ASSERT(window, "Failed to initialize glfw window");
 
       glfwSetWindowUserPointer(window, this);
       glfwSetFramebufferSizeCallback(window, FramebufferResizeCallback);
@@ -64,7 +64,7 @@ namespace Copium
 
     void Window::InitializeSurface()
     {
-      CP_VK_ASSERT(glfwCreateWindowSurface(Vulkan::GetInstance(), window, nullptr, &surface), "InitializeSurface : Failed to create Vulkan surface");
+      CP_VK_ASSERT(glfwCreateWindowSurface(Vulkan::GetInstance(), window, nullptr, &surface), "Failed to create Vulkan surface");
     }
 
     void Window::FramebufferResizeCallback(GLFWwindow* glfwWindow, int width, int height)

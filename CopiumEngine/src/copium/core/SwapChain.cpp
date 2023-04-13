@@ -137,7 +137,7 @@ namespace Copium
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = &renderFinishedSemaphores[flightIndex];
 
-    CP_VK_ASSERT(vkQueueSubmit(Vulkan::GetDevice().GetGraphicsQueue(), 1, &submitInfo, inFlightFences[flightIndex]), "SubmitGraphicsQueue : Failed to submit command buffer");
+    CP_VK_ASSERT(vkQueueSubmit(Vulkan::GetDevice().GetGraphicsQueue(), 1, &submitInfo, inFlightFences[flightIndex]), "Failed to submit command buffer");
   }
 
   void SwapChain::EndPresent()
@@ -236,7 +236,7 @@ namespace Copium
       createInfo.pQueueFamilyIndices = nullptr;
     }
 
-    CP_VK_ASSERT(vkCreateSwapchainKHR(Vulkan::GetDevice(), &createInfo, nullptr, &handle), "Initialize : Failed to initialize the swapchain");
+    CP_VK_ASSERT(vkCreateSwapchainKHR(Vulkan::GetDevice(), &createInfo, nullptr, &handle), "Failed to initialize the swapchain");
 
     vkGetSwapchainImagesKHR(Vulkan::GetDevice(), handle, &imageCount, nullptr);
     images.resize(imageCount);
@@ -311,7 +311,7 @@ namespace Copium
     renderPassCreateInfo.dependencyCount = 1;
     renderPassCreateInfo.pDependencies = &dependency;
 
-    CP_VK_ASSERT(vkCreateRenderPass(Vulkan::GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "InitializeRenderPass : Failed to initialze render pass");
+    CP_VK_ASSERT(vkCreateRenderPass(Vulkan::GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "Failed to initialze render pass");
   }
 
   void SwapChain::InitializeFramebuffers()
@@ -331,7 +331,7 @@ namespace Copium
       createInfo.height = extent.height;
       createInfo.layers = 1;
 
-      CP_VK_ASSERT(vkCreateFramebuffer(Vulkan::GetDevice(), &createInfo, nullptr, &framebuffers[i]), "InitializeFramebuffers : Failed to initialize swap chain framebuffer");
+      CP_VK_ASSERT(vkCreateFramebuffer(Vulkan::GetDevice(), &createInfo, nullptr, &framebuffers[i]), "Failed to initialize swap chain framebuffer");
     }
   }
 
@@ -344,14 +344,14 @@ namespace Copium
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
     {
-      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]), "InitializeSyncObjects : Failed to initialize available image semaphore");
-      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]), "InitializeSyncObjects : Failed to initialize render finished semaphore");
+      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]), "Failed to initialize available image semaphore");
+      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]), "Failed to initialize render finished semaphore");
 
       VkFenceCreateInfo fenceCreateInfo{};
       fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
       fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-      CP_VK_ASSERT(vkCreateFence(Vulkan::GetDevice(), &fenceCreateInfo, nullptr, &inFlightFences[i]), "InitializeSyncObjects : Failed to initialize in flight fence");
+      CP_VK_ASSERT(vkCreateFence(Vulkan::GetDevice(), &fenceCreateInfo, nullptr, &inFlightFences[i]), "Failed to initialize in flight fence");
     }
   }
 

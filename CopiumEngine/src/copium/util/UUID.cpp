@@ -20,7 +20,7 @@ namespace Copium
   UUID::UUID(const std::string& uuidString)
     : msb{0}, lsb{0}
   {
-    CP_ASSERT(uuidString.size() == 36, "UUID : Invalid UUID string size: %s", uuidString.c_str());
+    CP_ASSERT(uuidString.size() == 36, "Invalid UUID string size: %s", uuidString.c_str());
     for (int i = 0; i < 18; i++)
     {
       if (i == 8 || i == 13) // skip "-"
@@ -81,13 +81,13 @@ namespace Copium
   {
     if (c >= '0' && c <= '9') return c - '0';
     if (c >= 'a' && c <= 'f') return c - 'a' + 10;
-    CP_ABORT("HexToDec : Invalid char value: %c (%d)", c, (int)c);
+    CP_ABORT("Invalid char value: %c (%d)", c, (int)c);
   }
 
   char UUID::DecToHex(uint8_t nibble) const
   {
     if (nibble >= 0 && nibble <= 9) return '0' + nibble;
     if (nibble >= 10 && nibble <= 15) return 'a' + nibble - 10;
-    CP_ABORT("DecToHex : Invalid nibble value: %d", (int)nibble);
+    CP_ABORT("Invalid nibble value: %d", (int)nibble);
   }
 }

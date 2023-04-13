@@ -168,7 +168,7 @@ namespace Copium
     renderPassCreateInfo.dependencyCount = dependencies.size();
     renderPassCreateInfo.pDependencies = dependencies.data();
 
-    CP_VK_ASSERT(vkCreateRenderPass(Vulkan::GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "InitializeRenderPass : Failed to initialze render pass");
+    CP_VK_ASSERT(vkCreateRenderPass(Vulkan::GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "Failed to initialze render pass");
   }
 
   void Framebuffer::InitializeFramebuffers()
@@ -187,7 +187,7 @@ namespace Copium
       createInfo.height = height;
       createInfo.layers = 1;
 
-      CP_VK_ASSERT(vkCreateFramebuffer(Vulkan::GetDevice(), &createInfo, nullptr, &framebuffers[i]), "InitializeFramebuffers : Failed to initialize framebuffer");
+      CP_VK_ASSERT(vkCreateFramebuffer(Vulkan::GetDevice(), &createInfo, nullptr, &framebuffers[i]), "Failed to initialize framebuffer");
     }
   }
 }

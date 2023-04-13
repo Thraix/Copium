@@ -30,7 +30,7 @@ namespace Copium
 
   void Pipeline::SetDescriptorSet(const DescriptorSet& descriptorSet)
   {
-    CP_ASSERT(descriptorSet.GetSetIndex() < boundDescriptorSets.size(), "SetDescriptorSet : DescriptorSet index is out of bounds");
+    CP_ASSERT(descriptorSet.GetSetIndex() < boundDescriptorSets.size(), "DescriptorSet index is out of bounds");
     boundDescriptorSets[descriptorSet.GetSetIndex()] = descriptorSet;
   }
 
@@ -76,7 +76,7 @@ namespace Copium
       createInfo.bindingCount = layoutBindings.size();
       createInfo.pBindings = layoutBindings.data();
 
-      CP_VK_ASSERT(vkCreateDescriptorSetLayout(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorSetLayouts[i++]), "InitializeDescriptorSetLayout : Failed to initialize descriptor set layout");
+      CP_VK_ASSERT(vkCreateDescriptorSetLayout(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorSetLayouts[i++]), "Failed to initialize descriptor set layout");
     }
   }
 
@@ -192,7 +192,7 @@ namespace Copium
     pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
     pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
-    CP_VK_ASSERT(vkCreatePipelineLayout(Vulkan::GetDevice(), &pipelineLayoutCreateInfo, nullptr, &pipelineLayout), "InitializePipeline : Failed to initialize pipeline layout");
+    CP_VK_ASSERT(vkCreatePipelineLayout(Vulkan::GetDevice(), &pipelineLayoutCreateInfo, nullptr, &pipelineLayout), "Failed to initialize pipeline layout");
 
     const std::vector<VkPipelineShaderStageCreateInfo>& shaderStages = shader.GetShaderStages();
     VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo{};
@@ -213,6 +213,6 @@ namespace Copium
     graphicsPipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
     graphicsPipelineCreateInfo.basePipelineIndex = -1;
 
-    CP_VK_ASSERT(vkCreateGraphicsPipelines(Vulkan::GetDevice(), VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo, nullptr, &graphicsPipeline), "InitializePipeline : Failed to initialize graphics pipeline");
+    CP_VK_ASSERT(vkCreateGraphicsPipelines(Vulkan::GetDevice(), VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo, nullptr, &graphicsPipeline), "Failed to initialize graphics pipeline");
   }
 }

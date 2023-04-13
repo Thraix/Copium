@@ -83,7 +83,7 @@ namespace Copium
 
   void Renderer::InitializeIndexBuffer() 
   {
-    CP_ASSERT(MAX_NUM_INDICES < std::numeric_limits<uint16_t>::max(), "Renderer : Maximum number of indices too big");
+    CP_ASSERT(MAX_NUM_INDICES < std::numeric_limits<uint16_t>::max(), "Maximum number of indices too big");
 
     std::vector<uint16_t> indices;
     indices.resize(MAX_NUM_INDICES);

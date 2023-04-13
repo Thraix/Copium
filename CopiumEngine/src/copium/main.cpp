@@ -7,7 +7,7 @@
 
 int main(int argc, char** argv)
 {
-  CP_ASSERT(glfwInit() == GLFW_TRUE, "main : Failed to initialize the glfw context");
+  CP_ASSERT(glfwInit() == GLFW_TRUE, "Failed to initialize the glfw context");
   for (int i = 0; i < argc; i++)
   {
     CP_INFO(argv[i]);
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
       glfwPollEvents();
       if (timer.Elapsed() >= 1.0)
       {
-        CP_DEBUG("main : %d fps", frames);
+        CP_DEBUG("%d fps", frames);
         frames = 0;
         timer.Start();
       }

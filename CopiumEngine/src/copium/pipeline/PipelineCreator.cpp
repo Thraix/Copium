@@ -55,7 +55,7 @@ namespace Copium
     case BindingType::UniformBuffer:
       return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     default:
-      CP_ABORT("GetDescriptorType : Unhandled switch case");
+      CP_ABORT("Unhandled switch case");
     }
   }
 
@@ -68,7 +68,7 @@ namespace Copium
     case ShaderType::Fragment:
       return VK_SHADER_STAGE_FRAGMENT_BIT;
     default:
-      CP_ABORT("GetShaderStageFlags : Unhandled switch case");
+      CP_ABORT("Unhandled switch case");
     }
   }
 }

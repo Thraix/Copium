@@ -23,7 +23,7 @@ namespace Copium
 
   VkDescriptorImageInfo ColorAttachment::GetDescriptorImageInfo(int index) const
   {
-    CP_ASSERT(index >= 0 && index < imageViews.size(), "GetDescriptorImageInfo : index out of bound for color attachment");
+    CP_ASSERT(index >= 0 && index < imageViews.size(), "index out of bound for color attachment");
 
     VkDescriptorImageInfo imageInfo{};
     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -34,7 +34,7 @@ namespace Copium
 
   VkImageView ColorAttachment::GetImageView(int index)
   {
-    CP_ASSERT(index >= 0 && index < imageViews.size(), "GetImageView : Index out of bound");
+    CP_ASSERT(index >= 0 && index < imageViews.size(), "Index out of bound");
 
     return imageViews[index];
   }

@@ -10,7 +10,7 @@ namespace Copium
     timer.Start();
     InitializeInstance(applicationName);
     InitializeDebugMessenger();
-    CP_INFO("Instance : Initialized Vulkan in %f seconds", timer.Elapsed());
+    CP_INFO("Initialized Vulkan in %f seconds", timer.Elapsed());
   }
 
   Instance::~Instance()
@@ -41,7 +41,7 @@ namespace Copium
     std::vector<VkExtensionProperties> extensions{extensionCount};
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-    CP_INFO("InitiaizeInstace : Supported Extensions:");
+    CP_INFO("Supported Extensions:");
     for (auto&& extension : extensions)
     {
       CP_INFO_CONT("\t%s", extension.extensionName);
@@ -49,7 +49,7 @@ namespace Copium
 
     std::vector<const char*> layers{};
     DebugMessenger::AddRequiredLayers(&layers);
-    CP_ASSERT(CheckLayerSupport(layers), "InitializeInstance : Some required layers are not supported");
+    CP_ASSERT(CheckLayerSupport(layers), "Some required layers are not supported");
 
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -58,7 +58,7 @@ namespace Copium
     createInfo.ppEnabledExtensionNames = requiredExtensions.data();
     createInfo.enabledLayerCount = layers.size();
     createInfo.ppEnabledLayerNames = layers.data();
-    CP_VK_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance), "InitializeInstance : Failed to create instance");
+    CP_VK_ASSERT(vkCreateInstance(&createInfo, nullptr, &instance), "Failed to create instance");
   }
 
   void Instance::InitializeDebugMessenger()
@@ -87,7 +87,7 @@ namespace Copium
     std::vector<VkLayerProperties> availableLayers(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-    CP_INFO("CheckLayerSupport : Supported Layers:");
+    CP_INFO("Supported Layers:");
     for (auto&& availableLayer : availableLayers)
     {
       CP_INFO_CONT("\t%s", availableLayer.layerName);

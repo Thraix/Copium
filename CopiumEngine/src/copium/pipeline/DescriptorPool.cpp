@@ -20,7 +20,7 @@ namespace Copium
     createInfo.maxSets = DESCRIPTOR_SET_COUNT * SwapChain::MAX_FRAMES_IN_FLIGHT;
     createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
-    CP_VK_ASSERT(vkCreateDescriptorPool(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorPool), "DescriptorPool : Failed to initialize descriptor pool");
+    CP_VK_ASSERT(vkCreateDescriptorPool(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorPool), "Failed to initialize descriptor pool");
   }
 
   DescriptorPool::~DescriptorPool()
@@ -38,7 +38,7 @@ namespace Copium
     allocateInfo.descriptorSetCount = descriptorSets.size();
     allocateInfo.pSetLayouts = layouts.data();
 
-    CP_VK_ASSERT(vkAllocateDescriptorSets(Vulkan::GetDevice(), &allocateInfo, descriptorSets.data()), "AllocateDescriptorSets : Failed to allocate descriptor sets");
+    CP_VK_ASSERT(vkAllocateDescriptorSets(Vulkan::GetDevice(), &allocateInfo, descriptorSets.data()), "Failed to allocate descriptor sets");
 
     return descriptorSets;
   }

@@ -52,18 +52,18 @@ namespace Copium
       if ((typeFilter & (1 << i)) && (memoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
         return i;
     }
-    CP_ABORT("FindMemoryType : Failed to find suitable memory type");
+    CP_ABORT("Failed to find suitable memory type");
   }
 
   void Device::SelectPhysicalDevice()
   {
     uint32_t deviceCount;
     vkEnumeratePhysicalDevices(Vulkan::GetInstance(), &deviceCount, nullptr);
-    CP_ASSERT(deviceCount != 0, "SelectPhysicaDevice : No available devices support Vulkan");
+    CP_ASSERT(deviceCount != 0, "No available devices support Vulkan");
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(Vulkan::GetInstance(), &deviceCount, devices.data());
-    CP_INFO("SelectPhysicaDevice : Available devices:");
+    CP_INFO("Available devices:");
     for (auto&& device : devices)
     {
       VkPhysicalDeviceProperties deviceProperties;
@@ -77,11 +77,11 @@ namespace Copium
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(device, &deviceProperties);
         physicalDevice = device;
-        CP_INFO("SelectPhysicaDevice : Selecting device: %s", deviceProperties.deviceName);
+        CP_INFO("Selecting device: %s", deviceProperties.deviceName);
         break;
       }
     }
-    CP_ASSERT(physicalDevice != VK_NULL_HANDLE, "SelectPhysicaDevice : Failed to find suitable GPU");
+    CP_ASSERT(physicalDevice != VK_NULL_HANDLE, "Failed to find suitable GPU");
   }
 
   void Device::InitializeLogicalDevice()
@@ -113,7 +113,7 @@ namespace Copium
     createInfo.ppEnabledExtensionNames = deviceExtensions.data();
     createInfo.enabledExtensionCount = deviceExtensions.size();
 
-    CP_VK_ASSERT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device), "InitializeLogicalDevice : Failed to initialize logical device");
+    CP_VK_ASSERT(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device), "Failed to initialize logical device");
 
     graphicsQueueIndex = query.graphicsFamily.value();
     presentQueueIndex = query.presentFamily.value();
@@ -127,7 +127,7 @@ namespace Copium
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     createInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     createInfo.queueFamilyIndex = graphicsQueueIndex;
-    CP_VK_ASSERT(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool), "InitializeCommandPool : Failed to initialize command pool");
+    CP_VK_ASSERT(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool), "Failed to initialize command pool");
   }
 
   bool Device::IsPhysicalDeviceSuitable(VkPhysicalDevice device)

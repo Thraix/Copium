@@ -103,7 +103,7 @@ namespace Copium
       shaderBinding.bindingType = BindingType::Sampler2D;
     else
       shaderBinding.bindingType = BindingType::UniformBuffer;
-    CP_ASSERT(bindings.emplace(shaderBinding).second, "ParseLayout : multiple layouts with the same binding");
+    CP_ASSERT(bindings.emplace(shaderBinding).second, "multiple layouts with the same binding");
   }
 
   std::string_view ShaderReflector::ParseWord(const std::string& str, int& index)

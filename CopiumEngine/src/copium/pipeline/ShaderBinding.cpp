@@ -21,7 +21,7 @@ namespace Copium
         return offset;
       offset += GetUniformTypeOffset(uniformElem.first);
     }
-    CP_ABORT("GetUniformOffset : Uniform not found=%s", uniform);
+    CP_ABORT("Uniform not found=%s", uniform);
   }
 
   uint32_t ShaderBinding::GetUniformSize(const std::string& uniform) const
@@ -31,7 +31,7 @@ namespace Copium
       if (uniformElem.second == uniform)
         return GetUniformTypeSize(uniformElem.first);
     }
-    CP_ABORT("GetUniformSize : Uniform not found=%s", uniform);
+    CP_ABORT("Uniform not found=%s", uniform);
   }
 
   UniformType ShaderBinding::GetUniformType(const std::string& uniform) const
@@ -41,12 +41,12 @@ namespace Copium
       if (uniformElem.second == uniform)
         return uniformElem.first;
     }
-    CP_ABORT("GetUniformType : Uniform not found=%s", uniform);
+    CP_ABORT("Uniform not found=%s", uniform);
   }
 
   uint32_t ShaderBinding::GetUniformBufferSize() const
   {
-    CP_ASSERT(bindingType == BindingType::UniformBuffer, "GetUniformBufferSize : BindingType is not UniformBuffer");
+    CP_ASSERT(bindingType == BindingType::UniformBuffer, "BindingType is not UniformBuffer");
 
     uint32_t size = 0;
     for (auto& uniform : uniforms)
@@ -79,7 +79,7 @@ namespace Copium
     case UniformType::Float:
       return 4; // float
     default:
-      CP_ABORT("GetUniformBufferSize : Unhandled switch case");
+      CP_ABORT("Unhandled switch case");
     }
   }
 
@@ -102,7 +102,7 @@ namespace Copium
     case UniformType::Float:
       return 16; // alignas(16) glm::vec2
     default:
-      CP_ABORT("GetUniformBufferSize : Unhandled switch case");
+      CP_ABORT("Unhandled switch case");
     }
   }
 }

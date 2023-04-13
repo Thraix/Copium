@@ -13,7 +13,7 @@ namespace Copium
     : Sampler{}, Asset{AssetType::Texture2D}
   {
     const std::string& filepath = metaFile.GetMetaClass("Texture2D").GetValue("filepath");
-    CP_DEBUG("Texture2D : Loading texture file: %s", filepath.c_str());
+    CP_DEBUG("Loading texture file: %s", filepath.c_str());
     InitializeTextureImageFromFile(filepath);
   }
 
@@ -48,7 +48,7 @@ namespace Copium
     int texChannels;
     stbi_uc* pixels = stbi_load(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
-    CP_ASSERT(pixels, "InitializeTextureImage : Failed to load texture image");
+    CP_ASSERT(pixels, "Failed to load texture image");
 
     InitializeTextureImageFromData((void*)pixels, texWidth, texHeight);
 

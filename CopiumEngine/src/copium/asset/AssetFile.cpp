@@ -27,7 +27,7 @@ namespace Copium
       Load(metaFile, str, type);
       return;
     }
-    CP_ABORT("Load : Unknown Asset type");
+    CP_ABORT("Unknown Asset type");
   }
 
   const std::string& AssetFile::GetPath() const

@@ -23,7 +23,7 @@ namespace Copium
   const std::string& MetaFileClass::GetValue(const std::string& key) const
   {
     auto it = values.find(key);
-    CP_ASSERT(it != values.end(), "GetValue : Value does not exist: %s", key.c_str());
+    CP_ASSERT(it != values.end(), "Value does not exist: %s", key.c_str());
     return it->second;
   }
 
@@ -52,7 +52,7 @@ namespace Copium
   {
     std::ifstream stream(filepath);
 
-    CP_ASSERT(stream.is_open(), "MetaFile : Could not find meta file: %s", filepath.c_str());
+    CP_ASSERT(stream.is_open(), "Could not find meta file: %s", filepath.c_str());
     LoadMetaFile(stream);
   }
 
@@ -69,14 +69,14 @@ namespace Copium
   MetaFileClass& MetaFile::GetMetaClass(const std::string& className)
   {
     auto it = classes.find(className);
-    CP_ASSERT(it != classes.end(), "GetMetaClass : class does not exist: %s", className.c_str());
+    CP_ASSERT(it != classes.end(), "class does not exist: %s", className.c_str());
     return it->second;
   }
 
   const MetaFileClass& MetaFile::GetMetaClass(const std::string& className) const
   {
     auto it = classes.find(className);
-    CP_ASSERT(it != classes.end(), "GetMetaClass : class does not exist: ", className.c_str());
+    CP_ASSERT(it != classes.end(), "class does not exist: ", className.c_str());
     return it->second;
   }
 
@@ -128,7 +128,7 @@ namespace Copium
         currentClass = StringUtil::Trim(line);
         currentClass = currentClass.substr(1, currentClass.size() - 2);
         metaClassIt = classes.find(currentClass);
-        CP_ASSERT(metaClassIt == classes.end(), "LoadMetaFile : Meta file contains two of the same class: %s", currentClass.c_str());
+        CP_ASSERT(metaClassIt == classes.end(), "Meta file contains two of the same class: %s", currentClass.c_str());
         metaClassIt = classes.emplace(currentClass, MetaFileClass{}).first;
         continue;
       }
@@ -136,7 +136,7 @@ namespace Copium
       size_t pos = line.find("=");
       if(pos == std::string::npos)
       {
-        CP_WARN("LoadMetaFile : Meta file line does not contain \'=\'");
+        CP_WARN("Meta file line does not contain \'=\'");
         continue;
       }
 
@@ -144,15 +144,15 @@ namespace Copium
       std::string_view value = StringUtil::Trim(std::string_view(line.c_str() + pos + 1));
       if(key.length() == 0)
       {
-        CP_WARN("LoadMetaFile : MetaFile key is empty");
+        CP_WARN("MetaFile key is empty");
         continue;
       }
 
-      CP_ASSERT(metaClassIt != classes.end(), "LoadMetaFile : No meta file header specified: ", filepath.c_str());
+      CP_ASSERT(metaClassIt != classes.end(), "No meta file header specified: ", filepath.c_str());
       auto res = metaClassIt->second.values.emplace(key, value);
       if(!res.second)
       {
-        CP_WARN("LoadMetaFile : Meta file key is defined twice: %s", std::string(key).c_str());
+        CP_WARN("Meta file key is defined twice: %s", std::string(key).c_str());
       }
     }
   }

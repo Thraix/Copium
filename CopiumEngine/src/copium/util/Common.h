@@ -4,6 +4,7 @@
 #include "copium/util/VulkanException.h"
 
 #include <iostream>
+#include <iomanip>
 
 #define CP_TERM_RED    "\x1B[31m"
 #define CP_TERM_GREEN  "\x1B[32m"
@@ -11,16 +12,16 @@
 #define CP_TERM_GRAY   "\x1B[90m"
 #define CP_TERM_CLEAR  "\033[0m"
 
-#define CP_DEBUG(format, ...)      std::cout << CP_TERM_GRAY   << "[DBG] " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_INFO(format, ...)       std::cout <<                   "[INF] " << Copium::String::Format(format, __VA_ARGS__) <<                  std::endl
-#define CP_WARN(format, ...)       std::cout << CP_TERM_YELLOW << "[WRN] " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_ERR(format, ...)        std::cout << CP_TERM_RED    << "[ERR] " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_DEBUG(format, ...)      std::cout << CP_TERM_GRAY   << "[DBG] " << __func__ << " : " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_INFO(format, ...)       std::cout <<                   "[INF] " << __func__ << " : " << Copium::String::Format(format, __VA_ARGS__) <<                  std::endl
+#define CP_WARN(format, ...)       std::cout << CP_TERM_YELLOW << "[WRN] " << __func__ << " : " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_ERR(format, ...)        std::cout << CP_TERM_RED    << "[ERR] " << __func__ << " : " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
 
 // Continue traces, will not print the [XXX] tag before the log
-#define CP_DEBUG_CONT(format, ...) std::cout << CP_TERM_GRAY   << "      " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_INFO_CONT(format, ...)  std::cout <<                   "      " << Copium::String::Format(format, __VA_ARGS__) <<                  std::endl
-#define CP_WARN_CONT(format, ...)  std::cout << CP_TERM_YELLOW << "      " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_ERR_CONT(format, ...)   std::cout << CP_TERM_RED    << "      " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_DEBUG_CONT(format, ...) std::cout << CP_TERM_GRAY   << "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_INFO_CONT(format, ...)  std::cout <<                   "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(format, __VA_ARGS__) <<                  std::endl
+#define CP_WARN_CONT(format, ...)  std::cout << CP_TERM_YELLOW << "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_ERR_CONT(format, ...)   std::cout << CP_TERM_RED    << "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
 
 #define CP_ABORT(format, ...) \
   do \
@@ -35,7 +36,7 @@
     if(!(Function)) \
     { \
       CP_ERR("Assertion failed at %s:%d", __FILE__, __LINE__); \
-      CP_ERR_CONT(format, __VA_ARGS__); \
+      CP_ERR_CONT("%s : %s", #Function, Copium::String::Format(format, __VA_ARGS__).c_str()); \
       throw Copium::RuntimeException(Copium::String::Format(format, __VA_ARGS__)); \
     } \
   } while(false)
@@ -45,7 +46,7 @@
     if(Function != VK_SUCCESS) \
     { \
       CP_ERR("Assertion failed at %s:%d", __FILE__, __LINE__); \
-      CP_ERR_CONT(format, __VA_ARGS__); \
+      CP_ERR_CONT("%s : %s", #Function, Copium::String::Format(format, __VA_ARGS__).c_str()); \
       throw Copium::VulkanException(Copium::String::Format(format, __VA_ARGS__)); \
     } \
   } while(false)
@@ -71,7 +72,7 @@ namespace Copium
     static std::string Format(const std::string& format, Args... args)
     {
       int size = std::snprintf(nullptr, 0, format.c_str(), args...) + 1;
-      CP_ASSERT(size > 0, "Format : Error during formatting");
+      CP_ASSERT(size > 0, "Error during formatting");
       std::unique_ptr<char[]> buf(new char[size]);
       std::snprintf(buf.get(), size, format.c_str(), args...);
       return std::string(buf.get(), buf.get() + size - 1);

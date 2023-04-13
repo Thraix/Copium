@@ -36,7 +36,7 @@ namespace Copium
     createInfo.minLod = 0.0f;
     createInfo.maxLod = 0.0f;
 
-    CP_VK_ASSERT(vkCreateSampler(Vulkan::GetDevice(), &createInfo, nullptr, &sampler), "InitializeSampler : Failed to initialize texture sampler");
+    CP_VK_ASSERT(vkCreateSampler(Vulkan::GetDevice(), &createInfo, nullptr, &sampler), "Failed to initialize texture sampler");
   }
 
   Sampler::operator VkSampler() const

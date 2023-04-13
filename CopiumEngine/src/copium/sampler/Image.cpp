@@ -23,7 +23,7 @@ namespace Copium
     createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     createInfo.flags = 0;
 
-    CP_VK_ASSERT(vkCreateImage(Vulkan::GetDevice(), &createInfo, nullptr, image), "InitializeImage : Failed to initialize image");
+    CP_VK_ASSERT(vkCreateImage(Vulkan::GetDevice(), &createInfo, nullptr, image), "Failed to initialize image");
 
     VkMemoryRequirements memoryRequirements;
     vkGetImageMemoryRequirements(Vulkan::GetDevice(), *image, &memoryRequirements);
@@ -33,7 +33,7 @@ namespace Copium
     allocateInfo.allocationSize = memoryRequirements.size;
     allocateInfo.memoryTypeIndex = Vulkan::GetDevice().FindMemoryType(memoryRequirements.memoryTypeBits, properties);
 
-    CP_VK_ASSERT(vkAllocateMemory(Vulkan::GetDevice(), &allocateInfo, nullptr, imageMemory), "InitializeImage : Failed to initiallizse image memory");
+    CP_VK_ASSERT(vkAllocateMemory(Vulkan::GetDevice(), &allocateInfo, nullptr, imageMemory), "Failed to initiallizse image memory");
 
     vkBindImageMemory(Vulkan::GetDevice(), *image, *imageMemory, 0);
   }
@@ -55,7 +55,7 @@ namespace Copium
     createInfo.subresourceRange.levelCount = 1;
     createInfo.subresourceRange.baseArrayLayer = 0;
     createInfo.subresourceRange.layerCount = 1;
-    CP_VK_ASSERT(vkCreateImageView(Vulkan::GetDevice(), &createInfo, nullptr, &imageView), "InitializeImageView : Failed to initialize image view");
+    CP_VK_ASSERT(vkCreateImageView(Vulkan::GetDevice(), &createInfo, nullptr, &imageView), "Failed to initialize image view");
     return imageView;
   }
 
@@ -121,7 +121,7 @@ namespace Copium
     }
     else
     {
-      CP_ABORT("TransitioinImageLayout : Unsupported layout transition");
+      CP_ABORT("Unsupported layout transition");
     }
 
     vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
@@ -173,6 +173,6 @@ namespace Copium
         return format;
       }
     }
-    CP_ABORT("SelectSupportedFormat : Failed to select supported format");
+    CP_ABORT("Failed to select supported format");
   }
 }

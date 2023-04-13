@@ -7,7 +7,7 @@ namespace Copium
   DescriptorSet::DescriptorSet(DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout, const std::set<ShaderBinding>& bindings)
     : descriptorPool{descriptorPool}, descriptorSetLayout{descriptorSetLayout}, bindings{bindings}
   {
-    CP_ASSERT(!bindings.empty(), "DescriptorSet : cannot initialize DescriptorSet with empty ShaderBindings");
+    CP_ASSERT(!bindings.empty(), "Cannot initialize DescriptorSet with empty ShaderBindings");
 
     descriptorSets = descriptorPool.AllocateDescriptorSets(descriptorSetLayout);
     for (auto& binding : bindings)
@@ -86,7 +86,7 @@ namespace Copium
   UniformBuffer& DescriptorSet::GetUniformBuffer(const std::string& uniformBuffer)
   {
     auto it = uniformBuffers.find(uniformBuffer);
-    CP_ASSERT(it != uniformBuffers.end(), "GetUniformBuffer : UniformBuffer not found = %s", uniformBuffer.c_str());
+    CP_ASSERT(it != uniformBuffers.end(), "UniformBuffer not found = %s", uniformBuffer.c_str());
     return *it->second;
   }
 
