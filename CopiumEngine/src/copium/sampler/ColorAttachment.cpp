@@ -5,8 +5,32 @@
 
 namespace Copium
 {
+
+  ColorAttachment::ColorAttachment(const MetaFile& metaFile)
+  {
+    const MetaFileClass& metaClass = metaFile.GetMetaClass("RenderTexture");
+    if (metaClass.HasValue("width"))
+    {
+      char* endPtr;
+      width = std::strtol(metaClass.GetValue("width").c_str(), &endPtr, 10);
+    }
+    else
+    {
+      width = Vulkan::GetSwapChain().GetExtent().width;
+    }
+    if (metaClass.HasValue("height"))
+    {
+      char* endPtr;
+      height = std::strtol(metaClass.GetValue("height").c_str(), &endPtr, 10);
+    }
+    else
+    {
+      height = Vulkan::GetSwapChain().GetExtent().height;
+    }
+    InitializeColorAttachment(width, height);
+  }
+
   ColorAttachment::ColorAttachment(int width, int height)
-    : Sampler{}
   {
     InitializeColorAttachment(width, height);
   }
@@ -21,6 +45,28 @@ namespace Copium
       vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
   }
 
+  void ColorAttachment::Resize(int width, int height)
+  {
+    for (auto&& image : images)
+      vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
+    for (auto&& imageMemory : imageMemories)
+      vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
+    for (auto&& imageView : imageViews)
+      vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
+
+    InitializeColorAttachment(width, height);
+  }
+
+  int ColorAttachment::GetWidth() const
+  {
+    return width;
+  }
+
+  int ColorAttachment::GetHeight() const
+  {
+    return height;
+  }
+
   VkDescriptorImageInfo ColorAttachment::GetDescriptorImageInfo(int index) const
   {
     CP_ASSERT(index >= 0 && index < imageViews.size(), "index out of bound for color attachment");
@@ -32,7 +78,7 @@ namespace Copium
     return imageInfo;
   }
 
-  VkImageView ColorAttachment::GetImageView(int index)
+  VkImageView ColorAttachment::GetImageView(int index) const
   {
     CP_ASSERT(index >= 0 && index < imageViews.size(), "Index out of bound");
 

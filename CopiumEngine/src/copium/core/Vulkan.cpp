@@ -1,6 +1,10 @@
 #include "copium/core/Vulkan.h"
 
 #include "copium/asset/AssetManager.h"
+#include "copium/sampler/Texture2D.h"
+#include "copium/sampler/ColorAttachment.h"
+#include "copium/pipeline/Pipeline.h"
+#include "copium/buffer/Framebuffer.h"
 
 namespace Copium
 {
@@ -15,6 +19,11 @@ namespace Copium
     window = std::make_unique<Window>("Copium Engine", 1920, 1080, Window::Mode::Windowed);
     device = std::make_unique<Device>();
     swapChain = std::make_unique<SwapChain>();
+
+    AssetManager::RegisterAssetType<Texture2D>("Texture2D");
+    AssetManager::RegisterAssetType<ColorAttachment>("RenderTexture");
+    AssetManager::RegisterAssetType<Pipeline>("Pipeline");
+    AssetManager::RegisterAssetType<Framebuffer>("Framebuffer");
 
     // TODO: Make the working directory always be relative to the assets folder
     //       By looking at where the executable is, since that should always be in the bin folder (it currently isn't though)

@@ -7,20 +7,15 @@
 
 namespace Copium
 {
-  enum class AssetType
-  {
-    Pipeline,
-    Texture2D,
-    Sound,
-  };
   using AssetHandle = uint64_t;
+  static constexpr int NULL_ASSET_HANDLE = 0;
 
   struct AssetMeta
   {
     AssetHandle handle;
-    AssetType type;
     std::string name;
     UUID uuid;
-    bool isRuntime;
+    bool isRuntime = false;
+    int loadCount = 1;
   };
 }

@@ -1,12 +1,13 @@
 #pragma once
 
+#include "copium/asset/Asset.h"
 #include "copium/util/Common.h"
 
 #include <vulkan/vulkan.hpp>
 
 namespace Copium
 {
-  class Sampler
+  class Sampler : public Asset
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Sampler);
   protected:

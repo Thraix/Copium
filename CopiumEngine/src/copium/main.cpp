@@ -8,10 +8,6 @@
 int main(int argc, char** argv)
 {
   CP_ASSERT(glfwInit() == GLFW_TRUE, "Failed to initialize the glfw context");
-  for (int i = 0; i < argc; i++)
-  {
-    CP_INFO(argv[i]);
-  }
 
   Copium::Vulkan::Initialize();
   {

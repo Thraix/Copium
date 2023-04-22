@@ -294,14 +294,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="res\shaders\shader.frag" />
-    <None Include="res\shaders\shader.vert" />
-    <None Include="res\shaders\passthrough.frag" />
-    <None Include="res\shaders\passthrough.vert" />
-    <None Include="res\shaders\renderer.frag" />
-    <None Include="res\shaders\renderer.vert" />
-    <None Include="assets\fox.meta" />
-    <None Include="assets\fox2.meta" />
-  </ItemGroup>
 </Project>

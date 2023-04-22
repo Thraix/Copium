@@ -18,6 +18,15 @@ namespace Copium
     vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
   }
 
+
+  void DepthAttachment::Resize(int width, int height)
+  {
+    vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
+    vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
+    vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
+    InitializeDepthAttachment(width, height);
+  }
+
   VkDescriptorImageInfo DepthAttachment::GetDescriptorImageInfo(int index) const
   {
     VkDescriptorImageInfo imageInfo{};

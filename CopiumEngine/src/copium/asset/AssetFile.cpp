@@ -4,6 +4,8 @@
 
 namespace Copium
 {
+  std::vector<std::string> AssetFile::assetTypes;
+
   AssetFile::AssetFile(const std::string& path)
     : path{path}
   {
@@ -17,17 +19,16 @@ namespace Copium
 
   void AssetFile::Load() 
   {
-    const std::vector<std::pair<std::string, AssetType>> strToType{{"Texture2D", AssetType::Texture2D}};
     MetaFile metaFile{path};
-    for (auto&& [str, type] : strToType)
+    for (auto&& assetType : assetTypes)
     {
-      if (!metaFile.HasMetaClass(str))
+      if (!metaFile.HasMetaClass(assetType))
         continue;
 
-      Load(metaFile, str, type);
+      Load(metaFile, assetType);
       return;
     }
-    CP_ABORT("Unknown Asset type");
+    CP_WARN("Unknown Asset type in file: %s", metaFile.GetFilePath().c_str());
   }
 
   const std::string& AssetFile::GetPath() const
@@ -40,11 +41,15 @@ namespace Copium
     return uuid;
   }
 
-  void AssetFile::Load(const MetaFile& metaFile, const std::string& className, AssetType assetType)
+  void AssetFile::Load(const MetaFile& metaFile, const std::string& className)
   {
     const MetaFileClass& metaClass = metaFile.GetMetaClass(className);
     uuid = UUID{metaClass.GetValue("uuid")};
-    type = assetType;
     dateModified = FileSystem::DateModified(path);
+  }
+
+  void AssetFile::RegisterAssetType(const std::string& assetType)
+  {
+    assetTypes.emplace_back(assetType);
   }
 }

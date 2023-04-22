@@ -4,6 +4,7 @@
 #include "copium/asset/AssetFile.h"
 #include "copium/util/Common.h"
 
+#include <functional>
 #include <map>
 #include <vector>
 
@@ -13,6 +14,8 @@ namespace Copium
   {
     CP_STATIC_CLASS(AssetManager);
   private:
+    using CreateAssetFunc = std::function<Asset&(const MetaFile& metaFile, const std::string& str)>;
+    static std::map<std::string, CreateAssetFunc> assetTypes;
     static std::vector<std::string> assetDirs;
     static std::map<AssetHandle, std::unique_ptr<Asset>> assets;
 
@@ -31,6 +34,13 @@ namespace Copium
     static void UnloadAsset(AssetHandle handle);
     static Asset& RegisterRuntimeAsset(const std::string& name, std::unique_ptr<Asset>&& asset);
     static void Cleanup();
+
+    template <typename AssetType>
+    static void RegisterAssetType(const std::string& assetType)
+    {
+      CP_ASSERT(assetTypes.emplace(assetType, &AssetManager::CreateAsset<AssetType>).second, "Asset type already exists: %s", assetType.c_str());
+      AssetFile::RegisterAssetType(assetType);
+    }
 
     template <typename AssetT>
     static AssetT& LoadAsset(const std::string& assetPath)
@@ -66,7 +76,19 @@ namespace Copium
     }
 
   private:
+    static Asset& LoadAssetFromPath(const std::string& filepath);
+
     template <typename T>
-    static Asset& CreateAsset(const MetaFile& metaFile, const std::string& metaFileClass);
+    static Asset& CreateAsset(const MetaFile& metaFile, const std::string& metaFileClass)
+    {
+      AssetHandle handle = assetHandle++;
+      pathToAssetCache.emplace(metaFile.GetFilePath(), handle);
+      Asset& asset = *assets.emplace(handle, std::make_unique<T>(metaFile)).first->second.get();
+      asset.metaData.handle = handle;
+      asset.metaData.name = metaFile.GetFilePath();
+      asset.metaData.uuid = UUID{metaFile.GetMetaClass(metaFileClass).GetValue("uuid")};
+      asset.metaData.isRuntime = false;
+      return asset;
+    }
   };
 }

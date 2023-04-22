@@ -1,11 +1,24 @@
 #include "copium/buffer/Framebuffer.h"
 
+#include "copium/asset/AssetManager.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/core/Vulkan.h"
 #include "copium/sampler/Image.h"
 
 namespace Copium
 {
+  Framebuffer::Framebuffer(const MetaFile& metaFile)
+  {
+    const MetaFileClass& metaClass = metaFile.GetMetaClass("Framebuffer");
+    ColorAttachment& attachment = AssetManager::LoadAsset<ColorAttachment>(UUID{metaClass.GetValue("rendertexture-uuid")});
+    colorAttachment = attachment;
+    width = attachment.GetWidth();
+    height = attachment.GetHeight();
+    InitializeDepthBuffer();
+    InitializeRenderPass();
+    InitializeFramebuffers();
+  }
+
   Framebuffer::Framebuffer(uint32_t width, uint32_t height)
     : width{width}, height{height}
   {
@@ -20,6 +33,7 @@ namespace Copium
     for (auto& framebuffer : framebuffers)
       vkDestroyFramebuffer(Vulkan::GetDevice(), framebuffer, nullptr);
     vkDestroyRenderPass(Vulkan::GetDevice(), renderPass, nullptr);
+    AssetManager::UnloadAsset(colorAttachment);
   }
 
   void Framebuffer::Resize(uint32_t width, uint32_t height)
@@ -27,12 +41,10 @@ namespace Copium
     vkDeviceWaitIdle(Vulkan::GetDevice());
     this->width = width;
     this->height = height;
-    colorAttachment.reset();
-    depthAttachment.reset();
     for (auto&& framebuffer : framebuffers)
       vkDestroyFramebuffer(Vulkan::GetDevice(), framebuffer, nullptr);
-    InitializeImage();
-    InitializeDepthBuffer();
+    AssetManager::GetAsset<ColorAttachment>(colorAttachment).Resize(width, height);
+    depthAttachment->Resize(width, height);
     InitializeFramebuffers();
   }
 
@@ -84,7 +96,7 @@ namespace Copium
 
   const ColorAttachment& Framebuffer::GetColorAttachment() const
   {
-    return *colorAttachment;
+    return AssetManager::GetAsset<ColorAttachment>(colorAttachment);
   }
 
   uint32_t Framebuffer::GetWidth() const
@@ -99,7 +111,7 @@ namespace Copium
 
   void Framebuffer::InitializeImage()
   {
-    colorAttachment = std::make_unique<ColorAttachment>(width, height);
+    colorAttachment = AssetManager::RegisterRuntimeAsset("Framebuffer::ColorAttachment", std::make_unique<ColorAttachment>(width, height));
   }
 
   void Framebuffer::InitializeDepthBuffer()
@@ -174,9 +186,10 @@ namespace Copium
   void Framebuffer::InitializeFramebuffers()
   {
     framebuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
+    const ColorAttachment& attachment = AssetManager::GetAsset<ColorAttachment>(colorAttachment);
     for (size_t i = 0; i < framebuffers.size(); ++i)
     {
-      std::vector<VkImageView> attachments{colorAttachment->GetImageView(i), depthAttachment->GetImageView()};
+      std::vector<VkImageView> attachments{attachment.GetImageView(i), depthAttachment->GetImageView()};
 
       VkFramebufferCreateInfo createInfo{};
       createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

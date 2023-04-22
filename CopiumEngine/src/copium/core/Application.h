@@ -15,15 +15,15 @@ namespace Copium
     CP_DELETE_COPY_AND_MOVE_CTOR(Application);
   private:
     std::unique_ptr<Renderer> renderer;
-    std::unique_ptr<Framebuffer> framebuffer;
+    AssetHandle framebuffer;
     AssetHandle texture2D;
     AssetHandle texture2D2;
+    AssetHandle graphicsPipeline;
+    AssetHandle graphicsPipelinePassthrough;
     std::unique_ptr<DescriptorPool> descriptorPool;
     std::unique_ptr<DescriptorSet> descriptorSet;
     std::unique_ptr<DescriptorSet> descriptorSetPassthrough;
     std::unique_ptr<DescriptorSet> descriptorSetRenderer;
-    std::unique_ptr<Pipeline> graphicsPipeline;
-    std::unique_ptr<Pipeline> graphicsPipelinePassthrough;
     std::unique_ptr<Mesh> mesh;
     std::unique_ptr<Mesh> meshPassthrough;
     std::unique_ptr<CommandBuffer> commandBuffer;

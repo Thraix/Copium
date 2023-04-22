@@ -1,6 +1,5 @@
 #pragma once
 
-#include "copium/asset/Asset.h"
 #include "copium/buffer/CommandBufferScoped.h"
 #include "copium/sampler/Image.h"
 #include "copium/sampler/Sampler.h"
@@ -10,7 +9,7 @@
 
 namespace Copium
 {
-  class Texture2D final : public Sampler, public Asset
+  class Texture2D final : public Sampler
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Texture2D);
   private:

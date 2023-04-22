@@ -52,16 +52,13 @@ namespace Copium
     vkDeviceWaitIdle(Vulkan::GetDevice());
     AssetManager::UnloadAsset(texture2D);
     AssetManager::UnloadAsset(texture2D2);
+    AssetManager::UnloadAsset(graphicsPipeline);
+    AssetManager::UnloadAsset(graphicsPipelinePassthrough);
+    AssetManager::UnloadAsset(framebuffer);
   }
 
   bool Application::Update()
   {
-    if (framebuffer->GetWidth() != Vulkan::GetSwapChain().GetExtent().width || framebuffer->GetHeight() != Vulkan::GetSwapChain().GetExtent().height)
-    {
-      framebuffer->Resize(Vulkan::GetSwapChain().GetExtent().width / 8, Vulkan::GetSwapChain().GetExtent().height / 8);
-      descriptorSetPassthrough->SetSampler(framebuffer->GetColorAttachment(), 0);
-    }
-
     if (!Vulkan::GetSwapChain().BeginPresent())
       return true;
 
@@ -74,42 +71,37 @@ namespace Copium
 
   void Application::InitializeFrameBuffer()
   {
-    framebuffer = std::make_unique<Framebuffer>(Vulkan::GetSwapChain().GetExtent().width, Vulkan::GetSwapChain().GetExtent().height);
+    framebuffer = AssetManager::LoadAsset<Framebuffer>("framebuffer.meta");
   }
 
   void Application::InitializeRenderer()
   {
-    renderer = std::make_unique<Renderer>(framebuffer->GetRenderPass());
+    renderer = std::make_unique<Renderer>();
   }
 
   void Application::InitializeTextureSampler()
   {
-    texture2D = AssetManager::LoadAsset("fox.meta");
-    texture2D2 = AssetManager::LoadAsset("fox2.meta");
+    texture2D = AssetManager::LoadAsset<Texture2D>("fox.meta");
+    texture2D2 = AssetManager::LoadAsset<Texture2D>("fox2.meta");
   }
 
   void Application::InitializeDescriptorSets()
   {
     descriptorPool = std::make_unique<DescriptorPool>();
 
-    descriptorSet = graphicsPipeline->CreateDescriptorSet(*descriptorPool, 0);
+    descriptorSet = AssetManager::GetAsset<Pipeline>(graphicsPipeline).CreateDescriptorSet(*descriptorPool, 0);
     descriptorSet->SetSampler(AssetManager::GetAsset<Texture2D>(texture2D), 1);
 
-    descriptorSetPassthrough = graphicsPipelinePassthrough->CreateDescriptorSet(*descriptorPool, 0);
-    descriptorSetPassthrough->SetSampler(framebuffer->GetColorAttachment(), 0);
+    descriptorSetPassthrough = AssetManager::GetAsset<Pipeline>(graphicsPipelinePassthrough).CreateDescriptorSet(*descriptorPool, 0);
+    descriptorSetPassthrough->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
 
     descriptorSetRenderer = renderer->GetGraphicsPipeline().CreateDescriptorSet(*descriptorPool, 1);
   }
 
   void Application::InitializeGraphicsPipeline()
   {
-    PipelineCreator creator{framebuffer->GetRenderPass(), "res/shaders/shader.vert", "res/shaders/shader.frag"};
-    creator.SetVertexDescriptor(Vertex::GetDescriptor());
-    graphicsPipeline = std::make_unique<Pipeline>(creator);
-
-    PipelineCreator creatorPassthrough{Vulkan::GetSwapChain().GetRenderPass(), "res/shaders/passthrough.vert", "res/shaders/passthrough.frag"};
-    creatorPassthrough.SetVertexDescriptor(VertexPassthrough::GetDescriptor());
-    graphicsPipelinePassthrough = std::make_unique<Pipeline>(creatorPassthrough);
+    graphicsPipeline = AssetManager::LoadAsset<Pipeline>("pipeline.meta");
+    graphicsPipelinePassthrough = AssetManager::LoadAsset<Pipeline>("passthrough.meta");
   }
 
   void Application::InitializeMesh()
@@ -127,13 +119,15 @@ namespace Copium
   {
     commandBuffer->Begin();
 
-    framebuffer->Bind(*commandBuffer);
-    graphicsPipeline->Bind(*commandBuffer);
+    Framebuffer& fb = AssetManager::GetAsset<Framebuffer>(framebuffer);
+    Pipeline& pl = AssetManager::GetAsset<Pipeline>(graphicsPipeline);
+    fb.Bind(*commandBuffer);
+    pl.Bind(*commandBuffer);
 
     UpdateUniformBuffer();
 
-    graphicsPipeline->SetDescriptorSet(*descriptorSet);
-    graphicsPipeline->BindDescriptorSets(*commandBuffer);
+    pl.SetDescriptorSet(*descriptorSet);
+    pl.BindDescriptorSets(*commandBuffer);
 
     mesh->Bind(*commandBuffer);
     mesh->Render(*commandBuffer);
@@ -151,13 +145,14 @@ namespace Copium
     renderer->Quad(glm::vec2{ 0.1, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D2));
     renderer->End();
 
-    framebuffer->Unbind(*commandBuffer);
+    fb.Unbind(*commandBuffer);
 
     Vulkan::GetSwapChain().BeginFrameBuffer(*commandBuffer);
 
-    graphicsPipelinePassthrough->Bind(*commandBuffer);
-    graphicsPipelinePassthrough->SetDescriptorSet(*descriptorSetPassthrough);
-    graphicsPipelinePassthrough->BindDescriptorSets(*commandBuffer);
+    Pipeline& plPassthrough = AssetManager::GetAsset<Pipeline>(graphicsPipelinePassthrough);
+    plPassthrough.Bind(*commandBuffer);
+    plPassthrough.SetDescriptorSet(*descriptorSetPassthrough);
+    plPassthrough.BindDescriptorSets(*commandBuffer);
 
     meshPassthrough->Bind(*commandBuffer);
     meshPassthrough->Render(*commandBuffer);
@@ -171,7 +166,8 @@ namespace Copium
     static Timer startTimer;
 
     float time = startTimer.Elapsed();
-    float aspect = framebuffer->GetWidth() / (float)framebuffer->GetHeight();
+    Framebuffer& fb = AssetManager::GetAsset<Framebuffer>(framebuffer);
+    float aspect = fb.GetWidth() / (float)fb.GetHeight();
 
     {
       glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f);

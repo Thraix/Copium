@@ -13,11 +13,10 @@ namespace Copium
   {
     friend class AssetManager;
   public:
-    Asset(AssetType type);
+    Asset();
     virtual ~Asset();
 
     AssetHandle GetHandle() const;
-    AssetType GetType() const;
     const std::string& GetName() const;
     UUID GetUUID() const;
     bool isRuntime() const;

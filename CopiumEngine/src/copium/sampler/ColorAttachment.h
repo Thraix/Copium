@@ -14,12 +14,19 @@ namespace Copium
     std::vector<VkImage> images;
     std::vector<VkDeviceMemory> imageMemories;
     std::vector<VkImageView> imageViews;
+    int width;
+    int height;
   public:
+    ColorAttachment(const MetaFile& metaFile);
     ColorAttachment(int width, int height);
     ~ColorAttachment() override;
 
+    void Resize(int width, int height);
+
+    int GetWidth() const;
+    int GetHeight() const;
     VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;
-    VkImageView GetImageView(int index);
+    VkImageView GetImageView(int index) const;
 
   private:
     void InitializeColorAttachment(int width, int height);

@@ -1,11 +1,51 @@
 #include "copium/pipeline/Pipeline.h"
 
+#include "copium/asset/AssetManager.h"
+#include "copium/buffer/Framebuffer.h"
 #include "copium/core/Vulkan.h"
 #include "copium/pipeline/Shader.h"
+#include "copium/renderer/RendererVertex.h"
+#include "copium/mesh/VertexPassthrough.h"
+#include "copium/mesh/Vertex.h"
 #include "copium/util/FileSystem.h"
 
 namespace Copium
 {
+  Pipeline::Pipeline(const MetaFile& metaFile)
+    : shaderReflector{ShaderReflector{metaFile.GetMetaClass("Pipeline").GetValue("vert-filepath"), metaFile.GetMetaClass("Pipeline").GetValue("frag-filepath")}}
+  {
+    const MetaFileClass& metaFileClass = metaFile.GetMetaClass("Pipeline");
+    VkRenderPass renderPass;
+    if (metaFileClass.HasValue("framebuffer-uuid"))
+    {
+      Framebuffer& fb = AssetManager::LoadAsset<Framebuffer>(UUID{metaFileClass.GetValue("framebuffer-uuid")});
+      renderPass = fb.GetRenderPass();
+      framebuffer = fb;
+    }
+    else
+    {
+      renderPass = Vulkan::GetSwapChain().GetRenderPass();
+    }
+    PipelineCreator creator{renderPass, metaFileClass.GetValue("vert-filepath"), metaFileClass.GetValue("frag-filepath")};
+    std::string type = metaFileClass.GetValue("type");
+    if (type == "Renderer")
+    {
+      creator.SetVertexDescriptor(RendererVertex::GetDescriptor());
+      creator.SetDepthTest(false);
+    }
+    else if (type == "Passthrough")
+    {
+      creator.SetVertexDescriptor(VertexPassthrough::GetDescriptor());
+      creator.SetDepthTest(false);
+    }
+    else if (type == "Mesh")
+    {
+      creator.SetVertexDescriptor(Vertex::GetDescriptor());
+    }
+    InitializeDescriptorSetLayout(creator);
+    InitializePipeline(creator);
+  }
+
   Pipeline::Pipeline(PipelineCreator creator)
     : shaderReflector{creator.shaderReflector}
   {
@@ -20,6 +60,10 @@ namespace Copium
     for (auto&& descriptorSetLayout : descriptorSetLayouts)
     {
       vkDestroyDescriptorSetLayout(Vulkan::GetDevice(), descriptorSetLayout, nullptr);
+    }
+    if (framebuffer != NULL_ASSET_HANDLE)
+    {
+      AssetManager::UnloadAsset(framebuffer);
     }
   }
 

@@ -1,0 +1,6 @@
+[Pipeline]
+vert-filepath=res/shaders/renderer.vert
+frag-filepath=res/shaders/renderer.frag
+framebuffer-uuid=91455834-b62b-354e-ee3b-50f7dbe74d28
+type=Renderer
+uuid=59c56410-000b-70ca-1ae1-4568fb7856f7

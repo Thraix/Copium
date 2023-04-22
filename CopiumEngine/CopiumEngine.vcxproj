@@ -261,16 +261,6 @@
     <ClInclude Include="src\copium\util\VulkanException.h" />
     <ClInclude Include="src\copium\mesh\VertexPassthrough.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\fox.meta" />
-    <None Include="assets\fox2.meta" />
-    <None Include="res\shaders\passthrough.frag" />
-    <None Include="res\shaders\passthrough.vert" />
-    <None Include="res\shaders\renderer.frag" />
-    <None Include="res\shaders\renderer.vert" />
-    <None Include="res\shaders\shader.frag" />
-    <None Include="res\shaders\shader.vert" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

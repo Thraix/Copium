@@ -1,5 +1,7 @@
 #pragma once
 
+#include "copium/asset/Asset.h"
+#include "copium/asset/AssetMeta.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/sampler/ColorAttachment.h"
 #include "copium/sampler/DepthAttachment.h"
@@ -9,11 +11,11 @@
 
 namespace Copium
 {
-  class Framebuffer final
+  class Framebuffer final : public Asset
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Framebuffer);
   private:
-    std::unique_ptr<ColorAttachment> colorAttachment;
+    AssetHandle colorAttachment;
     std::unique_ptr<DepthAttachment> depthAttachment;
     std::vector<VkFramebuffer> framebuffers;
     VkRenderPass renderPass;
@@ -21,6 +23,7 @@ namespace Copium
     uint32_t width;
     uint32_t height;
   public:
+    Framebuffer(const MetaFile& metaFile);
     Framebuffer(uint32_t width, uint32_t height);
     ~Framebuffer();
 

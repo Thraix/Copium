@@ -1,5 +1,6 @@
 #pragma once
 
+#include "copium/asset/Asset.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/pipeline/DescriptorSet.h"
 #include "copium/pipeline/PipelineCreator.h"
@@ -10,7 +11,7 @@
 
 namespace Copium
 {
-  class Pipeline final
+  class Pipeline final : public Asset
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Pipeline);
   private:
@@ -19,8 +20,11 @@ namespace Copium
     std::vector<VkDescriptorSet> boundDescriptorSets;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
+    AssetHandle framebuffer;
 
   public:
+
+    Pipeline(const MetaFile& metaFile);
     Pipeline(PipelineCreator creator);
     ~Pipeline();
     void Bind(const CommandBuffer& commandBuffer);

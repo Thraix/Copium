@@ -8,9 +8,10 @@ namespace Copium
 {
   class AssetFile
   {
+    friend class AssetManager;
   private:
+    static std::vector<std::string> assetTypes;
     std::string path;
-    AssetType type;
     UUID uuid;
     int64_t dateModified;
 
@@ -23,6 +24,7 @@ namespace Copium
     const std::string& GetPath() const;
     UUID GetUUID() const;
   private:
-    void Load(const MetaFile& metaFile, const std::string& className, AssetType assetType);
+    void Load(const MetaFile& metaFile, const std::string& className);
+    static void RegisterAssetType(const std::string& assetType);
   };
 }

@@ -12,19 +12,20 @@ namespace Copium
   static constexpr int MAX_NUM_INDICES = 6 * MAX_NUM_QUADS;
   static constexpr int MAX_NUM_TEXTURES = 32;
 
-  Renderer::Renderer(VkRenderPass renderPass)
+  Renderer::Renderer()
     : descriptorPool{},
       ibo{MAX_NUM_INDICES}, 
       emptyTexture{AssetManager::RegisterRuntimeAsset("empty", std::make_unique<Texture2D>(std::vector<uint8_t>{0, 0, 0, 255}, 1, 1))},
       samplers{MAX_NUM_TEXTURES, &AssetManager::GetAsset<Texture2D>(emptyTexture)}
   {
     InitializeIndexBuffer();
-    InitializeGraphicsPipeline(renderPass);
+    InitializeGraphicsPipeline();
   }
 
   Renderer::~Renderer()
   {
     AssetManager::UnloadAsset(emptyTexture);
+    AssetManager::UnloadAsset(pipeline);
   }
 
   void Renderer::Quad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color)
@@ -59,7 +60,7 @@ namespace Copium
 
   void Renderer::Begin(CommandBuffer& commandBuffer)
   {
-    graphicsPipeline->Bind(commandBuffer);
+    AssetManager::GetAsset<Pipeline>(pipeline).Bind(commandBuffer);
     ibo.Bind(commandBuffer);
     batchIndex = -1;
     NextBatch();
@@ -73,12 +74,12 @@ namespace Copium
 
   Pipeline& Renderer::GetGraphicsPipeline()
   {
-    return *graphicsPipeline;
+    return AssetManager::GetAsset<Pipeline>(pipeline);
   }
 
   void Renderer::SetDescriptorSet(const DescriptorSet& descriptorSet)
   {
-    graphicsPipeline->SetDescriptorSet(descriptorSet);
+    AssetManager::GetAsset<Pipeline>(pipeline).SetDescriptorSet(descriptorSet);
   }
 
   void Renderer::InitializeIndexBuffer() 
@@ -99,19 +100,16 @@ namespace Copium
     ibo.UpdateStaging(indices.data());
   }
 
-  void Renderer::InitializeGraphicsPipeline(VkRenderPass renderPass)
+  void Renderer::InitializeGraphicsPipeline()
   {
-    PipelineCreator creator{renderPass, "res/shaders/renderer.vert", "res/shaders/renderer.frag"};
-    creator.SetVertexDescriptor(RendererVertex::GetDescriptor());
-    creator.SetDepthTest(false);
-    graphicsPipeline = std::make_unique<Pipeline>(creator);
+    pipeline = AssetManager::LoadAsset<Pipeline>("renderer.meta");
   }
 
   int Renderer::AllocateSampler(const Sampler& sampler)
   {
     for (size_t i = 0; i < textureCount; i++)
     {
-      if (*samplers[i] == sampler)
+      if (*samplers[i] == (VkSampler)sampler)
       {
         return i;
       }
@@ -142,8 +140,8 @@ namespace Copium
   {
     batches[batchIndex]->GetVertexBuffer().Unmap();
     batches[batchIndex]->GetVertexBuffer().Bind(*currentCommandBuffer);
-    graphicsPipeline->SetDescriptorSet(batches[batchIndex]->GetDescriptorSet());
-    graphicsPipeline->BindDescriptorSets(*currentCommandBuffer);
+    AssetManager::GetAsset<Pipeline>(pipeline).SetDescriptorSet(batches[batchIndex]->GetDescriptorSet());
+    AssetManager::GetAsset<Pipeline>(pipeline).BindDescriptorSets(*currentCommandBuffer);
     ibo.Draw(*currentCommandBuffer, quadCount * 6);
   }
 
@@ -153,7 +151,7 @@ namespace Copium
     std::fill(samplers.begin(), samplers.end(), &AssetManager::GetAsset<Texture2D>(emptyTexture));
     if (batchIndex >= batches.size())
     {
-      batches.emplace_back(std::make_unique<Batch>(*graphicsPipeline, descriptorPool, MAX_NUM_VERTICES, samplers));
+      batches.emplace_back(std::make_unique<Batch>(pipeline, descriptorPool, MAX_NUM_VERTICES, samplers));
     }
     mappedVertexBuffer = (char*)batches[batchIndex]->GetVertexBuffer().Map() + batches[batchIndex]->GetVertexBuffer().GetPosition(Vulkan::GetSwapChain().GetFlightIndex());
     quadCount = 0;

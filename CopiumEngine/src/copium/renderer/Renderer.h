@@ -1,5 +1,6 @@
 #pragma once
 
+#include "copium/asset/AssetMeta.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/buffer/IndexBuffer.h"
 #include "copium/buffer/RendererVertexBuffer.h"
@@ -20,7 +21,7 @@ namespace Copium
     DescriptorPool descriptorPool;
     IndexBuffer ibo;
     AssetHandle emptyTexture;
-    std::unique_ptr<Pipeline> graphicsPipeline;
+    AssetHandle pipeline;
     std::vector<std::unique_ptr<Batch>> batches;
 
     // Temporary data during a render
@@ -31,7 +32,7 @@ namespace Copium
     int textureCount;
     void* mappedVertexBuffer;
   public:
-    Renderer(VkRenderPass renderPass);
+    Renderer();
     ~Renderer();
 
     void Quad(const glm::vec2& from, const glm::vec2& to, const glm::vec3& color = glm::vec3{1, 1, 1});
@@ -44,7 +45,7 @@ namespace Copium
     void SetDescriptorSet(const DescriptorSet& descriptorSet);
   private:
     void InitializeIndexBuffer();
-    void InitializeGraphicsPipeline(VkRenderPass renderPass);
+    void InitializeGraphicsPipeline();
 
     int AllocateSampler(const Sampler& sampler);
     void AllocateQuad();

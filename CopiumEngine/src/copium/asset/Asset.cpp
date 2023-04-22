@@ -2,21 +2,12 @@
 
 namespace Copium
 {
-  Asset::Asset(AssetType type)
-  {
-    metaData.type = type;
-  }
-
+  Asset::Asset() = default;
   Asset::~Asset() = default;
 
   AssetHandle Asset::GetHandle() const
   {
     return metaData.handle;
-  }
-
-  AssetType Asset::GetType() const
-  {
-    return metaData.type;
   }
 
   const std::string& Asset::GetName() const

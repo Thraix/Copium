@@ -18,6 +18,8 @@ namespace Copium
     DepthAttachment(int width, int height);
     ~DepthAttachment() override;
 
+    void Resize(int width, int height);
+
     VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;
     VkImageView GetImageView() const;
 

@@ -1,5 +1,7 @@
 #include "copium/asset/AssetManager.h"
 
+#include "copium/buffer/Framebuffer.h"
+#include "copium/sampler/ColorAttachment.h"
 #include "copium/sampler/Texture2D.h"
 #include "copium/util/Common.h"
 #include "copium/util/MetaFile.h"
@@ -10,6 +12,7 @@
 namespace Copium
 {
   std::vector<std::string> AssetManager::assetDirs;
+  std::map<std::string, AssetManager::CreateAssetFunc> AssetManager::assetTypes;
   std::map<AssetHandle, std::unique_ptr<Asset>> AssetManager::assets;
   std::map<std::string, AssetHandle> AssetManager::pathToAssetCache;
   std::map<std::string, AssetHandle> AssetManager::nameToAssetCache;
@@ -27,10 +30,17 @@ namespace Copium
       if (std::filesystem::is_directory(it->path()))
         continue;
       std::filesystem::path assetDirPath{assetDir};
-      cachedAssetFiles.emplace_back(assetDir + "/" + std::filesystem::absolute(it->path()).string().substr(std::filesystem::absolute(assetDirPath).string().size()).c_str());
+      std::string assetPath = assetDir + "/" + std::filesystem::absolute(it->path()).string().substr(std::filesystem::absolute(assetDirPath).string().size() + 1).c_str();
+      try
+      {
+        CP_DEBUG("Registering Asset: %s", assetPath.c_str());
+        cachedAssetFiles.emplace_back(assetPath);
+      }
+      catch (RuntimeException& exception)
+      {
+        CP_ERR("Failed to register Asset: %s", assetPath.c_str());
+      }
     }
-    UUID uuid{};
-    CP_INFO(uuid.ToString().c_str());
   }
 
   void AssetManager::UnregisterAssetDir(std::string assetDir)
@@ -62,20 +72,12 @@ namespace Copium
     for (auto& dir : assetDirs)
     {
       std::string path = dir + "/" + assetPath;
-      auto it = pathToAssetCache.find(path);
-      if (it != pathToAssetCache.end())
-        return *assets.find(it->second)->second.get();
-
       std::ifstream file{path};
       if (!file.good())
         continue;
+      file.close();
 
-      MetaFile metaFile{path};
-      if (metaFile.HasMetaClass("Texture2D"))
-      {
-        return CreateAsset<Texture2D>(metaFile, "Texture2D");
-      }
-      CP_ABORT("Unknown Asset type: %s/%s", dir.c_str(), assetPath.c_str());
+      return LoadAssetFromPath(path);
     }
     CP_ABORT("Unknown Asset: %s", assetPath.c_str());
   }
@@ -86,26 +88,13 @@ namespace Copium
     CP_DEBUG("Loading uuid Asset: %s", uuid.ToString().c_str());
     for (auto&& assetFile : cachedAssetFiles)
     {
-      if (assetFile.GetUUID() != uuid)
-        continue;
-
       if (assetFile.NeedReload())
         assetFile.Load();
 
       if (assetFile.GetUUID() != uuid)
         continue;
 
-      CP_DEBUG("Loading Asset: %s", assetFile.GetPath().c_str());
-      auto it = pathToAssetCache.find(assetFile.GetPath());
-      if (it != pathToAssetCache.end())
-        return *assets.find(it->second)->second.get();
-
-      MetaFile metaFile{assetFile.GetPath()};
-      if (metaFile.HasMetaClass("Texture2D"))
-      {
-        return CreateAsset<Texture2D>(metaFile, "Texture2D");
-      }
-      CP_ABORT("Unknown Asset type: %s", assetFile.GetPath().c_str());
+      return LoadAssetFromPath(assetFile.GetPath());
     }
     CP_ABORT("Asset not found with uuid=%s", uuid.ToString().c_str());
     // TODO: Reload the assetCache to see if a new file has appeared with that uuid
@@ -114,7 +103,16 @@ namespace Copium
   void AssetManager::UnloadAsset(AssetHandle handle)
   {
     auto it = assets.find(handle);
-    CP_ASSERT(it != assets.end(), "Asset not loaded");
+    if (it == assets.end())
+    {
+      CP_WARN("Asset not loaded");
+      return;
+    }
+    CP_DEBUG("Unloading Asset: %s", it->second->GetName().c_str());
+
+    it->second->metaData.loadCount--;
+    if (it->second->metaData.loadCount > 0)
+      return;
 
     if (it->second->isRuntime())
       nameToAssetCache.erase(it->second->GetName());
@@ -127,14 +125,19 @@ namespace Copium
   {
     if (assets.empty())
       return;
-    CP_WARN("Cleaning up %d loaded assets", assets.size());
-    assets.clear();
-    nameToAssetCache.clear();
-    pathToAssetCache.clear();
+    CP_WARN("Performing auto clean up of %d non unloaded assets", assets.size());
+    while (!assets.empty())
+    {
+      UnloadAsset(assets.begin()->second->GetHandle());
+    }
+    CP_ASSERT(nameToAssetCache.empty(), "Name To Asset Cache not empty after full unload");
+    CP_ASSERT(pathToAssetCache.empty(), "Path To Asset Cache not empty after full unload");
   }
 
   Asset& AssetManager::RegisterRuntimeAsset(const std::string& name, std::unique_ptr<Asset>&& asset)
   {
+    CP_DEBUG("Registering Runtime Asset: %s", name.c_str());
+
     auto it = nameToAssetCache.find(name);
     CP_ASSERT(it == nameToAssetCache.end(), "Asset already exists: %s", name);
 
@@ -148,16 +151,23 @@ namespace Copium
     return *asset2;
   }
 
-  template <typename T>
-  Asset& AssetManager::CreateAsset(const MetaFile& metaFile, const std::string& metaFileClass)
+  Asset& AssetManager::LoadAssetFromPath(const std::string& filepath)
   {
-    AssetHandle handle = assetHandle++;
-    pathToAssetCache.emplace(metaFile.GetFilePath(), handle);
-    Asset& asset = *assets.emplace(handle, std::make_unique<T>(metaFile)).first->second.get();
-    asset.metaData.handle = handle;
-    asset.metaData.name = metaFile.GetFilePath();
-    asset.metaData.uuid = UUID{metaFile.GetMetaClass(metaFileClass).GetValue("uuid")};
-    asset.metaData.isRuntime = false;
-    return asset;
+    CP_DEBUG("Loading Asset: %s", filepath.c_str());
+    auto it = pathToAssetCache.find(filepath);
+    if (it != pathToAssetCache.end())
+    {
+      auto itAsset = assets.find(it->second);
+      itAsset->second->metaData.loadCount++;
+      return *itAsset->second.get();
+    }
+
+    MetaFile metaFile{filepath};
+    for (auto& assetType : assetTypes)
+    {
+      if(metaFile.HasMetaClass(assetType.first))
+        return assetType.second(metaFile, assetType.first);
+    }
+    CP_ABORT("Unknown Asset type: %s", filepath.c_str());
   }
 }
