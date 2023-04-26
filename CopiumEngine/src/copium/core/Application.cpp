@@ -1,6 +1,13 @@
 #include "copium/core/Application.h"
 
 #include "copium/core/Vulkan.h"
+#include "copium/event/EventDispatcher.h"
+#include "copium/event/MouseMoveEvent.h"
+#include "copium/event/MouseScrollEvent.h"
+#include "copium/event/MousePressEvent.h"
+#include "copium/event/KeyPressEvent.h"
+#include "copium/event/WindowFocusEvent.h"
+#include "copium/event/WindowResizeEvent.h"
 #include "copium/mesh/Vertex.h"
 #include "copium/mesh/VertexPassthrough.h"
 #include "copium/asset/AssetManager.h"
@@ -38,6 +45,7 @@ namespace Copium
 
   Application::Application()
   {
+    EventDispatcher::AddEventHandler(this);
     InitializeFrameBuffer();
     InitializeRenderer();
     InitializeGraphicsPipeline();
@@ -55,6 +63,7 @@ namespace Copium
     AssetManager::UnloadAsset(graphicsPipeline);
     AssetManager::UnloadAsset(graphicsPipelinePassthrough);
     AssetManager::UnloadAsset(framebuffer);
+    EventDispatcher::RemoveEventHandler(this);
   }
 
   bool Application::Update()
@@ -67,6 +76,58 @@ namespace Copium
 
     Vulkan::GetSwapChain().EndPresent();
     return !glfwWindowShouldClose(Vulkan::GetWindow().GetWindow());
+  }
+
+  EventResult Application::OnEvent(const Event& event)
+  {
+    switch (event.GetType())
+    {
+    case EventType::WindowResize:
+    {
+      const WindowResizeEvent& windowResizeEvent = static_cast<const WindowResizeEvent&>(event);
+      AssetManager::GetAsset<Framebuffer>(framebuffer).Resize(windowResizeEvent.GetWidth(), windowResizeEvent.GetHeight());
+      descriptorSetPassthrough->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
+
+      return EventResult::Continue;
+    }
+    case EventType::MouseMove:
+    {
+      const MouseMoveEvent& mouseMoveEvent = static_cast<const MouseMoveEvent&>(event);
+      mousePos = {mouseMoveEvent.GetPos().x / Vulkan::GetSwapChain().GetExtent().width, mouseMoveEvent.GetPos().y / Vulkan::GetSwapChain().GetExtent().height};
+
+      return EventResult::Continue;
+    }
+    case EventType::MousePress:
+    {
+      const MousePressEvent& mousePressEvent = static_cast<const MousePressEvent&>(event);
+      CP_INFO("%d", mousePressEvent.GetButton());
+
+      return EventResult::Focus;
+    }
+    case EventType::KeyPress:
+    {
+      const KeyPressEvent& keyPressEvent = static_cast<const KeyPressEvent&>(event);
+      CP_INFO("%d", keyPressEvent.GetButton());
+
+      return EventResult::Handled;
+    }
+    case EventType::MouseScroll:
+    {
+      const MouseScrollEvent& mouseScrollEvent = static_cast<const MouseScrollEvent&>(event);
+      CP_INFO("%d %d", mouseScrollEvent.GetScrollX(), mouseScrollEvent.GetScrollY());
+
+      return EventResult::Continue;
+    }
+    case EventType::WindowFocus:
+    {
+      const WindowFocusEvent& windowFocusEvent = static_cast<const WindowFocusEvent&>(event);
+      CP_INFO("Window Focused: %s", windowFocusEvent.IsFocused() ? "true" : "false");
+
+      return EventResult::Continue;
+    }
+    }
+
+    return EventResult::Continue;
   }
 
   void Application::InitializeFrameBuffer()
@@ -143,6 +204,7 @@ namespace Copium
     }
     renderer->Quad(glm::vec2{-0.9, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D));
     renderer->Quad(glm::vec2{ 0.1, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D2));
+    renderer->Quad(mousePos, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D2));
     renderer->End();
 
     fb.Unbind(*commandBuffer);

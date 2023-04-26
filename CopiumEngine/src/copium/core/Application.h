@@ -2,6 +2,7 @@
 
 #include "copium/asset/AssetMeta.h"
 #include "copium/buffer/Framebuffer.h"
+#include "copium/event/EventHandler.h"
 #include "copium/mesh/Mesh.h"
 #include "copium/pipeline/DescriptorPool.h"
 #include "copium/pipeline/DescriptorSet.h"
@@ -10,7 +11,7 @@
 
 namespace Copium
 {
-  class Application final
+  class Application final : EventHandler
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Application);
   private:
@@ -27,12 +28,14 @@ namespace Copium
     std::unique_ptr<Mesh> mesh;
     std::unique_ptr<Mesh> meshPassthrough;
     std::unique_ptr<CommandBuffer> commandBuffer;
+    glm::vec2 mousePos;
 
   public:
     Application();
     ~Application();
 
     bool Update();
+    EventResult OnEvent(const Event& event) override;
   private:
     void InitializeFrameBuffer();
     void InitializeRenderer();

@@ -28,7 +28,12 @@ namespace Copium
   private:
     void InitializeWindow(const std::string& windowName, int width, int height, Mode mode);
     void InitializeSurface();
-    static void FramebufferResizeCallback(GLFWwindow* glfwWindow, int width, int height);
 
+    static void FramebufferResizeCallback(GLFWwindow* glfwWindow, int width, int height);
+    static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+    static void MouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
+    static void WindowFocusCallback(GLFWwindow* window, int focused);
+    static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
   };
 }
