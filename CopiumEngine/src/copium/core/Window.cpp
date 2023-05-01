@@ -13,7 +13,7 @@
 
 namespace Copium
 {
-  Window::Window(const std::string& windowName, int width, int height, Mode mode)
+  Window::Window(const std::string& windowName, int width, int height, WindowMode mode)
   {
     InitializeWindow(windowName, width, height, mode);
     InitializeSurface();
@@ -35,20 +35,20 @@ namespace Copium
     return window;
   }
 
-  void Window::InitializeWindow(const std::string& windowName, int width, int height, Mode mode)
+  void Window::InitializeWindow(const std::string& windowName, int width, int height, WindowMode mode)
   {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     switch (mode)
     {
-    case Mode::Fullscreen:
+    case WindowMode::Fullscreen:
     {
       GLFWmonitor* monitor = glfwGetPrimaryMonitor();
       const GLFWvidmode* mode = glfwGetVideoMode(monitor);
       window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), glfwGetPrimaryMonitor(), nullptr);
       break;
     }
-    case Mode::BorderlessWindowed:
+    case WindowMode::BorderlessWindowed:
     {
       GLFWmonitor* monitor = glfwGetPrimaryMonitor();
       const GLFWvidmode* mode = glfwGetVideoMode(monitor);
@@ -56,13 +56,13 @@ namespace Copium
       glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
       break;
     }
-    case Mode::Windowed:
+    case WindowMode::Windowed:
     {
       window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
       break;
     }
     default:
-      CP_ABORT("Unreachable switch case");
+      CP_ABORT("Unreachable switch case: %s", ToString(mode).c_str());
     }
 
     CP_ASSERT(window, "Failed to initialize glfw window");

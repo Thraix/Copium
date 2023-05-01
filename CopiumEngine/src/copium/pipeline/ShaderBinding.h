@@ -1,25 +1,21 @@
 #pragma once
 
+#include "copium/util/Enum.h"
+
 #include <string>
 #include <vector>
 
+
+#define CP_BINDING_TYPE_ENUMS Sampler2D, UniformBuffer
+#define CP_SHADER_TYPE_ENUMS Vertex, Fragment
+#define CP_UNIFORM_TYPE_ENUMS Mat3, Mat4, Vec2, Vec3, Vec4, Float, Int
+
+CP_ENUM_CREATOR(Copium, BindingType, CP_BINDING_TYPE_ENUMS);
+CP_ENUM_CREATOR(Copium, ShaderType, CP_SHADER_TYPE_ENUMS);
+CP_ENUM_CREATOR(Copium, UniformType, CP_UNIFORM_TYPE_ENUMS);
+
 namespace Copium
 {
-  enum class BindingType
-  {
-    Sampler2D, UniformBuffer
-  };
-
-  enum class ShaderType
-  {
-    Vertex, Fragment
-  };
-
-  enum class UniformType
-  {
-    Mat3, Mat4, Vec2, Vec3, Vec4, Float, Int
-  };
-
   struct ShaderBinding
   {
     std::string name;

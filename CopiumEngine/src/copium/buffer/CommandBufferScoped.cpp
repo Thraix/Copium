@@ -3,7 +3,7 @@
 namespace Copium
 {
   CommandBufferScoped::CommandBufferScoped()
-    : CommandBuffer{Type::SingleUse}
+    : CommandBuffer{CommandBufferType::SingleUse}
   {
     CommandBuffer::Begin();
   }

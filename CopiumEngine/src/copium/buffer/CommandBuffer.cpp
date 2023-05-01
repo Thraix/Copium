@@ -4,19 +4,19 @@
 
 namespace Copium
 {
-  CommandBuffer::CommandBuffer(Type type)
+  CommandBuffer::CommandBuffer(CommandBufferType type)
     : type{type}
   {
     switch (type)
     {
-    case Type::SingleUse:
+    case CommandBufferType::SingleUse:
       commandBuffers.resize(1);
       break;
-    case Type::Dynamic:
+    case CommandBufferType::Dynamic:
       commandBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
       break;
     default:
-      CP_ABORT("Unreachable switch case");
+      CP_ABORT("Unreachable switch case: %s", ToString(type).c_str());
     }
 
     VkCommandBufferAllocateInfo allocateInfo{};
@@ -42,13 +42,13 @@ namespace Copium
 
     switch (type)
     {
-    case Type::SingleUse:
+    case CommandBufferType::SingleUse:
       beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
       break;
-    case Type::Dynamic:
+    case CommandBufferType::Dynamic:
       break;
     default:
-      CP_ABORT("Unreachable switch case");
+      CP_ABORT("Unreachable switch case: %s", ToString(type).c_str());
     }
 
     vkResetCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()], 0);

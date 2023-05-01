@@ -6,28 +6,28 @@
 
 namespace Copium
 {
-  Shader::Shader(Type type, const std::string& vertexInput, const std::string& fragmentInput)
+  Shader::Shader(ShaderReadType type, const std::string& vertexInput, const std::string& fragmentInput)
   {
     switch (type)
     {
-    case Type::GlslCode:
+    case ShaderReadType::GlslCode:
       vertShaderModule = InitializeShaderModuleFromGlslCode(vertexInput, shaderc_vertex_shader);
       fragShaderModule = InitializeShaderModuleFromGlslCode(fragmentInput, shaderc_fragment_shader);
       break;
-    case Type::GlslFile:
+    case ShaderReadType::GlslFile:
       vertShaderModule = InitializeShaderModuleFromGlslFile(vertexInput, shaderc_vertex_shader);
       fragShaderModule = InitializeShaderModuleFromGlslFile(fragmentInput, shaderc_fragment_shader);
       break;
-    case Type::SpvCode:
+    case ShaderReadType::SpvCode:
       vertShaderModule = InitializeShaderModule(vertexInput);
       fragShaderModule = InitializeShaderModule(fragmentInput);
       break;
-    case Type::SpvFile:
+    case ShaderReadType::SpvFile:
       vertShaderModule = InitializeShaderModule(FileSystem::ReadFile(vertexInput));
       fragShaderModule = InitializeShaderModule(FileSystem::ReadFile(fragmentInput));
       break;
     default:
-      CP_ASSERT(false, "Unreachable switch case %d", (int)type);
+      CP_ASSERT(false, "Unreachable switch case: %s", ToString(type).c_str());
     }
 
     shaderStages.resize(2);

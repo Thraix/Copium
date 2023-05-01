@@ -258,6 +258,7 @@
     <ClInclude Include="src\copium\core\DebugMessenger.h" />
     <ClInclude Include="src\copium\pipeline\DescriptorSet.h" />
     <ClInclude Include="src\copium\pipeline\DescriptorPool.h" />
+    <ClInclude Include="src\copium\util\Enum.h" />
     <ClInclude Include="src\copium\util\RuntimeException.h" />
     <ClInclude Include="src\copium\util\FileSystem.h" />
     <ClInclude Include="src\copium\buffer\Framebuffer.h" />

@@ -173,7 +173,7 @@ namespace Copium
 
   void Application::InitializeCommandBuffer()
   {
-    commandBuffer = std::make_unique<CommandBuffer>(CommandBuffer::Type::Dynamic);
+    commandBuffer = std::make_unique<CommandBuffer>(CommandBufferType::Dynamic);
   }
 
   void Application::RecordCommandBuffer()

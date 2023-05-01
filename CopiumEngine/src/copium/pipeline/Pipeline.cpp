@@ -126,7 +126,7 @@ namespace Copium
 
   void Pipeline::InitializePipeline(const PipelineCreator& creator)
   {
-    Shader shader{Shader::Type::GlslFile, creator.vertexShader, creator.fragmentShader};
+    Shader shader{ShaderReadType::GlslFile, creator.vertexShader, creator.fragmentShader};
 
     VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
     vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

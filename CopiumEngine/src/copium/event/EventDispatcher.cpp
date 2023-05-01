@@ -35,7 +35,7 @@ namespace Copium
           focusedEventHandler = eventHandler;
           return;
         default:
-          CP_ABORT("Unreachable switch case");
+          CP_ABORT("Unreachable switch case: %s", ToString(result).c_str());
         }
       }
     }

@@ -1,11 +1,10 @@
 #pragma once
 
-namespace Copium
-{
-  enum class EventType
-  {
-    MouseMove, MousePress, MouseRelease, MouseScroll,
-    KeyPress, KeyRelease,
-    WindowResize, WindowFocus,
-  };
-}
+#include "copium/util/Enum.h"
+
+#define CP_EVENT_TYPE_ENUMS \
+    MouseMove, MousePress, MouseRelease, MouseScroll, \
+    KeyPress, KeyRelease, \
+    WindowResize, WindowFocus
+
+CP_ENUM_CREATOR(Copium, EventType, CP_EVENT_TYPE_ENUMS);

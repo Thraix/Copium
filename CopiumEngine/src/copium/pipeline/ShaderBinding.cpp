@@ -79,7 +79,7 @@ namespace Copium
     case UniformType::Float:
       return 4; // float
     default:
-      CP_ABORT("Unhandled switch case");
+      CP_ABORT("Unhandled switch case: %s", ToString(type).c_str());
     }
   }
 
@@ -102,7 +102,7 @@ namespace Copium
     case UniformType::Float:
       return 16; // alignas(16) glm::vec2
     default:
-      CP_ABORT("Unhandled switch case");
+      CP_ABORT("Unhandled switch case", ToString(type).c_str());
     }
   }
 }
