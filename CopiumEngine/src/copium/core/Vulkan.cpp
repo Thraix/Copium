@@ -3,6 +3,7 @@
 #include "copium/asset/AssetManager.h"
 #include "copium/sampler/Texture2D.h"
 #include "copium/sampler/ColorAttachment.h"
+#include "copium/sampler/Font.h"
 #include "copium/pipeline/Pipeline.h"
 #include "copium/buffer/Framebuffer.h"
 
@@ -24,6 +25,7 @@ namespace Copium
     AssetManager::RegisterAssetType<ColorAttachment>("RenderTexture");
     AssetManager::RegisterAssetType<Pipeline>("Pipeline");
     AssetManager::RegisterAssetType<Framebuffer>("Framebuffer");
+    AssetManager::RegisterAssetType<Font>("Font");
 
     // TODO: Make the working directory always be relative to the assets folder
     //       By looking at where the executable is, since that should always be in the bin folder (it currently isn't though)

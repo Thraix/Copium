@@ -13,19 +13,10 @@ int main(int argc, char** argv)
   Copium::Vulkan::Initialize();
   {
     Copium::Application application;
-    Copium::Timer timer;
-    int frames = 0;
     while (application.Update())
     {
       glfwPollEvents();
       Copium::EventDispatcher::Dispatch();
-      if (timer.Elapsed() >= 1.0)
-      {
-        CP_DEBUG("%d fps", frames);
-        frames = 0;
-        timer.Start();
-      }
-      frames++;
     }
   }
   Copium::Vulkan::Destroy();

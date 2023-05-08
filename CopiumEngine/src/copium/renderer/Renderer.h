@@ -7,6 +7,7 @@
 #include "copium/pipeline/Pipeline.h"
 #include "copium/renderer/Batch.h"
 #include "copium/sampler/Texture2D.h"
+#include "copium/sampler/Font.h"
 #include "copium/util/Common.h"
 
 #include <glm/glm.hpp>
@@ -37,6 +38,8 @@ namespace Copium
 
     void Quad(const glm::vec2& from, const glm::vec2& to, const glm::vec3& color = glm::vec3{1, 1, 1});
     void Quad(const glm::vec2& from, const glm::vec2& to, const Sampler& sampler, const glm::vec2& texCoord1 = glm::vec2{0, 0}, const glm::vec2& texCoord2 = glm::vec2{1, 1});
+    // Returns the position where the text rendering ended
+    glm::vec2 Text(const std::string& str, const glm::vec2& position, const Font& font, float size, const glm::vec3& color = glm::vec3(1, 1, 1));
 
     void Begin(CommandBuffer& commandBuffer);
     void End();
@@ -52,6 +55,6 @@ namespace Copium
     void Flush();
     void NextBatch();
 
-    void AddVertex(const glm::vec2& position, const glm::vec3& color, int texindex, const glm::vec2& texCoord);
+    void AddVertex(const glm::vec2& position, const glm::vec3& color, int texindex, const glm::vec2& texCoord, int type);
   };
 }

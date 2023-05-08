@@ -9,6 +9,7 @@ namespace Copium
     descriptor.AddAttribute(0, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(RendererVertex, color), sizeof(RendererVertex));
     descriptor.AddAttribute(0, 2, VK_FORMAT_R32G32_SFLOAT, offsetof(RendererVertex, texCoord), sizeof(RendererVertex));
     descriptor.AddAttribute(0, 3, VK_FORMAT_R8_SINT, offsetof(RendererVertex, texIndex), sizeof(RendererVertex));
+    descriptor.AddAttribute(0, 4, VK_FORMAT_R8_SINT, offsetof(RendererVertex, type), sizeof(RendererVertex));
     return descriptor;
   }
 }

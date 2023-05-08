@@ -1,11 +1,7 @@
 #pragma once
 
-#include "copium/buffer/CommandBufferScoped.h"
-#include "copium/sampler/Image.h"
 #include "copium/sampler/Sampler.h"
 #include "copium/util/Common.h"
-
-#include <cstring>
 
 namespace Copium
 {
@@ -24,6 +20,6 @@ namespace Copium
     VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;
   private:
     void InitializeTextureImageFromFile(const std::string& filename);
-    void InitializeTextureImageFromData(void* rgbaData, int width, int height);
+    void InitializeTextureImageFromData(const uint8_t* rgbaData, int width, int height);
   };
 }

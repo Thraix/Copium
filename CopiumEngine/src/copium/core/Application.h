@@ -19,6 +19,7 @@ namespace Copium
     AssetHandle framebuffer;
     AssetHandle texture2D;
     AssetHandle texture2D2;
+    AssetHandle font;
     AssetHandle graphicsPipeline;
     AssetHandle graphicsPipelinePassthrough;
     std::unique_ptr<DescriptorPool> descriptorPool;
@@ -28,7 +29,10 @@ namespace Copium
     std::unique_ptr<Mesh> mesh;
     std::unique_ptr<Mesh> meshPassthrough;
     std::unique_ptr<CommandBuffer> commandBuffer;
+
     glm::vec2 mousePos;
+    int fps;
+    int frameCounter;
 
   public:
     Application();

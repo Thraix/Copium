@@ -38,6 +38,11 @@ namespace Copium
     this->depthTest = depthTest;
   }
 
+  void PipelineCreator::SetBlending(bool blending)
+  {
+    this->blending = blending;
+  }
+
   void PipelineCreator::AddShaderDescription()
   {
     for (auto& binding : shaderReflector.bindings)

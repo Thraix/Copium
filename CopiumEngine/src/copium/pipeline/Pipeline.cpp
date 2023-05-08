@@ -32,6 +32,7 @@ namespace Copium
     {
       creator.SetVertexDescriptor(RendererVertex::GetDescriptor());
       creator.SetDepthTest(false);
+      creator.SetBlending(true);
     }
     else if (type == "Passthrough")
     {
@@ -196,7 +197,7 @@ namespace Copium
     depthStencilCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     depthStencilCreateInfo.depthTestEnable = creator.depthTest ? VK_TRUE : VK_FALSE;
     depthStencilCreateInfo.depthWriteEnable = creator.depthTest ? VK_TRUE : VK_FALSE;
-    depthStencilCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+    depthStencilCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
     depthStencilCreateInfo.depthBoundsTestEnable = VK_FALSE;
     depthStencilCreateInfo.minDepthBounds = 0.0f;
     depthStencilCreateInfo.maxDepthBounds = 1.0f;
@@ -210,9 +211,9 @@ namespace Copium
                                           VK_COLOR_COMPONENT_G_BIT |
                                           VK_COLOR_COMPONENT_B_BIT |
                                           VK_COLOR_COMPONENT_A_BIT;
-    colorBlendAttachment.blendEnable = VK_FALSE;
-    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+    colorBlendAttachment.blendEnable = creator.blending ? VK_TRUE : VK_FALSE;
+    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
     colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
     colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
     colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;

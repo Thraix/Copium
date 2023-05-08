@@ -5,8 +5,46 @@ layout(set = 0, binding = 0) uniform sampler2D texSamplers[32];
 layout(location = 0) in vec3 inColor;
 layout(location = 1) in vec2 inTexCoord;
 layout(location = 2) in flat int inTexIndex;
+layout(location = 3) in flat int inType;
 
 layout(location = 0) out vec4 outColor;
+
+vec2 GetTextureSize()
+{
+  if(inTexIndex == 0) return textureSize(texSamplers[0], 0);
+  if(inTexIndex == 1) return textureSize(texSamplers[1], 0);
+  if(inTexIndex == 2) return textureSize(texSamplers[2], 0);
+  if(inTexIndex == 3) return textureSize(texSamplers[3], 0);
+  if(inTexIndex == 4) return textureSize(texSamplers[4], 0);
+  if(inTexIndex == 5) return textureSize(texSamplers[5], 0);
+  if(inTexIndex == 6) return textureSize(texSamplers[6], 0);
+  if(inTexIndex == 7) return textureSize(texSamplers[7], 0);
+  if(inTexIndex == 8) return textureSize(texSamplers[8], 0);
+  if(inTexIndex == 9) return textureSize(texSamplers[9], 0);
+  if(inTexIndex == 10) return textureSize(texSamplers[10], 0);
+  if(inTexIndex == 11) return textureSize(texSamplers[11], 0);
+  if(inTexIndex == 12) return textureSize(texSamplers[12], 0);
+  if(inTexIndex == 13) return textureSize(texSamplers[13], 0);
+  if(inTexIndex == 14) return textureSize(texSamplers[14], 0);
+  if(inTexIndex == 15) return textureSize(texSamplers[15], 0);
+  if(inTexIndex == 16) return textureSize(texSamplers[16], 0);
+  if(inTexIndex == 17) return textureSize(texSamplers[17], 0);
+  if(inTexIndex == 18) return textureSize(texSamplers[18], 0);
+  if(inTexIndex == 19) return textureSize(texSamplers[19], 0);
+  if(inTexIndex == 20) return textureSize(texSamplers[20], 0);
+  if(inTexIndex == 21) return textureSize(texSamplers[21], 0);
+  if(inTexIndex == 22) return textureSize(texSamplers[22], 0);
+  if(inTexIndex == 23) return textureSize(texSamplers[23], 0);
+  if(inTexIndex == 24) return textureSize(texSamplers[24], 0);
+  if(inTexIndex == 25) return textureSize(texSamplers[25], 0);
+  if(inTexIndex == 26) return textureSize(texSamplers[26], 0);
+  if(inTexIndex == 27) return textureSize(texSamplers[27], 0);
+  if(inTexIndex == 28) return textureSize(texSamplers[28], 0);
+  if(inTexIndex == 29) return textureSize(texSamplers[29], 0);
+  if(inTexIndex == 30) return textureSize(texSamplers[30], 0);
+  if(inTexIndex == 31) return textureSize(texSamplers[31], 0);
+  return vec2(0);
+}
 
 vec4 TextureColor()
 {
@@ -45,8 +83,31 @@ vec4 TextureColor()
   return vec4(1, 1, 1, 1);
 }
 
+float median(float r, float g, float b)
+{
+  return max(min(r, g), min(max(r, g), b));
+}
+
+float screenPxRange()
+{
+  float pxRange = 2.0f;
+  vec2 unitRange = vec2(pxRange) / vec2(GetTextureSize());
+  vec2 screenTexSize = vec2(1.0f) / fwidth(inTexCoord);
+  return max(0.5 * dot(unitRange, screenTexSize), 1.0);
+}
 
 void main()
 {
-  outColor = vec4(inColor, 1.0) * TextureColor();
+  if(inType == 1)
+  {
+    vec3 msd = TextureColor().rgb;
+    float sd = median(msd.r, msd.g, msd.b);
+    float screenPxDistance = screenPxRange() * (sd - 0.5);
+    float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
+    outColor = vec4(inColor, mix(0.0, 1.0, opacity));
+  }
+  else
+  {
+    outColor = vec4(inColor, 1.0) * TextureColor();
+  }
 }

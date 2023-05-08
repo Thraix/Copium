@@ -31,10 +31,10 @@ namespace Copium
   void Renderer::Quad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color)
   {
     AllocateQuad();
-    AddVertex(glm::vec2{pos.x, pos.y + size.y}, color, -1, glm::vec2{0, 0});
-    AddVertex(pos + size, color, -1, glm::vec2{0, 0});
-    AddVertex(glm::vec2{pos.x + size.x, pos.y}, color, -1, glm::vec2{0, 0});
-    AddVertex(pos, color, -1, glm::vec2{0, 0});
+    AddVertex(pos, color, -1, glm::vec2{0, 0}, RendererVertex::TYPE_QUAD);
+    AddVertex(glm::vec2{pos.x + size.x, pos.y}, color, -1, glm::vec2{0, 0}, RendererVertex::TYPE_QUAD);
+    AddVertex(pos + size, color, -1, glm::vec2{0, 0}, RendererVertex::TYPE_QUAD);
+    AddVertex(glm::vec2{pos.x, pos.y + size.y}, color, -1, glm::vec2{0, 0}, RendererVertex::TYPE_QUAD);
   }
 
 
@@ -42,19 +42,55 @@ namespace Copium
   {
     AllocateQuad();
     int texIndex = AllocateSampler(sampler);
-    AddVertex(glm::vec2{pos.x, pos.y + size.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord1.x, texCoord2.y});
-    AddVertex(pos + size, glm::vec3{1,1,1}, texIndex, texCoord2);
-    AddVertex(glm::vec2{pos.x + size.x, pos.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord2.x, texCoord1.y});
-    AddVertex(pos, glm::vec3{1,1,1}, texIndex, texCoord1);
+    AddVertex(pos, glm::vec3{1,1,1}, texIndex, texCoord1, RendererVertex::TYPE_QUAD);
+    AddVertex(glm::vec2{pos.x + size.x, pos.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord2.x, texCoord1.y}, RendererVertex::TYPE_QUAD);
+    AddVertex(pos + size, glm::vec3{1,1,1}, texIndex, texCoord2, RendererVertex::TYPE_QUAD);
+    AddVertex(glm::vec2{pos.x, pos.y + size.y}, glm::vec3{1, 1, 1}, texIndex, glm::vec2{texCoord1.x, texCoord2.y}, RendererVertex::TYPE_QUAD);
   }
 
-  void Renderer::AddVertex(const glm::vec2& position, const glm::vec3& color, int texindex, const glm::vec2& texCoord)
+  glm::vec2 Renderer::Text(const std::string& str, const glm::vec2& position, const Font& font, float size, const glm::vec3& color)
+  {
+    glm::vec2 offset = position;
+    for (char c : str)
+    {
+      if(c == ' ')
+      {
+        const Glyph& glyph = font.GetGlyph(c);
+        offset.x += glyph.advance * size;
+        continue;
+      }
+      else if (c == '\t')
+      {
+        const Glyph& glyph = font.GetGlyph(' ');
+        offset.x += glyph.advance * size * 4;
+        continue;
+      }
+      else if (c == '\n')
+      {
+        offset.y -= font.GetLineHeight() * size;
+        offset.x = position.x;
+        continue;
+      }
+      const Glyph& glyph = font.GetGlyph(c);
+      AllocateQuad();
+      int texIndex = AllocateSampler(font);
+      AddVertex(offset + glm::vec2{glyph.pos1.x * size, glyph.pos1.y * size}, color, texIndex, glyph.texCoord1, RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.pos2.x * size, glyph.pos1.y * size}, color, texIndex, glm::vec2{glyph.texCoord2.x, glyph.texCoord1.y}, RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.pos2.x * size, glyph.pos2.y * size}, color, texIndex, glyph.texCoord2, RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.pos1.x * size, glyph.pos2.y * size}, color, texIndex, glm::vec2{glyph.texCoord1.x, glyph.texCoord2.y}, RendererVertex::TYPE_TEXT);
+      offset.x += glyph.advance * size;
+    }
+    return offset;
+  }
+
+  void Renderer::AddVertex(const glm::vec2& position, const glm::vec3& color, int texindex, const glm::vec2& texCoord, int type)
   {
     RendererVertex* vertex = (RendererVertex*)mappedVertexBuffer;
     vertex->position = position;
     vertex->color = color;
     vertex->texCoord = texCoord;
     vertex->texIndex = texindex;
+    vertex->type  = type;
     mappedVertexBuffer = (RendererVertex*)mappedVertexBuffer + 1;
   }
 

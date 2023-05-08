@@ -1,16 +1,17 @@
 #include "copium/core/Application.h"
 
+#include "copium/asset/AssetManager.h"
 #include "copium/core/Vulkan.h"
 #include "copium/event/EventDispatcher.h"
-#include "copium/event/MouseMoveEvent.h"
-#include "copium/event/MouseScrollEvent.h"
-#include "copium/event/MousePressEvent.h"
 #include "copium/event/KeyPressEvent.h"
+#include "copium/event/MouseMoveEvent.h"
+#include "copium/event/MousePressEvent.h"
+#include "copium/event/MouseScrollEvent.h"
 #include "copium/event/WindowFocusEvent.h"
 #include "copium/event/WindowResizeEvent.h"
 #include "copium/mesh/Vertex.h"
 #include "copium/mesh/VertexPassthrough.h"
-#include "copium/asset/AssetManager.h"
+#include "copium/sampler/Font.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -60,6 +61,7 @@ namespace Copium
     vkDeviceWaitIdle(Vulkan::GetDevice());
     AssetManager::UnloadAsset(texture2D);
     AssetManager::UnloadAsset(texture2D2);
+    AssetManager::UnloadAsset(font);
     AssetManager::UnloadAsset(graphicsPipeline);
     AssetManager::UnloadAsset(graphicsPipelinePassthrough);
     AssetManager::UnloadAsset(framebuffer);
@@ -68,6 +70,8 @@ namespace Copium
 
   bool Application::Update()
   {
+    static Copium::Timer timer;
+
     if (!Vulkan::GetSwapChain().BeginPresent())
       return true;
 
@@ -75,6 +79,14 @@ namespace Copium
     Vulkan::GetSwapChain().SubmitToGraphicsQueue(*commandBuffer);
 
     Vulkan::GetSwapChain().EndPresent();
+    if (timer.Elapsed() >= 1.0)
+    {
+      fps = frameCounter;
+      frameCounter = 0;
+      timer.Start(); // Not quite accurate since the elapsed time might me 1.1, then we lose 0.1 precision
+    }
+    frameCounter++;
+
     return !glfwWindowShouldClose(Vulkan::GetWindow().GetWindow());
   }
 
@@ -93,7 +105,10 @@ namespace Copium
     case EventType::MouseMove:
     {
       const MouseMoveEvent& mouseMoveEvent = static_cast<const MouseMoveEvent&>(event);
-      mousePos = {mouseMoveEvent.GetPos().x / Vulkan::GetSwapChain().GetExtent().width, mouseMoveEvent.GetPos().y / Vulkan::GetSwapChain().GetExtent().height};
+
+      float aspect = Vulkan::GetSwapChain().GetExtent().width / (float)Vulkan::GetSwapChain().GetExtent().height;
+      mousePos = {(mouseMoveEvent.GetPos().x / Vulkan::GetSwapChain().GetExtent().width - 0.5) * 2.0 * aspect,
+                  -(mouseMoveEvent.GetPos().y / Vulkan::GetSwapChain().GetExtent().height - 0.5) * 2.0};
 
       return EventResult::Continue;
     }
@@ -144,6 +159,7 @@ namespace Copium
   {
     texture2D = AssetManager::LoadAsset<Texture2D>("fox.meta");
     texture2D2 = AssetManager::LoadAsset<Texture2D>("fox2.meta");
+    font = AssetManager::LoadAsset<Font>("font.meta");
   }
 
   void Application::InitializeDescriptorSets()
@@ -202,9 +218,12 @@ namespace Copium
         renderer->Quad(glm::vec2{-1 + x * 0.2 + 0.05, -1 + y * 0.2 + 0.05}, glm::vec2{0.1, 0.1}, glm::vec3{x * 0.1, y * 0.1, 1.0});
       }
     }
-    renderer->Quad(glm::vec2{-0.9, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D));
-    renderer->Quad(glm::vec2{ 0.1, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D2));
-    renderer->Quad(mousePos, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D2));
+    float aspect = fb.GetWidth() / (float)fb.GetHeight();
+    renderer->Quad(glm::vec2{-0.8, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D));
+    renderer->Quad(glm::vec2{ 0.1, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Font>(font));
+    renderer->Quad(mousePos - glm::vec2(0.1), glm::vec2{0.2}, AssetManager::GetAsset<Texture2D>(texture2D2));
+    std::string s = std::to_string(fps) + " fps";
+    renderer->Text(s, glm::vec2{-aspect + 0.01, 0.94}, AssetManager::GetAsset<Font>(font), 0.06, glm::vec3{0.3, 0.2, 0.8});
     renderer->End();
 
     fb.Unbind(*commandBuffer);
@@ -230,6 +249,7 @@ namespace Copium
     float time = startTimer.Elapsed();
     Framebuffer& fb = AssetManager::GetAsset<Framebuffer>(framebuffer);
     float aspect = fb.GetWidth() / (float)fb.GetHeight();
+    time = 0;
 
     {
       glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f);
@@ -245,8 +265,9 @@ namespace Copium
 
     {
       UniformBuffer& uniformBuffer = descriptorSetRenderer->GetUniformBuffer("ubo");
-      uniformBuffer.Set("projection", glm::ortho(-aspect, aspect, -1.0f, 1.0f));
-      uniformBuffer.Set("view", glm::translate(glm::mat4(1), glm::vec3(0.1 * glm::sin(4 * time), 0.1 * glm::cos(4 * time), 0.0)));
+      uniformBuffer.Set("projection", glm::ortho(-aspect, aspect, 1.0f, -1.0f));
+      // uniformBuffer.Set("view", glm::translate(glm::mat4(1), glm::vec3(0.1 * glm::sin(4 * time), 0.1 * glm::cos(4 * time), 0.0)));
+      uniformBuffer.Set("view", glm::mat4(1));
       uniformBuffer.Update();
     }
   }

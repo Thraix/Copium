@@ -1,6 +1,7 @@
 #include "copium/sampler/Texture2D.h"
 
 #include "copium/core/Vulkan.h"
+#include "copium/sampler/Image.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -19,7 +20,7 @@ namespace Copium
   Texture2D::Texture2D(const std::vector<uint8_t>& rgbaData, int width, int height)
   {
     CP_ASSERT(rgbaData.size() == width * height * 4, "rgbaData has invalid size, should be equal to width * height * 4 (%d) actually is %d", width * height * 4, rgbaData.size());
-    InitializeTextureImageFromData((void*)rgbaData.data(), width, height);
+    InitializeTextureImageFromData(rgbaData.data(), width, height);
   }
 
   Texture2D::~Texture2D()
@@ -41,6 +42,7 @@ namespace Copium
 
   void Texture2D::InitializeTextureImageFromFile(const std::string& filename)
   {
+    stbi_set_flip_vertically_on_load(true);
     int texWidth;
     int texHeight;
     int texChannels;
@@ -48,12 +50,12 @@ namespace Copium
 
     CP_ASSERT(pixels, "Failed to load texture image");
 
-    InitializeTextureImageFromData((void*)pixels, texWidth, texHeight);
+    InitializeTextureImageFromData(pixels, texWidth, texHeight);
 
     stbi_image_free(pixels);
   }
 
-  void Texture2D::InitializeTextureImageFromData(void* rgbaData, int width, int height)
+  void Texture2D::InitializeTextureImageFromData(const uint8_t* rgbaData, int width, int height)
   {
     VkDeviceSize bufferSize = width * height * 4;
     Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};

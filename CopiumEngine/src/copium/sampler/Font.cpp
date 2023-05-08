@@ -1,0 +1,120 @@
+#include "copium/sampler/Font.h"
+
+#include "copium/buffer/Buffer.h"
+#include "copium/core/Vulkan.h"
+#include "copium/sampler/Image.h"
+
+#define MSDF_ATLAS_PUBLIC
+#define MSDFGEN_PUBLIC
+#include <msdf-atlas-gen/msdf-atlas-gen.h>
+
+namespace Copium
+{
+  Font::Font(const MetaFile& metaFile)
+  {
+    msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
+    CP_ASSERT(ft, "Failed to initialize FreeType"); // TODO: Move to Vulkan singleton class?
+    std::string fontPath = metaFile.GetMetaClass("Font").GetValue("filepath");
+    msdfgen::FontHandle* font = msdfgen::loadFont(ft, fontPath.c_str());
+    CP_ASSERT(font, "Failed to initialize font: %s", fontPath.c_str());
+
+    std::vector<msdf_atlas::GlyphGeometry> glyphs;
+    msdf_atlas::FontGeometry fontGeometry(&glyphs);
+    fontGeometry.loadCharset(font, 1.0, msdf_atlas::Charset::ASCII);
+    const double maxCornerAngle = 3.0;
+    for (msdf_atlas::GlyphGeometry& glyph : glyphs)
+    {
+      glyph.edgeColoring(&msdfgen::edgeColoringInkTrap, maxCornerAngle, 0);
+    }
+    msdf_atlas::TightAtlasPacker packer;
+    packer.setDimensionsConstraint(msdf_atlas::TightAtlasPacker::DimensionsConstraint::SQUARE);
+    packer.setMinimumScale(64.0);
+    packer.setPixelRange(2.0);
+    packer.setMiterLimit(1.0);
+    packer.setPadding(2);
+    packer.pack(glyphs.data(), glyphs.size());
+
+    int width = 0, height = 0;
+    packer.getDimensions(width, height);
+
+    msdf_atlas::ImmediateAtlasGenerator<float, 3, msdf_atlas::msdfGenerator, msdf_atlas::BitmapAtlasStorage<msdf_atlas::byte, 3>> generator(width, height);
+    msdf_atlas::GeneratorAttributes attributes;
+    generator.setAttributes(attributes);
+    generator.setThreadCount(4);
+    generator.generate(glyphs.data(), glyphs.size());
+
+    msdf_atlas::BitmapAtlasStorage<msdf_atlas::byte, 3> pixels = generator.atlasStorage();
+    std::vector<uint8_t> data;
+    data.resize(width * height * 4);
+    msdfgen::Bitmap<msdf_atlas::byte, 3> bitmap = (msdfgen::Bitmap<msdf_atlas::byte, 3>)pixels;
+    for (int i = 0; i < width * height; i++)
+    {
+      data[i * 4] = bitmap[i * 3];
+      data[i * 4 + 1] = bitmap[i * 3 + 1];
+      data[i * 4 + 2] = bitmap[i * 3 + 2];
+      data[i * 4 + 3] = 255;
+    }
+    InitializeTextureImageFromData(data.data(), width, height);
+
+    for (msdf_atlas::GlyphGeometry& glyphGeom : glyphs)
+    {
+      Glyph glyph;
+      glyph.advance = glyphGeom.getAdvance();
+      double l, b, r, t;
+      glyphGeom.getQuadPlaneBounds(l, b, r, t);
+      glyph.pos1 = glm::vec2{l, b};
+      glyph.pos2 = glm::vec2{r, t};
+      glyphGeom.getQuadAtlasBounds(l, b, r, t);
+      glyph.texCoord1 = glm::vec2{l / width, b / height};
+      glyph.texCoord2 = glm::vec2{r / width, t / height};
+      this->glyphs.emplace((char)glyphGeom.getCodepoint(), glyph);
+    }
+    lineHeight = fontGeometry.getMetrics().lineHeight;
+
+    msdfgen::destroyFont(font);
+    msdfgen::deinitializeFreetype(ft);
+  }
+
+  Font::~Font()
+  {
+    vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
+    vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
+    vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
+  }
+
+  VkDescriptorImageInfo Font::GetDescriptorImageInfo(int index) const
+  {
+    VkDescriptorImageInfo imageInfo{};
+    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    imageInfo.sampler = sampler;
+    imageInfo.imageView = imageView;
+
+    return imageInfo;
+  }
+
+  const Glyph& Font::GetGlyph(char c) const
+  {
+    CP_ASSERT(glyphs.find(c) != glyphs.end(), "Glyph not found: %c", c);
+    return glyphs.find(c)->second;
+  }
+
+  float Font::GetLineHeight() const
+  {
+    return lineHeight;
+  }
+
+  void Font::InitializeTextureImageFromData(const uint8_t* rgbaData, int width, int height)
+  {
+    VkDeviceSize bufferSize = width * height * 4;
+    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};
+    void* data = stagingBuffer.Map();
+    memcpy(data, rgbaData, bufferSize);
+    stagingBuffer.Unmap();
+
+    Image::InitializeImage(width, height, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &image, &imageMemory);
+    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    Image::CopyBufferToImage(stagingBuffer, image, width, height);
+    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    imageView = Image::InitializeImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+  }
+}

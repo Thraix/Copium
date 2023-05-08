@@ -33,6 +33,7 @@ namespace Copium
     VkFrontFace frontFace = VK_FRONT_FACE_CLOCKWISE;
     VkRenderPass renderPass = VK_NULL_HANDLE;
     bool depthTest = true;
+    bool blending = false;
 
   public:
     PipelineCreator(VkRenderPass renderPass, const std::string& vertexShader, const std::string& fragmentShader);
@@ -42,6 +43,7 @@ namespace Copium
     void SetCullMode(VkCullModeFlags flags);
     void SetCullFrontFace(VkFrontFace cullFrontFace);
     void SetDepthTest(bool depthTest);
+    void SetBlending(bool blending);
   private:
     void AddShaderDescription();
     static VkDescriptorType GetDescriptorType(BindingType type);
