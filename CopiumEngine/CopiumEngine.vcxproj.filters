@@ -180,6 +180,9 @@
     <ClCompile Include="src\copium\event\MouseScrollEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\copium\sampler\Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\copium\sampler\DepthAttachment.h">
@@ -360,6 +363,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\event\MouseScrollEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\sampler\Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\sampler\Glyph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\util\Enum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{837d2ea3-3e5b-41a2-b2d2-4dc8b5425490}</ProjectGuid>
+    <RootNamespace>freetype</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)ext/repos/freetype/include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)libs\$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)ext/repos/freetype/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;FT2_BUILD_LIBRARY;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afblue.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afcjk.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afcover.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afdummy.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\aferrors.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afglobal.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afhints.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afindic.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\aflatin.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afloader.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afmodule.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afranges.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afscript.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afshaper.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afstyles.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\aftypes.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afws-decl.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\afws-iter.h" />
+    <ClInclude Include="..\..\repos\freetype\src\autofit\ft-hb.h" />
+    <ClInclude Include="..\..\repos\freetype\src\base\ftbase.h" />
+    <ClInclude Include="..\..\repos\freetype\src\base\md5.h" />
+    <ClInclude Include="..\..\repos\freetype\src\bdf\bdf.h" />
+    <ClInclude Include="..\..\repos\freetype\src\bdf\bdfdrivr.h" />
+    <ClInclude Include="..\..\repos\freetype\src\bdf\bdferror.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cache\ftccache.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cache\ftccback.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cache\ftcerror.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cache\ftcglyph.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cache\ftcimage.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cache\ftcmanag.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cache\ftcmru.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cache\ftcsbits.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cff\cffcmap.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cff\cffdrivr.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cff\cfferrs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cff\cffgload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cff\cffload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cff\cffobjs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cff\cffparse.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cff\cfftoken.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cid\ciderrs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cid\cidgload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cid\cidload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cid\cidobjs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cid\cidparse.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cid\cidriver.h" />
+    <ClInclude Include="..\..\repos\freetype\src\cid\cidtoken.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gxvalid\gxvalid.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gxvalid\gxvcommn.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gxvalid\gxverror.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gxvalid\gxvfeat.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gxvalid\gxvmod.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gxvalid\gxvmort.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gxvalid\gxvmorx.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gzip\crc32.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gzip\ftzconf.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gzip\gzguts.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gzip\inffast.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gzip\inffixed.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gzip\inflate.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gzip\inftrees.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gzip\zlib.h" />
+    <ClInclude Include="..\..\repos\freetype\src\gzip\zutil.h" />
+    <ClInclude Include="..\..\repos\freetype\src\lzw\ftzopen.h" />
+    <ClInclude Include="..\..\repos\freetype\src\otvalid\otvalid.h" />
+    <ClInclude Include="..\..\repos\freetype\src\otvalid\otvcommn.h" />
+    <ClInclude Include="..\..\repos\freetype\src\otvalid\otverror.h" />
+    <ClInclude Include="..\..\repos\freetype\src\otvalid\otvgpos.h" />
+    <ClInclude Include="..\..\repos\freetype\src\otvalid\otvmod.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pcf\pcf.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pcf\pcfdrivr.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pcf\pcferror.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pcf\pcfread.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pcf\pcfutil.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pfr\pfrcmap.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pfr\pfrdrivr.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pfr\pfrerror.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pfr\pfrgload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pfr\pfrload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pfr\pfrobjs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pfr\pfrsbit.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pfr\pfrtypes.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\afmparse.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\cffdecode.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psarrst.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psauxerr.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psauxmod.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psblues.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psconv.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\pserror.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psfixed.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psfont.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psft.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psglue.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\pshints.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psintrp.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psobjs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psread.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\psstack.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\pstypes.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\t1cmap.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psaux\t1decode.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pshinter\pshalgo.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pshinter\pshglob.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pshinter\pshmod.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pshinter\pshnterr.h" />
+    <ClInclude Include="..\..\repos\freetype\src\pshinter\pshrec.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psnames\psmodule.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psnames\psnamerr.h" />
+    <ClInclude Include="..\..\repos\freetype\src\psnames\pstables.h" />
+    <ClInclude Include="..\..\repos\freetype\src\raster\ftmisc.h" />
+    <ClInclude Include="..\..\repos\freetype\src\raster\ftraster.h" />
+    <ClInclude Include="..\..\repos\freetype\src\raster\ftrend1.h" />
+    <ClInclude Include="..\..\repos\freetype\src\raster\rasterrs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sdf\ftsdf.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sdf\ftsdfcommon.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sdf\ftsdferrs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sdf\ftsdfrend.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\pngshim.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\sfdriver.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\sferrors.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\sfobjs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\sfwoff.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\sfwoff2.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttbdf.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttcmap.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttcmapc.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttcolr.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttcpal.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttkern.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttmtx.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttpost.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttsbit.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\ttsvg.h" />
+    <ClInclude Include="..\..\repos\freetype\src\sfnt\woff2tags.h" />
+    <ClInclude Include="..\..\repos\freetype\src\smooth\ftgrays.h" />
+    <ClInclude Include="..\..\repos\freetype\src\smooth\ftsmerrs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\smooth\ftsmooth.h" />
+    <ClInclude Include="..\..\repos\freetype\src\svg\ftsvg.h" />
+    <ClInclude Include="..\..\repos\freetype\src\svg\svgtypes.h" />
+    <ClInclude Include="..\..\repos\freetype\src\truetype\ttdriver.h" />
+    <ClInclude Include="..\..\repos\freetype\src\truetype\tterrors.h" />
+    <ClInclude Include="..\..\repos\freetype\src\truetype\ttgload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\truetype\ttgxvar.h" />
+    <ClInclude Include="..\..\repos\freetype\src\truetype\ttinterp.h" />
+    <ClInclude Include="..\..\repos\freetype\src\truetype\ttobjs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\truetype\ttpload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\truetype\ttsubpix.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type1\t1afm.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type1\t1driver.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type1\t1errors.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type1\t1gload.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type1\t1load.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type1\t1objs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type1\t1parse.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type1\t1tokens.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type42\t42drivr.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type42\t42error.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type42\t42objs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type42\t42parse.h" />
+    <ClInclude Include="..\..\repos\freetype\src\type42\t42types.h" />
+    <ClInclude Include="..\..\repos\freetype\src\winfonts\fnterrs.h" />
+    <ClInclude Include="..\..\repos\freetype\src\winfonts\winfnt.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\repos\freetype\src\autofit\autofit.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftbase.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftbbox.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftbdf.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftbitmap.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftcid.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftdebug.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftfstype.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftgasp.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftglyph.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftgxval.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftinit.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftmm.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftotval.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftpatent.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftpfr.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftstroke.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftsynth.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftsystem.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\fttype1.c" />
+    <ClCompile Include="..\..\repos\freetype\src\base\ftwinfnt.c" />
+    <ClCompile Include="..\..\repos\freetype\src\bdf\bdf.c" />
+    <ClCompile Include="..\..\repos\freetype\src\bzip2\ftbzip2.c" />
+    <ClCompile Include="..\..\repos\freetype\src\cache\ftcache.c" />
+    <ClCompile Include="..\..\repos\freetype\src\cff\cff.c" />
+    <ClCompile Include="..\..\repos\freetype\src\cid\type1cid.c" />
+    <ClCompile Include="..\..\repos\freetype\src\gzip\ftgzip.c" />
+    <ClCompile Include="..\..\repos\freetype\src\lzw\ftlzw.c" />
+    <ClCompile Include="..\..\repos\freetype\src\pcf\pcf.c" />
+    <ClCompile Include="..\..\repos\freetype\src\pfr\pfr.c" />
+    <ClCompile Include="..\..\repos\freetype\src\psaux\psaux.c" />
+    <ClCompile Include="..\..\repos\freetype\src\pshinter\pshinter.c" />
+    <ClCompile Include="..\..\repos\freetype\src\psnames\psnames.c" />
+    <ClCompile Include="..\..\repos\freetype\src\raster\raster.c" />
+    <ClCompile Include="..\..\repos\freetype\src\sdf\sdf.c" />
+    <ClCompile Include="..\..\repos\freetype\src\sfnt\sfnt.c" />
+    <ClCompile Include="..\..\repos\freetype\src\smooth\smooth.c" />
+    <ClCompile Include="..\..\repos\freetype\src\svg\svg.c" />
+    <ClCompile Include="..\..\repos\freetype\src\truetype\truetype.c" />
+    <ClCompile Include="..\..\repos\freetype\src\type1\type1.c" />
+    <ClCompile Include="..\..\repos\freetype\src\type42\type42.c" />
+    <ClCompile Include="..\..\repos\freetype\src\winfonts\winfnt.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\repos\freetype\src\base\ftver.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -3,6 +3,8 @@ Release/
 .vs/
 */Debug/
 */Release/
+*/x64/
 bin/
 .ycm_extra_conf.py
 .cache
+libs

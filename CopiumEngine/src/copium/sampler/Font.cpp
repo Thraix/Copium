@@ -4,8 +4,6 @@
 #include "copium/core/Vulkan.h"
 #include "copium/sampler/Image.h"
 
-#define MSDF_ATLAS_PUBLIC
-#define MSDFGEN_PUBLIC
 #include <msdf-atlas-gen/msdf-atlas-gen.h>
 
 namespace Copium

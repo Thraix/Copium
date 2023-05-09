@@ -1,0 +1,18 @@
+[submodule "ext/repos/glm"]
+	path = ext/repos/glm
+	url = git@github.com:g-truc/glm.git
+[submodule "ext/repos/msdf-atlas-gen"]
+	path = ext/repos/msdf-atlas-gen
+	url = git@github.com:Chlumsky/msdf-atlas-gen.git
+[submodule "ext/repos/freetype"]
+	path = ext/repos/freetype
+	url = git@github.com:freetype/freetype.git
+[submodule "ext/repos/stb"]
+	path = ext/repos/stb
+	url = git@github.com:nothings/stb.git
+[submodule "ext/repos/glfw"]
+	path = ext/repos/glfw
+	url = git@github.com:glfw/glfw.git
+[submodule "ext/repos/shaderc"]
+	path = ext/repos/shaderc
+	url = git@github.com:google/shaderc.git
