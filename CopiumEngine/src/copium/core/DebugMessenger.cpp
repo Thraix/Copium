@@ -36,7 +36,7 @@ namespace Copium
     layers->emplace_back("VK_LAYER_KHRONOS_validation");
   }
 #else
-  DebugMessenger::DebugMessenger(VkInstance instance)
+  DebugMessenger::DebugMessenger(Instance& instance)
     : instance{instance}
   {}
 
