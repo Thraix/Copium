@@ -201,6 +201,7 @@
     <ClCompile Include="src\copium\pipeline\DescriptorPool.cpp" />
     <ClCompile Include="src\copium\pipeline\DescriptorSet.cpp" />
     <ClCompile Include="src\copium\sampler\Font.cpp" />
+    <ClCompile Include="src\copium\util\BoundingBox.cpp" />
     <ClCompile Include="src\copium\util\RuntimeException.cpp" />
     <ClCompile Include="src\copium\util\FileSystem.cpp" />
     <ClCompile Include="src\copium\buffer\Framebuffer.cpp" />
@@ -260,6 +261,7 @@
     <ClInclude Include="src\copium\buffer\CommandBuffer.h" />
     <ClInclude Include="src\copium\sampler\Font.h" />
     <ClInclude Include="src\copium\sampler\Glyph.h" />
+    <ClInclude Include="src\copium\util\BoundingBox.h" />
     <ClInclude Include="src\copium\util\Common.h" />
     <ClInclude Include="src\copium\core\DebugMessenger.h" />
     <ClInclude Include="src\copium\pipeline\DescriptorSet.h" />

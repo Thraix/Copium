@@ -74,10 +74,10 @@ namespace Copium
       const Glyph& glyph = font.GetGlyph(c);
       AllocateQuad();
       int texIndex = AllocateSampler(font);
-      AddVertex(offset + glm::vec2{glyph.pos1.x * size, glyph.pos1.y * size}, color, texIndex, glyph.texCoord1, RendererVertex::TYPE_TEXT);
-      AddVertex(offset + glm::vec2{glyph.pos2.x * size, glyph.pos1.y * size}, color, texIndex, glm::vec2{glyph.texCoord2.x, glyph.texCoord1.y}, RendererVertex::TYPE_TEXT);
-      AddVertex(offset + glm::vec2{glyph.pos2.x * size, glyph.pos2.y * size}, color, texIndex, glyph.texCoord2, RendererVertex::TYPE_TEXT);
-      AddVertex(offset + glm::vec2{glyph.pos1.x * size, glyph.pos2.y * size}, color, texIndex, glm::vec2{glyph.texCoord1.x, glyph.texCoord2.y}, RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.l * size, glyph.boundingBox.b * size}, color, texIndex, glyph.texCoordBoundingBox.lb, RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.r * size, glyph.boundingBox.b * size}, color, texIndex, glm::vec2{glyph.texCoordBoundingBox.r, glyph.texCoordBoundingBox.b}, RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.r * size, glyph.boundingBox.t * size}, color, texIndex, glyph.texCoordBoundingBox.rt, RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.l * size, glyph.boundingBox.t * size}, color, texIndex, glm::vec2{glyph.texCoordBoundingBox.l, glyph.texCoordBoundingBox.t}, RendererVertex::TYPE_TEXT);
       offset.x += glyph.advance * size;
     }
     return offset;

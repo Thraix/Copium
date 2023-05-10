@@ -1,15 +1,13 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include "copium/util/BoundingBox.h"
 
 namespace Copium
 {
   struct Glyph
   {
     float advance;
-    glm::vec2 pos1;
-    glm::vec2 pos2;
-    glm::vec2 texCoord1;
-    glm::vec2 texCoord2;
+    BoundingBox boundingBox;
+    BoundingBox texCoordBoundingBox;
   };
 }

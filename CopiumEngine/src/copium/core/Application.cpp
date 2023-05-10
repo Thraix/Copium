@@ -223,7 +223,10 @@ namespace Copium
     renderer->Quad(glm::vec2{ 0.1, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Font>(font));
     renderer->Quad(mousePos - glm::vec2(0.1), glm::vec2{0.2}, AssetManager::GetAsset<Texture2D>(texture2D2));
     std::string s = std::to_string(fps) + " fps";
-    renderer->Text(s, glm::vec2{-aspect + 0.01, 0.94}, AssetManager::GetAsset<Font>(font), 0.06, glm::vec3{0.3, 0.2, 0.8});
+    BoundingBox boundingBox = AssetManager::GetAsset<Font>(font).GetTextBoundingBox(s, 0.06);
+    glm::vec2 pos = glm::vec2{-aspect + 0.01, 0.94};
+    renderer->Quad(pos + boundingBox.lb, boundingBox.GetSize());
+    renderer->Text(s, pos, AssetManager::GetAsset<Font>(font), 0.06, glm::vec3{0.0f});
     renderer->End();
 
     fb.Unbind(*commandBuffer);

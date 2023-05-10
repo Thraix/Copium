@@ -60,11 +60,9 @@ namespace Copium
       glyph.advance = glyphGeom.getAdvance();
       double l, b, r, t;
       glyphGeom.getQuadPlaneBounds(l, b, r, t);
-      glyph.pos1 = glm::vec2{l, b};
-      glyph.pos2 = glm::vec2{r, t};
+      glyph.boundingBox = BoundingBox{(float)l, (float)b, (float)r, (float)t};
       glyphGeom.getQuadAtlasBounds(l, b, r, t);
-      glyph.texCoord1 = glm::vec2{l / width, b / height};
-      glyph.texCoord2 = glm::vec2{r / width, t / height};
+      glyph.texCoordBoundingBox = BoundingBox{(float)l / width, (float)b / height, (float)r / width, (float)t / height};
       this->glyphs.emplace((char)glyphGeom.getCodepoint(), glyph);
     }
     lineHeight = fontGeometry.getMetrics().lineHeight;
@@ -99,6 +97,42 @@ namespace Copium
   float Font::GetLineHeight() const
   {
     return lineHeight;
+  }
+
+  BoundingBox Font::GetTextBoundingBox(const std::string& str, float size) const
+  {
+    BoundingBox boundingBox{0.0f};
+    glm::vec2 offset{0.0f};
+    for (auto c : str)
+    {
+      if(c == ' ')
+      {
+        const Glyph& glyph = GetGlyph(c);
+        offset.x += glyph.advance;
+        continue;
+      }
+      else if (c == '\t')
+      {
+        const Glyph& glyph = GetGlyph(' ');
+        offset.x += glyph.advance * 4;
+        continue;
+      }
+      else if (c == '\n')
+      {
+        boundingBox.r = std::max(boundingBox.r, offset.x);
+        offset.y -= GetLineHeight();
+        offset.x = 0.0f;
+        continue;
+      }
+      const Glyph& glyph = GetGlyph(c);
+      boundingBox.l = std::min(boundingBox.l, offset.x + glyph.boundingBox.l);
+      boundingBox.t = std::max(boundingBox.t, offset.y + glyph.boundingBox.t);
+      offset.x += glyph.advance;
+      boundingBox.b = std::min(boundingBox.b, offset.y + glyph.boundingBox.b);
+    }
+    boundingBox.r = std::max(boundingBox.r, offset.x);
+    boundingBox.lbrt *= size;
+    return boundingBox;
   }
 
   void Font::InitializeTextureImageFromData(const uint8_t* rgbaData, int width, int height)
