@@ -178,6 +178,10 @@
     <ClCompile Include="src\copium\core\Device.cpp" />
     <ClCompile Include="src\copium\core\Vulkan.cpp" />
     <ClCompile Include="src\copium\core\Window.cpp" />
+    <ClCompile Include="src\copium\ecs\ComponentPoolBase.cpp" />
+    <ClCompile Include="src\copium\ecs\ECSManager.cpp" />
+    <ClCompile Include="src\copium\ecs\Entity.cpp" />
+    <ClCompile Include="src\copium\ecs\EntitySet.cpp" />
     <ClCompile Include="src\copium\event\Event.cpp" />
     <ClCompile Include="src\copium\event\EventDispatcher.cpp" />
     <ClCompile Include="src\copium\event\KeyPressEvent.cpp" />
@@ -236,6 +240,12 @@
     <ClInclude Include="src\copium\core\Device.h" />
     <ClInclude Include="src\copium\core\Vulkan.h" />
     <ClInclude Include="src\copium\core\Window.h" />
+    <ClInclude Include="src\copium\ecs\ComponentPool.h" />
+    <ClInclude Include="src\copium\ecs\ComponentPoolBase.h" />
+    <ClInclude Include="src\copium\ecs\Config.h" />
+    <ClInclude Include="src\copium\ecs\ECSManager.h" />
+    <ClInclude Include="src\copium\ecs\Entity.h" />
+    <ClInclude Include="src\copium\ecs\EntitySet.h" />
     <ClInclude Include="src\copium\event\Event.h" />
     <ClInclude Include="src\copium\event\EventDispatcher.h" />
     <ClInclude Include="src\copium\event\EventHandler.h" />
