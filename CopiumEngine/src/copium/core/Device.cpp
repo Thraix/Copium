@@ -63,25 +63,26 @@ namespace Copium
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(Vulkan::GetInstance(), &deviceCount, devices.data());
+
+    std::vector<std::pair<VkPhysicalDevice, uint32_t>> devicePriorities;
+    devicePriorities.reserve(deviceCount);
     CP_INFO("Available devices:");
     for (auto&& device : devices)
     {
       VkPhysicalDeviceProperties deviceProperties;
       vkGetPhysicalDeviceProperties(device, &deviceProperties);
       CP_INFO_CONT("\t%s", deviceProperties.deviceName);
+      devicePriorities.emplace_back(device, GetPhysicalDevicePriority(device));
     }
-    for (auto&& device : devices)
-    {
-      if (IsPhysicalDeviceSuitable(device))
-      {
-        VkPhysicalDeviceProperties deviceProperties;
-        vkGetPhysicalDeviceProperties(device, &deviceProperties);
-        physicalDevice = device;
-        CP_INFO("Selecting device: %s", deviceProperties.deviceName);
-        break;
-      }
-    }
-    CP_ASSERT(physicalDevice != VK_NULL_HANDLE, "Failed to find suitable GPU");
+
+    std::sort(devicePriorities.begin(), devicePriorities.end(), [](const std::pair<VkPhysicalDevice, uint32_t>& lhs, const std::pair<VkPhysicalDevice, uint32_t>& rhs) { return lhs.second > rhs.second; });
+    auto&& it = devicePriorities.begin();
+    CP_ASSERT(it->second != 0, "Failed to find suitable GPU");
+
+    VkPhysicalDeviceProperties deviceProperties;
+    vkGetPhysicalDeviceProperties(it->first, &deviceProperties);
+    physicalDevice = it->first;
+    CP_INFO("Selecting device: %s", deviceProperties.deviceName);
   }
 
   void Device::InitializeLogicalDevice()
@@ -130,30 +131,33 @@ namespace Copium
     CP_VK_ASSERT(vkCreateCommandPool(device, &createInfo, nullptr, &commandPool), "Failed to initialize command pool");
   }
 
-  bool Device::IsPhysicalDeviceSuitable(VkPhysicalDevice device)
+  uint32_t Device::GetPhysicalDevicePriority(VkPhysicalDevice device)
   {
+    uint32_t priority = 0;
     VkPhysicalDeviceProperties deviceProperties;
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
-    if (deviceProperties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
-      return false;
+    if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+      priority = 100;
+    else
+      priority = 50;
 
     VkPhysicalDeviceFeatures deviceFeatures;
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
     if (!deviceFeatures.fillModeNonSolid || !deviceFeatures.samplerAnisotropy)
-      return false;
+      return 0;
 
     QueueFamiliesQuery query{Vulkan::GetWindow().GetSurface(), device};
     if (!query.AllRequiredFamiliesSupported())
-      return false;
+      return 0;
 
     if (!CheckDeviceExtensionSupport(device))
-      return false;
+      return 0;
 
     SwapChainSupportDetails details{Vulkan::GetWindow().GetSurface(), device};
     if (!details.Valid())
-      return false;
+      return 0;
 
-    return true;
+    return priority;
   }
 
   bool Device::CheckDeviceExtensionSupport(VkPhysicalDevice device)

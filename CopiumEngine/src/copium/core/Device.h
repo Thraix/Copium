@@ -38,7 +38,7 @@ namespace Copium
     void SelectPhysicalDevice();
     void InitializeLogicalDevice();
     void InitializeCommandPool();
-    bool IsPhysicalDeviceSuitable(VkPhysicalDevice device);
+    uint32_t GetPhysicalDevicePriority(VkPhysicalDevice device);
     bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
     std::vector<const char*> GetRequiredDeviceExtensions();
   };

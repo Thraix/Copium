@@ -45,15 +45,15 @@ namespace Copium
     {
       GLFWmonitor* monitor = glfwGetPrimaryMonitor();
       const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-      window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), glfwGetPrimaryMonitor(), nullptr);
+      window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), monitor, nullptr);
       break;
     }
     case WindowMode::BorderlessWindowed:
     {
-      GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-      const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+      const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+      glfwWindowHint(GLFW_DECORATED, false);
       window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), nullptr, nullptr);
-      glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
       break;
     }
     case WindowMode::Windowed:
@@ -83,6 +83,8 @@ namespace Copium
 
   void Window::FramebufferResizeCallback(GLFWwindow* glfwWindow, int width, int height)
   {
+    if (width == 0 || height == 0)
+      return;
     Vulkan::GetSwapChain().ResizeFramebuffer();
     EventDispatcher::QueueEvent(WindowResizeEvent{width, height});
   }

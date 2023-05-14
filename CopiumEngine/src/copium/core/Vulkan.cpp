@@ -17,7 +17,7 @@ namespace Copium
   void Vulkan::Initialize()
   {
     instance = std::make_unique<Instance>("Copium Engine");
-    window = std::make_unique<Window>("Copium Engine", 1920, 1080, WindowMode::Windowed);
+    window = std::make_unique<Window>("Copium Engine", 1440, 810, WindowMode::Windowed);
     device = std::make_unique<Device>();
     swapChain = std::make_unique<SwapChain>();
 

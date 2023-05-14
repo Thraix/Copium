@@ -116,5 +116,11 @@
     <ClInclude Include="..\..\repos\glfw\src\null_platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\repos\glfw\include\GLFW\glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\repos\glfw\include\GLFW\glfw3native.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

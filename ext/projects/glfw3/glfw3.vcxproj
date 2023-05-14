@@ -161,6 +161,8 @@
     <ClCompile Include="..\..\repos\glfw\src\xkb_unicode.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\repos\glfw\include\GLFW\glfw3.h" />
+    <ClInclude Include="..\..\repos\glfw\include\GLFW\glfw3native.h" />
     <ClInclude Include="..\..\repos\glfw\src\internal.h" />
     <ClInclude Include="..\..\repos\glfw\src\mappings.h" />
     <ClInclude Include="..\..\repos\glfw\src\null_joystick.h" />
