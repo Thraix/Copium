@@ -3,6 +3,7 @@
 
 #include "copium/ecs/ComponentPool.h"
 #include "copium/ecs/Config.h"
+#include "copium/ecs/SystemPool.h"
 #include "copium/util/Common.h"
 
 #include <functional>
@@ -18,9 +19,20 @@ namespace Copium
   private:
     std::unordered_set<EntityID> entities;
     std::map<std::type_index, ComponentPoolBase*> componentPool;
+
+    std::unique_ptr<SystemPool> systemPool;
     int currentEntityId = 1;
   public:
+    ECSManager();
     ~ECSManager();
+
+    template <typename SystemClass, typename... Args>
+    SystemOrderer AddSystem(const Args&... args)
+    {
+      return systemPool->AddSystem(typeid(SystemClass), new SystemClass{args...});
+    }
+
+    void UpdateSystems();
 
     EntityID CreateEntity();
     void DestroyEntity(EntityID entity);
@@ -37,7 +49,7 @@ namespace Copium
     template <typename Component, typename... Args>
     Component& AddComponent(EntityID entity, Args&&... args)
     {
-      return AddComponent(entity, Component(args...));
+      return AddComponent(entity, Component{args...});
     }
 
     template <typename Component>
@@ -76,7 +88,7 @@ namespace Copium
     {
       auto pool = GetComponentPoolAssure<Component>();
       Component* component = pool->FindComponent(entity);
-      ASSERT(component, "Entity did not contain component (entity=%u, Component=%s)", entity, typeid(Component).name());
+      CP_ASSERT(component, "Entity did not contain component (entity=%u, Component=%s)", entity, typeid(Component).name());
       return *component;
     }
 

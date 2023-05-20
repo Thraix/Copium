@@ -48,20 +48,18 @@ namespace Copium
   {
     EventDispatcher::AddEventHandler(this);
     InitializeFrameBuffer();
-    InitializeRenderer();
     InitializeGraphicsPipeline();
     InitializeTextureSampler();
     InitializeDescriptorSets();
     InitializeMesh();
     InitializeCommandBuffer();
+    InitializeScene();
   }
 
   Application::~Application()
   {
     vkDeviceWaitIdle(Vulkan::GetDevice());
     AssetManager::UnloadAsset(texture2D);
-    AssetManager::UnloadAsset(texture2D2);
-    AssetManager::UnloadAsset(font);
     AssetManager::UnloadAsset(graphicsPipeline);
     AssetManager::UnloadAsset(graphicsPipelinePassthrough);
     AssetManager::UnloadAsset(framebuffer);
@@ -92,6 +90,7 @@ namespace Copium
 
   EventResult Application::OnEvent(const Event& event)
   {
+    scene->OnEvent(event);
     switch (event.GetType())
     {
     case EventType::WindowResize:
@@ -150,16 +149,14 @@ namespace Copium
     framebuffer = AssetManager::LoadAsset<Framebuffer>("framebuffer.meta");
   }
 
-  void Application::InitializeRenderer()
+  void Application::InitializeScene()
   {
-    renderer = std::make_unique<Renderer>();
+    scene = std::make_unique<Scene>(*commandBuffer, *descriptorPool);
   }
 
   void Application::InitializeTextureSampler()
   {
     texture2D = AssetManager::LoadAsset<Texture2D>("fox.meta");
-    texture2D2 = AssetManager::LoadAsset<Texture2D>("fox2.meta");
-    font = AssetManager::LoadAsset<Font>("font.meta");
   }
 
   void Application::InitializeDescriptorSets()
@@ -171,8 +168,6 @@ namespace Copium
 
     descriptorSetPassthrough = AssetManager::GetAsset<Pipeline>(graphicsPipelinePassthrough).CreateDescriptorSet(*descriptorPool, 0);
     descriptorSetPassthrough->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
-
-    descriptorSetRenderer = renderer->GetGraphicsPipeline().CreateDescriptorSet(*descriptorPool, 1);
   }
 
   void Application::InitializeGraphicsPipeline()
@@ -209,25 +204,7 @@ namespace Copium
     mesh->Bind(*commandBuffer);
     mesh->Render(*commandBuffer);
 
-    renderer->SetDescriptorSet(*descriptorSetRenderer);
-    renderer->Begin(*commandBuffer);
-    for (int y = 0; y < 10; y++)
-    {
-      for (int x = 0; x < 10; x++)
-      {
-        renderer->Quad(glm::vec2{-1 + x * 0.2 + 0.05, -1 + y * 0.2 + 0.05}, glm::vec2{0.1, 0.1}, glm::vec3{x * 0.1, y * 0.1, 1.0});
-      }
-    }
-    float aspect = fb.GetWidth() / (float)fb.GetHeight();
-    renderer->Quad(glm::vec2{-0.8, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Texture2D>(texture2D));
-    renderer->Quad(glm::vec2{ 0.1, -0.4}, glm::vec2{0.8, 0.8}, AssetManager::GetAsset<Font>(font));
-    renderer->Quad(mousePos - glm::vec2(0.1), glm::vec2{0.2}, AssetManager::GetAsset<Texture2D>(texture2D2));
-    std::string s = std::to_string(fps) + " fps";
-    BoundingBox boundingBox = AssetManager::GetAsset<Font>(font).GetTextBoundingBox(s, 0.06);
-    glm::vec2 pos = glm::vec2{-aspect + 0.01, 0.94};
-    renderer->Quad(pos + boundingBox.lb, boundingBox.GetSize());
-    renderer->Text(s, pos, AssetManager::GetAsset<Font>(font), 0.06, glm::vec3{0.0f});
-    renderer->End();
+    scene->Update();
 
     fb.Unbind(*commandBuffer);
 
@@ -252,7 +229,6 @@ namespace Copium
     float time = startTimer.Elapsed();
     Framebuffer& fb = AssetManager::GetAsset<Framebuffer>(framebuffer);
     float aspect = fb.GetWidth() / (float)fb.GetHeight();
-    time = 0;
 
     {
       glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f);
@@ -263,14 +239,6 @@ namespace Copium
       uniformBuffer.Set("view", glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
       uniformBuffer.Set("model", glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
       uniformBuffer.Set("lightPos", (glm::vec3)(glm::rotate(glm::mat4{1.0f}, time * glm::radians(45.0f), glm::vec3(0, 1, 0)) * glm::vec4{0.3, 0.1, 0, 1}));
-      uniformBuffer.Update();
-    }
-
-    {
-      UniformBuffer& uniformBuffer = descriptorSetRenderer->GetUniformBuffer("ubo");
-      uniformBuffer.Set("projection", glm::ortho(-aspect, aspect, 1.0f, -1.0f));
-      // uniformBuffer.Set("view", glm::translate(glm::mat4(1), glm::vec3(0.1 * glm::sin(4 * time), 0.1 * glm::cos(4 * time), 0.0)));
-      uniformBuffer.Set("view", glm::mat4(1));
       uniformBuffer.Update();
     }
   }

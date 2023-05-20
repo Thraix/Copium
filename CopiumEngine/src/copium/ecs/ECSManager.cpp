@@ -4,6 +4,10 @@
 
 namespace Copium
 {
+  ECSManager::ECSManager()
+    : systemPool{std::make_unique<SystemPool>(this)}
+  {}
+
   ECSManager::~ECSManager()
   {
     for (auto&& components : componentPool)
@@ -11,6 +15,11 @@ namespace Copium
       delete components.second;
     }
     componentPool.clear();
+  }
+
+  void ECSManager::UpdateSystems()
+  {
+    systemPool->Update();
   }
 
   size_t ECSManager::GetEntityCount() const
