@@ -233,7 +233,7 @@
     <ClCompile Include="src\copium\buffer\VertexBuffer.cpp" />
     <ClCompile Include="src\copium\pipeline\VertexDescriptor.cpp" />
     <ClCompile Include="src\copium\mesh\VertexPassthrough.cpp" />
-    <ClCompile Include="src\copium\util\UUID.cpp" />
+    <ClCompile Include="src\copium\util\Uuid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\copium\asset\Asset.h" />
@@ -313,7 +313,7 @@
     <ClInclude Include="src\copium\mesh\Vertex.h" />
     <ClInclude Include="src\copium\buffer\VertexBuffer.h" />
     <ClInclude Include="src\copium\pipeline\VertexDescriptor.h" />
-    <ClInclude Include="src\copium\util\UUID.h" />
+    <ClInclude Include="src\copium\util\Uuid.h" />
     <ClInclude Include="src\copium\util\VulkanException.h" />
     <ClInclude Include="src\copium\mesh\VertexPassthrough.h" />
   </ItemGroup>

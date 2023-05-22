@@ -11,23 +11,23 @@ namespace Copium
 
   private:
     ECSManager* manager;
-    EntityID id;
+    EntityId id;
 
   public:
     Entity();
     Entity(ECSManager* manager);
-    Entity(ECSManager* manager, EntityID id);
+    Entity(ECSManager* manager, EntityId id);
 
-    operator EntityID() const;
-    void operator=(EntityID entityId);
+    operator EntityId() const;
+    void operator=(EntityId entityId);
     bool operator==(const Entity& entity);
     bool operator!=(const Entity& entity);
     operator bool() const;
 
     void Invalidate();
     void Destroy();
-    void SetID(EntityID aId);
-    EntityID GetID() const;
+    void SetId(EntityId entityId);
+    EntityId GetId() const;
     ECSManager* GetManager() const;
 
     static Entity Create(ECSManager* manager);

@@ -129,7 +129,7 @@
     <ClCompile Include="src\copium\pipeline\ShaderBinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\copium\util\UUID.cpp">
+    <ClCompile Include="src\copium\util\Uuid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\copium\asset\AssetManager.cpp">
@@ -329,7 +329,7 @@
     <ClInclude Include="src\copium\pipeline\ShaderBinding.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\copium\util\UUID.h">
+    <ClInclude Include="src\copium\util\Uuid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\asset\AssetMeta.h">

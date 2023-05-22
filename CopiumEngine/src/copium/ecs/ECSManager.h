@@ -17,7 +17,7 @@ namespace Copium
   class ECSManager final
   {
   private:
-    std::unordered_set<EntityID> entities;
+    std::unordered_set<EntityId> entities;
     std::map<std::type_index, ComponentPoolBase*> componentPool;
 
     std::unique_ptr<SystemPool> systemPool;
@@ -34,26 +34,26 @@ namespace Copium
 
     void UpdateSystems();
 
-    EntityID CreateEntity();
-    void DestroyEntity(EntityID entity);
+    EntityId CreateEntity();
+    void DestroyEntity(EntityId entity);
     size_t GetEntityCount() const;
-    bool ValidEntity(EntityID entity);
-    void Each(std::function<void(EntityID)> function);
+    bool ValidEntity(EntityId entity);
+    void Each(std::function<void(EntityId)> function);
 
     template <typename... Components>
-    std::tuple<Components&...> AddComponents(EntityID entity, Components&&... components)
+    std::tuple<Components&...> AddComponents(EntityId entity, Components&&... components)
     {
       return std::forward_as_tuple(AddComponent(entity, Components(components))...);
     }
 
     template <typename Component, typename... Args>
-    Component& AddComponent(EntityID entity, Args&&... args)
+    Component& AddComponent(EntityId entity, Args&&... args)
     {
       return AddComponent(entity, Component{args...});
     }
 
     template <typename Component>
-    Component& AddComponent(EntityID entity, const Component& component)
+    Component& AddComponent(EntityId entity, const Component& component)
     {
       auto pool = GetComponentPool<Component>();
 
@@ -71,20 +71,20 @@ namespace Copium
     }
 
     template <typename Component>
-    void RemoveComponent(EntityID entity)
+    void RemoveComponent(EntityId entity)
     {
       auto pool = GetComponentPoolAssure<Component>();
       CP_ASSERT(pool->Erase(entity), "Entity did not contain component (entity=%u, Component=%s)", entity, typeid(Component).name());
     }
 
     template <typename... Components>
-    void RemoveComponents(EntityID entity)
+    void RemoveComponents(EntityId entity)
     {
       (RemoveComponent<Components>(entity), ...);
     }
 
     template <typename Component>
-    Component& GetComponent(EntityID entity)
+    Component& GetComponent(EntityId entity)
     {
       auto pool = GetComponentPoolAssure<Component>();
       Component* component = pool->FindComponent(entity);
@@ -93,7 +93,7 @@ namespace Copium
     }
 
     template <typename Component>
-    bool HasComponent(EntityID entity)
+    bool HasComponent(EntityId entity)
     {
       auto pool = GetComponentPool<Component>();
       if (pool)
@@ -102,13 +102,13 @@ namespace Copium
     }
 
     template <typename... Components>
-    bool HasComponents(EntityID entity)
+    bool HasComponents(EntityId entity)
     {
       return (HasComponent<Components>(entity) && ...);
     }
 
     template <typename... Components>
-    bool HasAnyComponent(EntityID entity)
+    bool HasAnyComponent(EntityId entity)
     {
       return (HasComponent<Components>(entity) || ...);
     }
@@ -132,7 +132,7 @@ namespace Copium
     }
 
     template <typename Component>
-    void Each(std::function<void(EntityID, Component&)> function)
+    void Each(std::function<void(EntityId, Component&)> function)
     {
       auto pool = GetComponentPool<Component>();
       if (pool)
@@ -147,7 +147,7 @@ namespace Copium
     }
 
     template <typename Component, typename... Components, typename Func>
-    EntityID Find(Func function)
+    EntityId Find(Func function)
     {
       auto pool = GetComponentPool<Component>();
       if (pool)
@@ -167,7 +167,7 @@ namespace Copium
     }
 
     template <typename Component>
-    EntityID Find(std::function<bool(EntityID, Component&)> function)
+    EntityId Find(std::function<bool(EntityId, Component&)> function)
     {
       auto pool = GetComponentPool<Component>();
       if (pool)

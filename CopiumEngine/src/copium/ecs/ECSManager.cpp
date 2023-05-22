@@ -27,7 +27,7 @@ namespace Copium
     return entities.size();
   }
 
-  EntityID ECSManager::CreateEntity()
+  EntityId ECSManager::CreateEntity()
   {
     CP_ASSERT(currentEntityId != MAX_NUM_ENTITIES, "No more entities available");
     entities.emplace(currentEntityId);
@@ -35,7 +35,7 @@ namespace Copium
     return currentEntityId - 1;
   }
 
-  void ECSManager::DestroyEntity(EntityID entity)
+  void ECSManager::DestroyEntity(EntityId entity)
   {
     auto it = entities.find(entity);
     CP_ASSERT(it != entities.end(), "Entity does not exist in ECSManager (entity=%u)", entity);
@@ -46,12 +46,12 @@ namespace Copium
     }
   }
 
-  bool ECSManager::ValidEntity(EntityID entity)
+  bool ECSManager::ValidEntity(EntityId entity)
   {
     return entities.find(entity) != entities.end();
   }
 
-  void ECSManager::Each(std::function<void(EntityID)> function)
+  void ECSManager::Each(std::function<void(EntityId)> function)
   {
     for (auto e : entities)
       function(e);

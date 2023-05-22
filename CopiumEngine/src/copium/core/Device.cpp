@@ -77,7 +77,7 @@ namespace Copium
 
     std::sort(devicePriorities.begin(), devicePriorities.end(), [](const std::pair<VkPhysicalDevice, uint32_t>& lhs, const std::pair<VkPhysicalDevice, uint32_t>& rhs) { return lhs.second > rhs.second; });
     auto&& it = devicePriorities.begin();
-    CP_ASSERT(it->second != 0, "Failed to find suitable GPU");
+    CP_ASSERT(it->second != 0, "Failed to find suitable gpu");
 
     VkPhysicalDeviceProperties deviceProperties;
     vkGetPhysicalDeviceProperties(it->first, &deviceProperties);

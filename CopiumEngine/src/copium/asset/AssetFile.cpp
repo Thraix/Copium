@@ -36,7 +36,7 @@ namespace Copium
     return path;
   }
 
-  UUID AssetFile::GetUUID() const 
+  Uuid AssetFile::GetUuid() const
   {
     return uuid;
   }
@@ -44,7 +44,7 @@ namespace Copium
   void AssetFile::Load(const MetaFile& metaFile, const std::string& className)
   {
     const MetaFileClass& metaClass = metaFile.GetMetaClass(className);
-    uuid = UUID{metaClass.GetValue("uuid")};
+    uuid = Uuid{metaClass.GetValue("uuid")};
     dateModified = FileSystem::DateModified(path);
   }
 

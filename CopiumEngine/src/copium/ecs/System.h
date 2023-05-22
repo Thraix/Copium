@@ -12,7 +12,7 @@ namespace Copium
   public:
     void Run() override
     {
-      manager->Each<Components...>([&](EntityID entityId, Components&... components) { RunEntity(Entity{manager, entityId}, components...); });
+      manager->Each<Components...>([&](EntityId entityId, Components&... components) { RunEntity(Entity{manager, entityId}, components...); });
     }
 
     virtual void RunEntity(Entity entity, Components&... components) = 0;

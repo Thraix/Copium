@@ -18,7 +18,7 @@ namespace Copium
     VkRenderPass renderPass;
     if (metaFileClass.HasValue("framebuffer-uuid"))
     {
-      Framebuffer& fb = AssetManager::LoadAsset<Framebuffer>(UUID{metaFileClass.GetValue("framebuffer-uuid")});
+      Framebuffer& fb = AssetManager::LoadAsset<Framebuffer>(Uuid{metaFileClass.GetValue("framebuffer-uuid")});
       renderPass = fb.GetRenderPass();
       framebuffer = fb;
     }

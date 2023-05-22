@@ -10,7 +10,7 @@ namespace Copium
   Framebuffer::Framebuffer(const MetaFile& metaFile)
   {
     const MetaFileClass& metaClass = metaFile.GetMetaClass("Framebuffer");
-    ColorAttachment& attachment = AssetManager::LoadAsset<ColorAttachment>(UUID{metaClass.GetValue("rendertexture-uuid")});
+    ColorAttachment& attachment = AssetManager::LoadAsset<ColorAttachment>(Uuid{metaClass.GetValue("rendertexture-uuid")});
     colorAttachment = attachment;
     width = attachment.GetWidth();
     height = attachment.GetHeight();

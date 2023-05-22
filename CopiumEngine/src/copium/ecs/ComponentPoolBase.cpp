@@ -2,12 +2,12 @@
 
 namespace Copium
 {
-  std::vector<EntityID>& ComponentPoolBase::GetEntities()
+  std::vector<EntityId>& ComponentPoolBase::GetEntities()
   {
     return entities.GetList();
   }
 
-  const std::vector<EntityID>& ComponentPoolBase::GetEntities() const
+  const std::vector<EntityId>& ComponentPoolBase::GetEntities() const
   {
     return entities.GetList();
   }

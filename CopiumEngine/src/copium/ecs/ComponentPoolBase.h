@@ -16,8 +16,8 @@ namespace Copium
 
     virtual size_t Size() = 0;
     virtual void Pop() = 0;
-    virtual bool Erase(EntityID entity) = 0;
-    std::vector<EntityID>& GetEntities();
-    const std::vector<EntityID>& GetEntities() const;
+    virtual bool Erase(EntityId entity) = 0;
+    std::vector<EntityId>& GetEntities();
+    const std::vector<EntityId>& GetEntities() const;
   };
 }

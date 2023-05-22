@@ -1,6 +1,6 @@
 #pragma once
 
-#include "copium/util/UUID.h"
+#include "copium/util/Uuid.h"
 
 #include <stdint.h>
 #include <string>
@@ -14,7 +14,7 @@ namespace Copium
   {
     AssetHandle handle;
     std::string name;
-    UUID uuid;
+    Uuid uuid;
     bool isRuntime = false;
     int loadCount = 1;
   };

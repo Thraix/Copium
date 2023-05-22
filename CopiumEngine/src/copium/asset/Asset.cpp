@@ -15,7 +15,7 @@ namespace Copium
     return metaData.name;
   }
 
-  UUID Asset::GetUUID() const
+  Uuid Asset::GetUuid() const
   {
     return metaData.uuid;
   }

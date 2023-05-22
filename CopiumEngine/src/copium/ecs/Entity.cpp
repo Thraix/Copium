@@ -10,16 +10,16 @@ namespace Copium
     : manager{manager}, id{INVALID_ENTITY}
   {}
 
-  Entity::Entity(ECSManager* manager, EntityID id)
+  Entity::Entity(ECSManager* manager, EntityId id)
     : manager{manager}, id{id}
   {}
 
-  Entity::operator EntityID() const
+  Entity::operator EntityId() const
   {
     return id;
   }
 
-  void Entity::operator=(EntityID entityId)
+  void Entity::operator=(EntityId entityId)
   {
     id = entityId;
   }
@@ -54,12 +54,12 @@ namespace Copium
       manager->DestroyEntity(id);
   }
 
-  void Entity::SetID(EntityID aId)
+  void Entity::SetId(EntityId entityId)
   {
-    id = aId;
+    id = entityId;
   }
 
-  EntityID Entity::GetID() const
+  EntityId Entity::GetId() const
   {
     return id;
   }

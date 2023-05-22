@@ -16,12 +16,12 @@ namespace Copium
     std::vector<Component> components;
 
   public:
-    ComponentPool(EntityID entity, const Component& component)
+    ComponentPool(EntityId entity, const Component& component)
     {
       Emplace(entity, component);
     }
 
-    Component& Emplace(EntityID entity, const Component& component)
+    Component& Emplace(EntityId entity, const Component& component)
     {
       components.push_back(component);
       entities.Emplace(entity);
@@ -34,7 +34,7 @@ namespace Copium
       entities.Pop();
     }
 
-    bool Erase(EntityID entity)
+    bool Erase(EntityId entity)
     {
       size_t index = entities.Find(entity);
       if (!entities.Erase(entity))
@@ -48,12 +48,12 @@ namespace Copium
       return operator[](index);
     }
 
-    size_t Find(EntityID entity)
+    size_t Find(EntityId entity)
     {
       return entities.Find(entity);
     }
 
-    Component* FindComponent(EntityID entity)
+    Component* FindComponent(EntityId entity)
     {
       size_t index = Find(entity);
       if (index < Size())

@@ -30,7 +30,7 @@ namespace Copium
     static void UnregisterAssetDir(std::string assetDir);
     static Asset& GetAsset(AssetHandle handle);
     static Asset& LoadAsset(const std::string& assetPath);
-    static Asset& LoadAsset(const UUID& uuid);
+    static Asset& LoadAsset(const Uuid& uuid);
     static void UnloadAsset(AssetHandle handle);
     static Asset& RegisterRuntimeAsset(const std::string& name, std::unique_ptr<Asset>&& asset);
     static void Cleanup();
@@ -51,7 +51,7 @@ namespace Copium
     }
 
     template <typename AssetT>
-    static AssetT& LoadAsset(const UUID& uuid)
+    static AssetT& LoadAsset(const Uuid& uuid)
     {
       AssetT* asset = dynamic_cast<AssetT*>(&LoadAsset(uuid));
       CP_ASSERT(asset, "Invalid Asset cast");
@@ -86,7 +86,7 @@ namespace Copium
       Asset& asset = *assets.emplace(handle, std::make_unique<T>(metaFile)).first->second.get();
       asset.metaData.handle = handle;
       asset.metaData.name = metaFile.GetFilePath();
-      asset.metaData.uuid = UUID{metaFile.GetMetaClass(metaFileClass).GetValue("uuid")};
+      asset.metaData.uuid = Uuid{metaFile.GetMetaClass(metaFileClass).GetValue("uuid")};
       asset.metaData.isRuntime = false;
       return asset;
     }

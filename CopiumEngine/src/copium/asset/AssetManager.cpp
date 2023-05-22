@@ -83,7 +83,7 @@ namespace Copium
   }
 
 
-  Asset& AssetManager::LoadAsset(const UUID& uuid) 
+  Asset& AssetManager::LoadAsset(const Uuid& uuid) 
   {
     CP_DEBUG("Loading uuid Asset: %s", uuid.ToString().c_str());
     for (auto&& assetFile : cachedAssetFiles)
@@ -91,7 +91,7 @@ namespace Copium
       if (assetFile.NeedReload())
         assetFile.Load();
 
-      if (assetFile.GetUUID() != uuid)
+      if (assetFile.GetUuid() != uuid)
         continue;
 
       return LoadAssetFromPath(assetFile.GetPath());
@@ -145,7 +145,7 @@ namespace Copium
     Asset* asset2 = assets.emplace(handle, std::move(asset)).first->second.get();
     asset2->metaData.handle = handle;
     asset2->metaData.name = name;
-    asset2->metaData.uuid = UUID();
+    asset2->metaData.uuid = Uuid();
     asset2->metaData.isRuntime = true;
     nameToAssetCache.emplace(name, handle);
     return *asset2;

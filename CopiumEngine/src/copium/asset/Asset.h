@@ -2,7 +2,7 @@
 
 #include "copium/asset/AssetMeta.h"
 #include "copium/util/MetaFile.h"
-#include "copium/util/UUID.h"
+#include "copium/util/Uuid.h"
 
 #include <stdint.h>
 
@@ -18,7 +18,7 @@ namespace Copium
 
     AssetHandle GetHandle() const;
     const std::string& GetName() const;
-    UUID GetUUID() const;
+    Uuid GetUuid() const;
     bool isRuntime() const;
 
     operator AssetHandle() const;

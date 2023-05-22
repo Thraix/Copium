@@ -6,7 +6,7 @@
 
 namespace Copium
 {
-  class UUID
+  class Uuid
   {
   private:
     uint64_t msb;
@@ -15,18 +15,18 @@ namespace Copium
     static std::mt19937 randomGenerator;
     static std::uniform_int_distribution<uint64_t> randomDistribution;
   public:
-    UUID();
-    UUID(uint64_t msb, uint64_t lsb);
+    Uuid();
+    Uuid(uint64_t msb, uint64_t lsb);
     // Format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-    UUID(const std::string& uuidString);
+    Uuid(const std::string& uuidString);
 
     std::string ToString() const;
 
-    bool operator==(const UUID& rhs);
-    bool operator!=(const UUID& rhs);
-    bool operator<(const UUID& rhs);
+    bool operator==(const Uuid& rhs);
+    bool operator!=(const Uuid& rhs);
+    bool operator<(const Uuid& rhs);
 
-    friend std::ostream& operator<<(std::ostream& os, const UUID& uuid);
+    friend std::ostream& operator<<(std::ostream& os, const Uuid& uuid);
 
   private:
     uint8_t HexToDec(char c) const;
