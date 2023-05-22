@@ -22,6 +22,13 @@ namespace Copium
     systemPool->Update();
   }
 
+  void ECSManager::UpdateSystems(const Signal& signal)
+  {
+    // TODO: Maybe we want a different pool for Signal based Systems for performance reasons?
+    // Maybe even a pool for each type of Signal?
+    systemPool->Update(signal);
+  }
+
   size_t ECSManager::GetEntityCount() const
   {
     return entities.size();

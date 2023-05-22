@@ -15,6 +15,12 @@ namespace Copium
       manager->Each<Components...>([&](EntityId entityId, Components&... components) { RunEntity(Entity{manager, entityId}, components...); });
     }
 
-    virtual void RunEntity(Entity entity, Components&... components) = 0;
+    void Run(const Signal& signal) override
+    {
+      manager->Each<Components...>([&](EntityId entityId, Components&... components) { RunEntity(signal, Entity{manager, entityId}, components...); });
+    }
+
+    virtual void RunEntity(Entity entity, Components&... components) {};
+    virtual void RunEntity(const Signal& signal, Entity entity, Components&... components) {};
   };
 }

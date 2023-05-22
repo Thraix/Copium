@@ -3,6 +3,7 @@
 
 #include "copium/ecs/ComponentPool.h"
 #include "copium/ecs/Config.h"
+#include "copium/ecs/Signal.h"
 #include "copium/ecs/SystemPool.h"
 #include "copium/util/Common.h"
 
@@ -33,6 +34,7 @@ namespace Copium
     }
 
     void UpdateSystems();
+    void UpdateSystems(const Signal& signal);
 
     EntityId CreateEntity();
     void DestroyEntity(EntityId entity);

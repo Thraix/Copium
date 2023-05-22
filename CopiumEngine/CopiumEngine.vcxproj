@@ -184,10 +184,12 @@
     <ClCompile Include="src\copium\ecs\ECSManager.cpp" />
     <ClCompile Include="src\copium\ecs\Entity.cpp" />
     <ClCompile Include="src\copium\ecs\EntitySet.cpp" />
+    <ClCompile Include="src\copium\ecs\Signal.cpp" />
     <ClCompile Include="src\copium\ecs\SystemOrderer.cpp" />
     <ClCompile Include="src\copium\ecs\SystemPool.cpp" />
     <ClCompile Include="src\copium\event\Event.cpp" />
     <ClCompile Include="src\copium\event\EventDispatcher.cpp" />
+    <ClCompile Include="src\copium\event\EventSignal.cpp" />
     <ClCompile Include="src\copium\event\KeyPressEvent.cpp" />
     <ClCompile Include="src\copium\event\KeyReleaseEvent.cpp" />
     <ClCompile Include="src\copium\event\MouseMoveEvent.cpp" />
@@ -252,6 +254,7 @@
     <ClInclude Include="src\copium\ecs\ECSManager.h" />
     <ClInclude Include="src\copium\ecs\Entity.h" />
     <ClInclude Include="src\copium\ecs\EntitySet.h" />
+    <ClInclude Include="src\copium\ecs\Signal.h" />
     <ClInclude Include="src\copium\ecs\System.h" />
     <ClInclude Include="src\copium\ecs\SystemBase.h" />
     <ClInclude Include="src\copium\ecs\SystemOrderer.h" />
@@ -260,6 +263,7 @@
     <ClInclude Include="src\copium\event\EventDispatcher.h" />
     <ClInclude Include="src\copium\event\EventHandler.h" />
     <ClInclude Include="src\copium\event\EventResult.h" />
+    <ClInclude Include="src\copium\event\EventSignal.h" />
     <ClInclude Include="src\copium\event\EventType.h" />
     <ClInclude Include="src\copium\event\KeyPressEvent.h" />
     <ClInclude Include="src\copium\event\KeyReleaseEvent.h" />

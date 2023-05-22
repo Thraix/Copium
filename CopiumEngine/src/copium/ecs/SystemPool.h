@@ -2,6 +2,7 @@
 
 #include "copium/ecs/SystemBase.h"
 #include "copium/ecs/SystemOrderer.h"
+#include "copium/ecs/Signal.h"
 #include "copium/util/Common.h"
 
 #include <vector>
@@ -25,6 +26,7 @@ namespace Copium
     ~SystemPool();
     SystemOrderer AddSystem(const std::type_index& systemId, SystemBase* system);
     void Update();
+    void Update(const Signal& signal);
 
     void MoveSystemAfter(const std::type_index& systemId, const std::type_index& afterSystemId);
     void MoveSystemBefore(const std::type_index& systemId, const std::type_index& beforeSystemId);

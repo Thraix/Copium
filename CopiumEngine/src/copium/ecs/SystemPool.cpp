@@ -32,6 +32,14 @@ namespace Copium
     }
   }
 
+  void SystemPool::Update(const Signal& signal)
+  {
+    for (auto& system : systemOrder)
+    {
+      system->Run(signal);
+    }
+  }
+
   void SystemPool::MoveSystemAfter(const std::type_index& systemId, const std::type_index& afterSystemId)
   {
     auto it1 = systems.find(systemId);

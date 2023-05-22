@@ -13,6 +13,7 @@ namespace Copium
   class RenderSystem : public System<TransformC>
   {
   private:
+    // Find better way to store these?
     Renderer* renderer;
     DescriptorSet* descriptorSet;
     CommandBuffer* commandBuffer;
@@ -51,10 +52,6 @@ namespace Copium
       uniformBuffer.Set("view", glm::mat4(1));
       uniformBuffer.Update();
 
-      // Not sure how to put this in the ECSManager system handler
-      // Potentially have the system take in the descriptorSetRenderer as constructor parameter
-      // But not sure how commandBuffer can be added, since it can change each frame
-      // Maybe introducing Resource concept to ECSManager?
       renderer->SetDescriptorSet(*descriptorSet);
       renderer->Begin(*commandBuffer);
       System::Run();

@@ -23,8 +23,9 @@ namespace Copium
     renderer = std::make_unique<Renderer>();
     descriptorSetRenderer = renderer->GetGraphicsPipeline().CreateDescriptorSet(descriptorPool, 1);
     ecs = std::make_unique<ECSManager>();
-    ecs->AddSystem<FrameCountSystem>();
     ecs->AddSystem<RenderSystem>(renderer.get(), descriptorSetRenderer.get(), &commandBuffer); // better way to store the RenderSystem data?
+    ecs->AddSystem<FrameCountSystem>().Before<FrameCountSystem>();
+    ecs->AddSystem<MouseFollowSystem>();
 
     // TODO: Load from scene file
     for (int y = 0; y < 10; y++)
@@ -66,8 +67,7 @@ namespace Copium
 
   EventResult Scene::OnEvent(const Event& event)
   {
-    // ecs->UpdateEventSystems(event);
-    MouseFollowSystem{ecs.get(), event}.Run(); // TODO: Remove when I figure out how to handle events in systems
+    ecs->UpdateSystems(EventSignal{event});
     return EventResult::Continue;
   }
 }

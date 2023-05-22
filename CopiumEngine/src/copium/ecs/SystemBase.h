@@ -1,5 +1,7 @@
 #pragma once
 
+#include "copium/ecs/Signal.h"
+
 namespace Copium
 {
   class ECSManager;
@@ -12,5 +14,6 @@ namespace Copium
 
   public:
     virtual void Run() = 0;
+    virtual void Run(const Signal& signal) = 0;
   };
 }
