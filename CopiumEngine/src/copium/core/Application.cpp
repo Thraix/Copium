@@ -19,13 +19,13 @@ namespace Copium
 {
   const std::vector<Vertex> vertices = {
     Vertex{{-0.5f, 0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-    Vertex{{ 0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-    Vertex{{ 0.5f, 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
     Vertex{{-0.5f, 0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+    Vertex{{ 0.5f, 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+    Vertex{{ 0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
     Vertex{{-0.5f, 0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-    Vertex{{ 0.5f, 0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-    Vertex{{ 0.5f, 0.0f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
     Vertex{{-0.5f, 0.0f,  0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+    Vertex{{ 0.5f, 0.0f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+    Vertex{{ 0.5f, 0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
   };
 
   const std::vector<uint16_t> indices = {
@@ -77,14 +77,6 @@ namespace Copium
     Vulkan::GetSwapChain().SubmitToGraphicsQueue(*commandBuffer);
 
     Vulkan::GetSwapChain().EndPresent();
-    if (timer.Elapsed() >= 1.0)
-    {
-      fps = frameCounter;
-      frameCounter = 0;
-      timer.Start(); // Not quite accurate since the elapsed time might me 1.1, then we lose 0.1 precision
-    }
-    frameCounter++;
-
     return !glfwWindowShouldClose(Vulkan::GetWindow().GetWindow());
   }
 
@@ -98,16 +90,6 @@ namespace Copium
       const WindowResizeEvent& windowResizeEvent = static_cast<const WindowResizeEvent&>(event);
       AssetManager::GetAsset<Framebuffer>(framebuffer).Resize(windowResizeEvent.GetWidth(), windowResizeEvent.GetHeight());
       descriptorSetPassthrough->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
-
-      return EventResult::Continue;
-    }
-    case EventType::MouseMove:
-    {
-      const MouseMoveEvent& mouseMoveEvent = static_cast<const MouseMoveEvent&>(event);
-
-      float aspect = Vulkan::GetSwapChain().GetExtent().width / (float)Vulkan::GetSwapChain().GetExtent().height;
-      mousePos = {(mouseMoveEvent.GetPos().x / Vulkan::GetSwapChain().GetExtent().width - 0.5) * 2.0 * aspect,
-                  -(mouseMoveEvent.GetPos().y / Vulkan::GetSwapChain().GetExtent().height - 0.5) * 2.0};
 
       return EventResult::Continue;
     }
@@ -231,11 +213,8 @@ namespace Copium
     float aspect = fb.GetWidth() / (float)fb.GetHeight();
 
     {
-      glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f);
-      projection[1][1] *= -1;
-
       UniformBuffer& uniformBuffer = descriptorSet->GetUniformBuffer("ubo");
-      uniformBuffer.Set("projection", projection);
+      uniformBuffer.Set("projection", glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f));
       uniformBuffer.Set("view", glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
       uniformBuffer.Set("model", glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
       uniformBuffer.Set("lightPos", (glm::vec3)(glm::rotate(glm::mat4{1.0f}, time * glm::radians(45.0f), glm::vec3(0, 1, 0)) * glm::vec4{0.3, 0.1, 0, 1}));

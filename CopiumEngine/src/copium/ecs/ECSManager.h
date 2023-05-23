@@ -33,6 +33,12 @@ namespace Copium
       return systemPool->AddSystem(typeid(SystemClass), new SystemClass{args...});
     }
 
+    template <typename SystemClass>
+    void RemoveSystem()
+    {
+      systemPool->MoveSystemBefore(typeid(SystemClass));
+    }
+
     void UpdateSystems();
     void UpdateSystems(const Signal& signal);
 

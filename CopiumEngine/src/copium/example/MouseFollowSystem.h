@@ -7,6 +7,8 @@
 #include "copium/event/MouseMoveEvent.h"
 #include "copium/example/Components.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Copium
 {
   class MouseFollowSystem : public System<MouseFollowC, TransformC>
@@ -21,8 +23,8 @@ namespace Copium
         {
           const MouseMoveEvent& mouseMoveEvent = static_cast<const MouseMoveEvent&>(eventSignal.GetEvent());
           float aspect = Vulkan::GetSwapChain().GetExtent().width / (float)Vulkan::GetSwapChain().GetExtent().height;
-          transform.position = {(mouseMoveEvent.GetPos().x / Vulkan::GetSwapChain().GetExtent().width - 0.5) * 2.0 * aspect,
-                                -(mouseMoveEvent.GetPos().y / Vulkan::GetSwapChain().GetExtent().height - 0.5) * 2.0};
+          // TODO: Get projectionViewMatrix from camera
+          transform.position = glm::inverse(glm::ortho(-aspect, aspect, -1.0f, 1.0f)) * glm::vec4{mouseMoveEvent.GetPos().x, mouseMoveEvent.GetPos().y, 0.0f, 0.0f};
           transform.position -= transform.size * glm::vec2{0.5f};
         }
       }

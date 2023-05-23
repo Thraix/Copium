@@ -47,8 +47,7 @@ namespace Copium
     {
       float aspect = Vulkan::GetSwapChain().GetExtent().width / (float)Vulkan::GetSwapChain().GetExtent().height;
       UniformBuffer& uniformBuffer = descriptorSet->GetUniformBuffer("ubo");
-      uniformBuffer.Set("projection", glm::ortho(-aspect, aspect, 1.0f, -1.0f));
-      // uniformBuffer.Set("view", glm::translate(glm::mat4(1), glm::vec3(0.1 * glm::sin(4 * time), 0.1 * glm::cos(4 * time), 0.0)));
+      uniformBuffer.Set("projection", glm::ortho(-aspect, aspect, -1.0f, 1.0f));
       uniformBuffer.Set("view", glm::mat4(1));
       uniformBuffer.Update();
 

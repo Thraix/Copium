@@ -30,10 +30,6 @@ namespace Copium
     std::unique_ptr<Mesh> meshPassthrough;
     std::unique_ptr<CommandBuffer> commandBuffer;
 
-    glm::vec2 mousePos;
-    int fps;
-    int frameCounter;
-
   public:
     Application();
     ~Application();

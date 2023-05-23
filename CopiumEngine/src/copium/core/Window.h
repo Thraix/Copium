@@ -17,6 +17,9 @@ namespace Copium
     GLFWwindow* window;
     VkSurfaceKHR surface;
 
+    int width;
+    int height;
+
   public:
     Window(const std::string& windowName, int width, int height, WindowMode mode);
     ~Window();

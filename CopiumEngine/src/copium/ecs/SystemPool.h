@@ -24,7 +24,9 @@ namespace Copium
   public:
     SystemPool(ECSManager* manager);
     ~SystemPool();
+
     SystemOrderer AddSystem(const std::type_index& systemId, SystemBase* system);
+    void RemoveSystem(const std::type_index& systemId);
     void Update();
     void Update(const Signal& signal);
 

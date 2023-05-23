@@ -8,4 +8,5 @@ void main()
 {
   gl_Position = vec4(inPosition, 0.0, 1.0);
   outTexCoord = inPosition * 0.5 + 0.5;
+  outTexCoord.y = 1.0 - outTexCoord.y;
 }

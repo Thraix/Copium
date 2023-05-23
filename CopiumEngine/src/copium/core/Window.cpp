@@ -14,6 +14,7 @@
 namespace Copium
 {
   Window::Window(const std::string& windowName, int width, int height, WindowMode mode)
+    : width{width}, height{height}
   {
     InitializeWindow(windowName, width, height, mode);
     InitializeSurface();
@@ -46,6 +47,8 @@ namespace Copium
       GLFWmonitor* monitor = glfwGetPrimaryMonitor();
       const GLFWvidmode* mode = glfwGetVideoMode(monitor);
       window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), monitor, nullptr);
+      width = mode->width;
+      height = mode->height;
       break;
     }
     case WindowMode::BorderlessWindowed:
@@ -54,6 +57,8 @@ namespace Copium
 
       glfwWindowHint(GLFW_DECORATED, false);
       window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), nullptr, nullptr);
+      width = mode->width;
+      height = mode->height;
       break;
     }
     case WindowMode::Windowed:
@@ -85,11 +90,14 @@ namespace Copium
   {
     if (width == 0 || height == 0)
       return;
+    Window* window = (Window*)glfwGetWindowUserPointer(glfwWindow);
+    window->width = width;
+    window->height = height;
     Vulkan::GetSwapChain().ResizeFramebuffer();
     EventDispatcher::QueueEvent(WindowResizeEvent{width, height});
   }
 
-  void Window::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+  void Window::KeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods)
   {
     if (action == GLFW_PRESS)
       EventDispatcher::QueueEvent(KeyPressEvent(key));
@@ -97,7 +105,7 @@ namespace Copium
       EventDispatcher::QueueEvent(KeyReleaseEvent(key));
   }
 
-  void Window::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+  void Window::MouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods)
   {
     if (action == GLFW_PRESS)
       EventDispatcher::QueueEvent(MousePressEvent{button});
@@ -105,17 +113,18 @@ namespace Copium
       EventDispatcher::QueueEvent(MouseReleaseEvent{button});
   }
 
-  void Window::MouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
+  void Window::MouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos)
   {
-    EventDispatcher::QueueEvent(MouseMoveEvent{glm::vec2{xpos, ypos}}); // TODO: Convert to Vulkan coordinates
+    Window* window = (Window*)glfwGetWindowUserPointer(glfwWindow);
+    EventDispatcher::QueueEvent(MouseMoveEvent{glm::vec2{xpos / window->width * 2.0 - 1.0, -(ypos / window->height * 2.0 - 1.0)}});
   }
 
-  void Window::WindowFocusCallback(GLFWwindow* window, int focused)
+  void Window::WindowFocusCallback(GLFWwindow* glfwWindow, int focused)
   {
     EventDispatcher::QueueEvent(WindowFocusEvent{focused == GLFW_TRUE});
   }
 
-  void Window::MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+  void Window::MouseScrollCallback(GLFWwindow* glfwWindow, double xoffset, double yoffset)
   {
     EventDispatcher::QueueEvent(MouseScrollEvent{(int)xoffset, (int)yoffset});
   }

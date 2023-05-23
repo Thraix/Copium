@@ -52,8 +52,6 @@ namespace Copium
     entityMouse.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox2.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
     entityMouse.AddComponent<MouseFollowC>();
 
-    glm::vec2 pos = glm::vec2{-aspect + 0.01, 0.94};
-
     Entity entityText = Entity::Create(ecs.get());
     entityText.AddComponent<TransformC>(glm::vec2{-aspect + 0.01, 0.94}, glm::vec2{1.0});
     entityText.AddComponent<TextC>(AssetRef{AssetManager::LoadAsset("font.meta")}, std::to_string(0) + " fps", 0.06f);

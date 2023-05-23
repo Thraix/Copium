@@ -19,9 +19,25 @@ namespace Copium
   SystemOrderer SystemPool::AddSystem(const std::type_index& systemId, SystemBase* system)
   {
     system->manager = manager;
+    CP_ASSERT(systems.find(systemId) == systems.end(), "System already exist in Ecs");
     systems.emplace(systemId, system);
     systemOrder.emplace_back(system);
     return SystemOrderer{systemId, this};
+  }
+
+  void SystemPool::RemoveSystem(const std::type_index& systemId)
+  {
+    auto it = systems.find(systemId);
+    if (it == systems.end())
+    {
+      CP_WARN("System does not exist in Ecs");
+      return;
+    }
+
+    auto itOrder = std::find(systemOrder.begin(), systemOrder.end(), it->second);
+    delete it->second;
+    systems.erase(it);
+    systemOrder.erase(itOrder);
   }
 
   void SystemPool::Update()
