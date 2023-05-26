@@ -17,11 +17,15 @@ namespace Copium
     Renderer* renderer;
     DescriptorSet* descriptorSet;
     CommandBuffer* commandBuffer;
+    glm::mat4* viewMatrix;
+    glm::mat4* projectionMatrix;
   public:
-    RenderSystem(Renderer* renderer, DescriptorSet* descriptorSet, CommandBuffer* commandBuffer)
+    RenderSystem(Renderer* renderer, DescriptorSet* descriptorSet, CommandBuffer* commandBuffer, glm::mat4* viewMatrix, glm::mat4* projectionMatrix)
       : renderer{renderer},
         descriptorSet{descriptorSet},
-        commandBuffer{commandBuffer}
+        commandBuffer{commandBuffer},
+        viewMatrix{viewMatrix},
+        projectionMatrix{projectionMatrix}
     {}
 
     void RunEntity(Entity entity, TransformC& transform)
@@ -47,8 +51,8 @@ namespace Copium
     {
       float aspect = Vulkan::GetSwapChain().GetExtent().width / (float)Vulkan::GetSwapChain().GetExtent().height;
       UniformBuffer& uniformBuffer = descriptorSet->GetUniformBuffer("ubo");
-      uniformBuffer.Set("projection", glm::ortho(-aspect, aspect, -1.0f, 1.0f));
-      uniformBuffer.Set("view", glm::mat4(1));
+      uniformBuffer.Set("projection", *projectionMatrix);
+      uniformBuffer.Set("view", *viewMatrix);
       uniformBuffer.Update();
 
       renderer->SetDescriptorSet(*descriptorSet);

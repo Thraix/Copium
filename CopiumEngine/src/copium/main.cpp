@@ -1,6 +1,7 @@
 #include "copium/core/Application.h"
 #include "copium/core/Vulkan.h"
 #include "copium/event/EventDispatcher.h"
+#include "copium/event/Input.h"
 #include "copium/util/Common.h"
 #include "copium/util/Timer.h"
 
@@ -16,7 +17,9 @@ int main(int argc, char** argv)
     while (application.Update())
     {
       glfwPollEvents();
+
       Copium::EventDispatcher::Dispatch();
+      Copium::Input::Update();
     }
   }
   Copium::Vulkan::Destroy();

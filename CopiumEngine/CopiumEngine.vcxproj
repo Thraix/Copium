@@ -190,6 +190,7 @@
     <ClCompile Include="src\copium\event\Event.cpp" />
     <ClCompile Include="src\copium\event\EventDispatcher.cpp" />
     <ClCompile Include="src\copium\event\EventSignal.cpp" />
+    <ClCompile Include="src\copium\event\Input.cpp" />
     <ClCompile Include="src\copium\event\KeyPressEvent.cpp" />
     <ClCompile Include="src\copium\event\KeyReleaseEvent.cpp" />
     <ClCompile Include="src\copium\event\MouseMoveEvent.cpp" />
@@ -265,6 +266,8 @@
     <ClInclude Include="src\copium\event\EventResult.h" />
     <ClInclude Include="src\copium\event\EventSignal.h" />
     <ClInclude Include="src\copium\event\EventType.h" />
+    <ClInclude Include="src\copium\event\Input.h" />
+    <ClInclude Include="src\copium\event\InputCode.h" />
     <ClInclude Include="src\copium\event\KeyPressEvent.h" />
     <ClInclude Include="src\copium\event\KeyReleaseEvent.h" />
     <ClInclude Include="src\copium\event\MouseMoveEvent.h" />
@@ -273,8 +276,12 @@
     <ClInclude Include="src\copium\event\MouseScrollEvent.h" />
     <ClInclude Include="src\copium\event\WindowFocusEvent.h" />
     <ClInclude Include="src\copium\event\WindowResizeEvent.h" />
+    <ClInclude Include="src\copium\example\CameraFollowPlayerSystem.h" />
+    <ClInclude Include="src\copium\example\CameraUpdateSystem.h" />
     <ClInclude Include="src\copium\example\Components.h" />
     <ClInclude Include="src\copium\example\FrameCountSystem.h" />
+    <ClInclude Include="src\copium\example\PhysicsSystem.h" />
+    <ClInclude Include="src\copium\example\PlayerControllerSystem.h" />
     <ClInclude Include="src\copium\example\RenderSystem.h" />
     <ClInclude Include="src\copium\example\MouseFollowSystem.h" />
     <ClInclude Include="src\copium\mesh\Mesh.h" />

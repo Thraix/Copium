@@ -2,6 +2,7 @@
 
 #include "copium/core/Vulkan.h"
 #include "copium/event/EventDispatcher.h"
+#include "copium/event/Input.h"
 #include "copium/event/KeyPressEvent.h"
 #include "copium/event/KeyReleaseEvent.h"
 #include "copium/event/MouseMoveEvent.h"
@@ -99,24 +100,48 @@ namespace Copium
 
   void Window::KeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods)
   {
-    if (action == GLFW_PRESS)
-      EventDispatcher::QueueEvent(KeyPressEvent(key));
-    else if (action == GLFW_RELEASE)
-      EventDispatcher::QueueEvent(KeyReleaseEvent(key));
+    try
+    {
+      if (action == GLFW_PRESS)
+      {
+        Input::OnKey(key, true);
+        EventDispatcher::QueueEvent(KeyPressEvent(key));
+      }
+      else if (action == GLFW_RELEASE)
+      {
+        Input::OnKey(key, false);
+        EventDispatcher::QueueEvent(KeyReleaseEvent(key));
+      }
+    }
+    catch (RuntimeException& exception)
+    {}
   }
 
   void Window::MouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods)
   {
-    if (action == GLFW_PRESS)
-      EventDispatcher::QueueEvent(MousePressEvent{button});
-    else if (action == GLFW_RELEASE)
-      EventDispatcher::QueueEvent(MouseReleaseEvent{button});
+    try
+    {
+      if (action == GLFW_PRESS)
+      {
+        Input::OnMouse(button, true);
+        EventDispatcher::QueueEvent(MousePressEvent{button});
+      }
+      else if (action == GLFW_RELEASE)
+      {
+        Input::OnMouse(button, false);
+        EventDispatcher::QueueEvent(MouseReleaseEvent{button});
+      }
+    }
+    catch (RuntimeException& exception)
+    {}
   }
 
   void Window::MouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos)
   {
     Window* window = (Window*)glfwGetWindowUserPointer(glfwWindow);
-    EventDispatcher::QueueEvent(MouseMoveEvent{glm::vec2{xpos / window->width * 2.0 - 1.0, -(ypos / window->height * 2.0 - 1.0)}});
+    glm::vec2 pos{xpos / window->width * 2.0 - 1.0, -(ypos / window->height * 2.0 - 1.0)};
+    Input::OnMouseMove(pos);
+    EventDispatcher::QueueEvent(MouseMoveEvent{pos});
   }
 
   void Window::WindowFocusCallback(GLFWwindow* glfwWindow, int focused)

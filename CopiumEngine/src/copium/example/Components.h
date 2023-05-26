@@ -1,6 +1,7 @@
 #pragma once
 
 #include "copium/asset/AssetRef.h"
+#include "copium/ecs/Entity.h"
 
 #include <string>
 
@@ -38,4 +39,22 @@ namespace Copium
 
   struct FrameCountC
   {};
+
+  struct CameraC
+  {
+    BoundingBox projection;
+    bool staticBoundingBox;
+  };
+
+  struct PhysicsC
+  {
+    float mass;
+    glm::vec2 force;
+    glm::vec2 velocity;
+  };
+
+  struct PlayerC
+  {
+    Entity camera;
+  };
 }

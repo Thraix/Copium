@@ -15,8 +15,9 @@ namespace Copium
     std::unique_ptr<Renderer> renderer;
     std::unique_ptr<ECSManager> ecs;
     std::unique_ptr<DescriptorSet> descriptorSetRenderer;
-    int frameCounter = 0;
-    int fps = 0;
+    glm::mat4 projectionMatrix;
+    glm::mat4 viewMatrix;
+    glm::mat4 invPvMatrix;
   public:
     Scene(CommandBuffer& commandBuffer, DescriptorPool& descriptorPool);
     void Update();

@@ -7,10 +7,14 @@
 #include "copium/ecs/Entity.h"
 #include "copium/ecs/System.h"
 #include "copium/event/MouseMoveEvent.h"
+#include "copium/example/CameraUpdateSystem.h"
+#include "copium/example/Components.h"
 #include "copium/example/FrameCountSystem.h"
 #include "copium/example/MouseFollowSystem.h"
 #include "copium/example/RenderSystem.h"
-#include "copium/example/Components.h"
+#include "copium/example/PhysicsSystem.h"
+#include "copium/example/PlayerControllerSystem.h"
+#include "copium/example/CameraFollowPlayerSystem.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -23,9 +27,14 @@ namespace Copium
     renderer = std::make_unique<Renderer>();
     descriptorSetRenderer = renderer->GetGraphicsPipeline().CreateDescriptorSet(descriptorPool, 1);
     ecs = std::make_unique<ECSManager>();
-    ecs->AddSystem<RenderSystem>(renderer.get(), descriptorSetRenderer.get(), &commandBuffer); // better way to store the RenderSystem data?
-    ecs->AddSystem<FrameCountSystem>().Before<FrameCountSystem>();
-    ecs->AddSystem<MouseFollowSystem>();
+
+    ecs->AddSystem<PlayerControllerSystem>();
+    ecs->AddSystem<PhysicsSystem>();
+    ecs->AddSystem<CameraFollowPlayerSystem>();
+    ecs->AddSystem<CameraUpdateSystem>(&viewMatrix, &projectionMatrix, &invPvMatrix);
+    ecs->AddSystem<MouseFollowSystem>(&invPvMatrix);
+    ecs->AddSystem<FrameCountSystem>();
+    ecs->AddSystem<RenderSystem>(renderer.get(), descriptorSetRenderer.get(), &commandBuffer, &viewMatrix, &projectionMatrix); // better way to store the RenderSystem data?
 
     // TODO: Load from scene file
     for (int y = 0; y < 10; y++)
@@ -33,7 +42,7 @@ namespace Copium
       for (int x = 0; x < 10; x++)
       {
         Entity entity = Entity::Create(ecs.get());
-        entity.AddComponent<TransformC>(glm::vec2{-1 + x * 0.2 + 0.05, -1 + y * 0.2 + 0.05}, glm::vec2{0.1, 0.1});
+        entity.AddComponent<TransformC>(glm::vec2{-10.0f + x * 1.6f + 0.4f, -10.0f + y * 1.6 + 0.4f}, glm::vec2{0.8f, 0.8f});
         entity.AddComponent<ColorC>(glm::vec3{x * 0.1f, y * 0.1f, 1.0f});
       }
     }
@@ -53,9 +62,19 @@ namespace Copium
     entityMouse.AddComponent<MouseFollowC>();
 
     Entity entityText = Entity::Create(ecs.get());
-    entityText.AddComponent<TransformC>(glm::vec2{-aspect + 0.01, 0.94}, glm::vec2{1.0});
-    entityText.AddComponent<TextC>(AssetRef{AssetManager::LoadAsset("font.meta")}, std::to_string(0) + " fps", 0.06f);
+    entityText.AddComponent<TransformC>(glm::vec2{-aspect * 10.0f + 0.1f, 9.4f}, glm::vec2{1.0});
+    entityText.AddComponent<TextC>(AssetRef{AssetManager::LoadAsset("font.meta")}, std::to_string(0) + " fps", 0.6f);
     entityText.AddComponent<FrameCountC>();
+
+    Entity entityCamera = Entity::Create(ecs.get());
+    entityCamera.AddComponent<CameraC>(BoundingBox(-aspect, -1.0f, aspect, 1.0f), false);
+    entityCamera.AddComponent<TransformC>(glm::vec2{0.0f}, glm::vec2{4.0f});
+
+    Entity entityPlayer = Entity::Create(ecs.get());
+    entityPlayer.AddComponent<PlayerC>(entityCamera);
+    entityPlayer.AddComponent<PhysicsC>(0.1f, glm::vec2{0.0f, 0.0f}, glm::vec2{0.0f, 0.0f});
+    entityPlayer.AddComponent<TransformC>(glm::vec2{0.0f}, glm::vec2{1.0f});
+    entityPlayer.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox2.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
   }
 
   void Scene::Update()
