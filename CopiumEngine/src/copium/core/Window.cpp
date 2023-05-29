@@ -12,6 +12,8 @@
 #include "copium/event/WindowResizeEvent.h"
 #include "copium/event/WindowFocusEvent.h"
 
+#include <GLFW/glfw3.h>
+
 namespace Copium
 {
   Window::Window(const std::string& windowName, int width, int height, WindowMode mode)
@@ -25,6 +27,22 @@ namespace Copium
   {
     vkDestroySurfaceKHR(Vulkan::GetInstance(), surface, nullptr);
     glfwDestroyWindow(window);
+  }
+
+  bool Window::ShouldClose() const
+  {
+    return glfwWindowShouldClose(window);
+
+  }
+
+  int Window::GetWidth() const
+  {
+    return width;
+  }
+
+  int Window::GetHeight() const
+  {
+    return height;
   }
 
   VkSurfaceKHR Window::GetSurface() const

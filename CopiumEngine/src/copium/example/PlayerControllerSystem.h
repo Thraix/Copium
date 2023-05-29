@@ -18,8 +18,19 @@ namespace Copium
       if (Input::IsKeyDown(CP_KEY_A)) force.x -= 1.0f;
       if (Input::IsKeyDown(CP_KEY_D)) force.x += 1.0f;
 
-      glm::normalize(force);
-      physics.force += force * magnitude;
+      if (force.x != 0 || force.y != 0)
+      {
+        force = glm::normalize(force);
+        physics.force += force * magnitude;
+      }
+
+      if (Input::IsKeyPressed(CP_KEY_H))
+      {
+        if (entity.HasComponent<HealthC>())
+          entity.RemoveComponent<HealthC>();
+        else
+          entity.AddComponent<HealthC>(8, 10);
+      }
     }
   };
 }

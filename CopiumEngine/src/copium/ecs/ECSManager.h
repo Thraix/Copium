@@ -48,6 +48,25 @@ namespace Copium
     bool ValidEntity(EntityId entity);
     void Each(std::function<void(EntityId)> function);
 
+    template <typename Listener, typename... Args>
+    void SetComponentListener(const Args&... args)
+    {
+      using Component = typename Listener::component_type;
+      auto pool = GetComponentPool<Component>();
+      Listener* listener = new Listener{args...};
+      listener->manager = this;
+      if (pool)
+      {
+        pool->SetComponentListener(listener);
+      }
+      else
+      {
+        ComponentPool<Component>* pool{new ComponentPool<Component>{}};
+        componentPool.emplace(GetComponentId<Component>(), pool);
+        pool->SetComponentListener(listener);
+      }
+    }
+
     template <typename... Components>
     std::tuple<Components&...> AddComponents(EntityId entity, Components&&... components)
     {

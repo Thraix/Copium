@@ -1,6 +1,9 @@
 #include "copium/event/Input.h"
 
 #include "copium/util/Common.h"
+#include "copium/core/Vulkan.h"
+
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Copium
 {
@@ -63,6 +66,11 @@ namespace Copium
     return mousePos;
   }
 
+  glm::vec2 Input::GetMouseWindowPos()
+  {
+    return glm::vec2{(mousePos.x + 1.0f) * 0.5f * Vulkan::GetWindow().GetWidth(), (1.0f - mousePos.y) * 0.5f * Vulkan::GetWindow().GetHeight()};
+  }
+
   void Input::OnKey(int keyCode, bool pressed)
   {
     CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range");
@@ -85,5 +93,6 @@ namespace Copium
   void Input::Update()
   {
     memset(keyEventList, false, sizeof(keyEventList));
+    memset(mouseEventList, false, sizeof(mouseEventList));
   }
 }

@@ -219,6 +219,12 @@
     <ClCompile Include="src\copium\event\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\copium\util\RefCounter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\copium\ecs\ComponentListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\copium\sampler\DepthAttachment.h">
@@ -483,6 +489,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\example\CameraFollowPlayerSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\example\HealthDisplaySystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\example\HealthChangeSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\util\RefCounter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\ecs\ComponentListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\example\HealthComponentListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

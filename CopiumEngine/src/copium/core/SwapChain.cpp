@@ -4,6 +4,8 @@
 #include "copium/core/Vulkan.h"
 #include "copium/sampler/Image.h"
 
+#include <GLFW/glfw3.h>
+
 namespace Copium
 {
   SwapChainSupportDetails::SwapChainSupportDetails(VkSurfaceKHR surface, VkPhysicalDevice physicalDevice)

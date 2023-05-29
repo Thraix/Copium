@@ -16,10 +16,9 @@ int main(int argc, char** argv)
     Copium::Application application;
     while (application.Update())
     {
-      glfwPollEvents();
-
-      Copium::EventDispatcher::Dispatch();
       Copium::Input::Update();
+      glfwPollEvents();
+      Copium::EventDispatcher::Dispatch();
     }
   }
   Copium::Vulkan::Destroy();

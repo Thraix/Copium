@@ -35,6 +35,7 @@ namespace Copium
     static bool IsMouseDown(int button);
     static bool IsMouseUp(int button);
 
+    static glm::vec2 GetMouseWindowPos();
     static glm::vec2 GetMousePos();
 
     static void OnKey(int keyCode, bool pressed);

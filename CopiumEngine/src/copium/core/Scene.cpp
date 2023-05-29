@@ -7,14 +7,17 @@
 #include "copium/ecs/Entity.h"
 #include "copium/ecs/System.h"
 #include "copium/event/MouseMoveEvent.h"
+#include "copium/example/CameraFollowPlayerSystem.h"
 #include "copium/example/CameraUpdateSystem.h"
 #include "copium/example/Components.h"
 #include "copium/example/FrameCountSystem.h"
+#include "copium/example/HealthChangeSystem.h"
+#include "copium/example/HealthComponentListener.h"
+#include "copium/example/HealthDisplaySystem.h"
 #include "copium/example/MouseFollowSystem.h"
-#include "copium/example/RenderSystem.h"
 #include "copium/example/PhysicsSystem.h"
 #include "copium/example/PlayerControllerSystem.h"
-#include "copium/example/CameraFollowPlayerSystem.h"
+#include "copium/example/RenderSystem.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -30,11 +33,14 @@ namespace Copium
 
     ecs->AddSystem<PlayerControllerSystem>();
     ecs->AddSystem<PhysicsSystem>();
+    ecs->AddSystem<HealthChangeSystem>();
+    ecs->AddSystem<HealthDisplaySystem>();
     ecs->AddSystem<CameraFollowPlayerSystem>();
     ecs->AddSystem<CameraUpdateSystem>(&viewMatrix, &projectionMatrix, &invPvMatrix);
     ecs->AddSystem<MouseFollowSystem>(&invPvMatrix);
     ecs->AddSystem<FrameCountSystem>();
     ecs->AddSystem<RenderSystem>(renderer.get(), descriptorSetRenderer.get(), &commandBuffer, &viewMatrix, &projectionMatrix); // better way to store the RenderSystem data?
+    ecs->SetComponentListener<HealthComponentListener>();
 
     // TODO: Load from scene file
     for (int y = 0; y < 10; y++)
@@ -72,6 +78,7 @@ namespace Copium
 
     Entity entityPlayer = Entity::Create(ecs.get());
     entityPlayer.AddComponent<PlayerC>(entityCamera);
+    entityPlayer.AddComponent<HealthC>(10, 10);
     entityPlayer.AddComponent<PhysicsC>(0.1f, glm::vec2{0.0f, 0.0f}, glm::vec2{0.0f, 0.0f});
     entityPlayer.AddComponent<TransformC>(glm::vec2{0.0f}, glm::vec2{1.0f});
     entityPlayer.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox2.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});

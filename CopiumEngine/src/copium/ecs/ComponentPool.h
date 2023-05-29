@@ -3,6 +3,7 @@
 #include "copium/ecs/Config.h"
 #include "copium/ecs/EntitySet.h"
 #include "copium/ecs/ComponentPoolBase.h"
+#include "copium/ecs/ComponentListener.h"
 
 #include <vector>
 
@@ -14,8 +15,18 @@ namespace Copium
     using Iterator = typename std::vector<Component>::iterator;
   private:
     std::vector<Component> components;
+    ComponentListener<Component>* listener = nullptr;
 
   public:
+    ComponentPool()
+    {}
+
+    ~ComponentPool() override
+    {
+      if(listener)
+        delete listener;
+    }
+
     ComponentPool(EntityId entity, const Component& component)
     {
       Emplace(entity, component);
@@ -25,21 +36,27 @@ namespace Copium
     {
       components.push_back(component);
       entities.Emplace(entity);
+      if(listener)
+        listener->Added(entity, components.back());
       return components.back();
     }
 
-    void Pop()
-    {
-      components.pop_back();
-      entities.Pop();
-    }
-
-    bool Erase(EntityId entity)
+    bool Erase(EntityId entity) override
     {
       size_t index = entities.Find(entity);
       if (!entities.Erase(entity))
         return false;
-      components.erase(components.begin() + index);
+      if (listener)
+      {
+        auto it = components.begin() + index;
+        Component component = *it;
+        components.erase(it);
+        listener->Removed(entity, component);
+      }
+      else
+      {
+        components.erase(components.begin() + index);
+      }
       return true;
     }
 
@@ -61,13 +78,18 @@ namespace Copium
       return nullptr;
     }
 
+    void SetComponentListener(ComponentListener<Component>* listener)
+    {
+      ComponentPool::listener = listener;
+    }
+
     Component& operator[](size_t index)
     {
       CP_ASSERT(index < components.size(), "Index Out of Bound Exception");
       return components[index];
     }
 
-    size_t Size()
+    size_t Size() override
     {
       return components.size();
     }

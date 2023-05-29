@@ -3,10 +3,16 @@
 #include "copium/util/Common.h"
 #include "copium/util/Enum.h"
 
-#include <GLFW/glfw3.h>
+#include <vulkan/vulkan.hpp>
 
-#define CP_WINDOW_MODE_ENUMS Fullscreen, BorderlessWindowed, Windowed
+#define CP_WINDOW_MODE_ENUMS \
+        Fullscreen, \
+        BorderlessWindowed, \
+        Windowed
+
 CP_ENUM_CREATOR(Copium, WindowMode, CP_WINDOW_MODE_ENUMS);
+
+struct GLFWwindow;
 
 namespace Copium
 {
@@ -24,6 +30,10 @@ namespace Copium
     Window(const std::string& windowName, int width, int height, WindowMode mode);
     ~Window();
 
+    bool ShouldClose() const;
+
+    int GetWidth() const;
+    int GetHeight() const;
     VkSurfaceKHR GetSurface() const;
     GLFWwindow* GetWindow();
 

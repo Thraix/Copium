@@ -180,6 +180,7 @@
     <ClCompile Include="src\copium\core\Scene.cpp" />
     <ClCompile Include="src\copium\core\Vulkan.cpp" />
     <ClCompile Include="src\copium\core\Window.cpp" />
+    <ClCompile Include="src\copium\ecs\ComponentListener.cpp" />
     <ClCompile Include="src\copium\ecs\ComponentPoolBase.cpp" />
     <ClCompile Include="src\copium\ecs\ECSManager.cpp" />
     <ClCompile Include="src\copium\ecs\Entity.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="src\copium\pipeline\DescriptorSet.cpp" />
     <ClCompile Include="src\copium\sampler\Font.cpp" />
     <ClCompile Include="src\copium\util\BoundingBox.cpp" />
+    <ClCompile Include="src\copium\util\RefCounter.cpp" />
     <ClCompile Include="src\copium\util\RuntimeException.cpp" />
     <ClCompile Include="src\copium\util\FileSystem.cpp" />
     <ClCompile Include="src\copium\buffer\Framebuffer.cpp" />
@@ -249,6 +251,7 @@
     <ClInclude Include="src\copium\core\Scene.h" />
     <ClInclude Include="src\copium\core\Vulkan.h" />
     <ClInclude Include="src\copium\core\Window.h" />
+    <ClInclude Include="src\copium\ecs\ComponentListener.h" />
     <ClInclude Include="src\copium\ecs\ComponentPool.h" />
     <ClInclude Include="src\copium\ecs\ComponentPoolBase.h" />
     <ClInclude Include="src\copium\ecs\Config.h" />
@@ -280,6 +283,9 @@
     <ClInclude Include="src\copium\example\CameraUpdateSystem.h" />
     <ClInclude Include="src\copium\example\Components.h" />
     <ClInclude Include="src\copium\example\FrameCountSystem.h" />
+    <ClInclude Include="src\copium\example\HealthChangeSystem.h" />
+    <ClInclude Include="src\copium\example\HealthComponentListener.h" />
+    <ClInclude Include="src\copium\example\HealthDisplaySystem.h" />
     <ClInclude Include="src\copium\example\PhysicsSystem.h" />
     <ClInclude Include="src\copium\example\PlayerControllerSystem.h" />
     <ClInclude Include="src\copium\example\RenderSystem.h" />
@@ -302,6 +308,7 @@
     <ClInclude Include="src\copium\pipeline\DescriptorSet.h" />
     <ClInclude Include="src\copium\pipeline\DescriptorPool.h" />
     <ClInclude Include="src\copium\util\Enum.h" />
+    <ClInclude Include="src\copium\util\RefCounter.h" />
     <ClInclude Include="src\copium\util\RuntimeException.h" />
     <ClInclude Include="src\copium\util\FileSystem.h" />
     <ClInclude Include="src\copium\buffer\Framebuffer.h" />

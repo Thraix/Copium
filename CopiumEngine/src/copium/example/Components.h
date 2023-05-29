@@ -57,4 +57,13 @@ namespace Copium
   {
     Entity camera;
   };
+
+  struct HealthC
+  {
+    int current;
+    int max;
+
+    Entity background;
+    Entity foreground;
+  };
 }

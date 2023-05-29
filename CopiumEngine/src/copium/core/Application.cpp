@@ -77,7 +77,7 @@ namespace Copium
     Vulkan::GetSwapChain().SubmitToGraphicsQueue(*commandBuffer);
 
     Vulkan::GetSwapChain().EndPresent();
-    return !glfwWindowShouldClose(Vulkan::GetWindow().GetWindow());
+    return !Vulkan::GetWindow().ShouldClose();
   }
 
   EventResult Application::OnEvent(const Event& event)
@@ -99,13 +99,6 @@ namespace Copium
       CP_INFO("%d", mousePressEvent.GetButton());
 
       return EventResult::Focus;
-    }
-    case EventType::KeyPress:
-    {
-      const KeyPressEvent& keyPressEvent = static_cast<const KeyPressEvent&>(event);
-      CP_INFO("%d", keyPressEvent.GetButton());
-
-      return EventResult::Handled;
     }
     case EventType::MouseScroll:
     {
