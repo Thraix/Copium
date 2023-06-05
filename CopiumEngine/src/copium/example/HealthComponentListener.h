@@ -31,5 +31,4 @@ namespace Copium
       health.foreground.Destroy();
     }
   };
-
 }

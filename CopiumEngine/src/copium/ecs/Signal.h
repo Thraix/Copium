@@ -1,5 +1,17 @@
 #pragma once
 
+#define CP_SIGNAL_DECLERATION_DEFINITION() \
+  static int GetIdStatic() \
+  { \
+      static int id = GetAllocatedId(); \
+      return id; \
+  } \
+ \
+  int GetId() const \
+  { \
+    return GetIdStatic(); \
+  }
+
 #define CP_SIGNAL_DECLERATION(SignalClass) \
   static int GetIdStatic(); \
   int GetId() const override

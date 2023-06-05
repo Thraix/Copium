@@ -15,9 +15,11 @@
 #include "copium/example/HealthComponentListener.h"
 #include "copium/example/HealthDisplaySystem.h"
 #include "copium/example/MouseFollowSystem.h"
+#include "copium/example/ColliderSystem.h"
 #include "copium/example/PhysicsSystem.h"
 #include "copium/example/PlayerControllerSystem.h"
 #include "copium/example/RenderSystem.h"
+#include "copium/example/PickupSystem.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -33,6 +35,8 @@ namespace Copium
 
     ecs->AddSystem<PlayerControllerSystem>();
     ecs->AddSystem<PhysicsSystem>();
+    ecs->AddSystem<ColliderSystem>();
+    ecs->AddSystem<PickupSystem>();
     ecs->AddSystem<HealthChangeSystem>();
     ecs->AddSystem<HealthDisplaySystem>();
     ecs->AddSystem<CameraFollowPlayerSystem>();
@@ -45,11 +49,43 @@ namespace Copium
     // TODO: Load from scene file
     for (int y = 0; y < 10; y++)
     {
+      {
+        Entity entity = Entity::Create(ecs.get());
+        entity.AddComponent<TransformC>(glm::vec2{-10.0f + 0.4f, -11.0f + y * 1.6 + 0.4f}, glm::vec2{0.8f, 0.8f});
+        entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
+        entity.AddComponent<StaticColliderC>(true);
+      }
+      {
+        Entity entity = Entity::Create(ecs.get());
+        entity.AddComponent<TransformC>(glm::vec2{10.0f - 0.4f, -10.0f + y * 1.6 + 0.4f}, glm::vec2{0.8f, 0.8f});
+        entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
+        entity.AddComponent<StaticColliderC>(true);
+      }
+    }
+    for (int x = 0; x < 10; x++)
+    {
+      {
+        Entity entity = Entity::Create(ecs.get());
+        entity.AddComponent<TransformC>(glm::vec2{-11.0f + x * 1.6 + 0.4f, -10.0f + 0.4f, }, glm::vec2{0.8f, 0.8f});
+        entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
+        entity.AddComponent<StaticColliderC>(true);
+      }
+      {
+        Entity entity = Entity::Create(ecs.get());
+        entity.AddComponent<TransformC>(glm::vec2{-11.0f + x * 1.6 + 0.4f, 10.0f - 0.4f, }, glm::vec2{0.8f, 0.8f});
+        entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
+        entity.AddComponent<StaticColliderC>(true);
+      }
+    }
+    for (int y = 0; y < 10; y++)
+    {
       for (int x = 0; x < 10; x++)
       {
         Entity entity = Entity::Create(ecs.get());
         entity.AddComponent<TransformC>(glm::vec2{-10.0f + x * 1.6f + 0.4f, -10.0f + y * 1.6 + 0.4f}, glm::vec2{0.8f, 0.8f});
         entity.AddComponent<ColorC>(glm::vec3{x * 0.1f, y * 0.1f, 1.0f});
+        entity.AddComponent<StaticColliderC>(false);
+        entity.AddComponent<PickupC>();
       }
     }
 
@@ -57,10 +93,13 @@ namespace Copium
     Entity entityFox = Entity::Create(ecs.get());
     entityFox.AddComponent<TransformC>(glm::vec2{-0.9f, -0.4f}, glm::vec2{0.8f, 0.8f});
     entityFox.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
+    entityFox.AddComponent<StaticColliderC>(true);
 
     Entity entityFontAtlas = Entity::Create(ecs.get());
     entityFontAtlas.AddComponent<TransformC>(glm::vec2{0.1f, -0.4f}, glm::vec2{0.8, 0.8});
     entityFontAtlas.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("font.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
+    entityFontAtlas.AddComponent<StaticColliderC>(false);
+    entityFontAtlas.AddComponent<PickupC>();
 
     Entity entityMouse = Entity::Create(ecs.get());
     entityMouse.AddComponent<TransformC>(glm::vec2(0.1), glm::vec2{0.2});
@@ -80,8 +119,9 @@ namespace Copium
     entityPlayer.AddComponent<PlayerC>(entityCamera);
     entityPlayer.AddComponent<HealthC>(10, 10);
     entityPlayer.AddComponent<PhysicsC>(0.1f, glm::vec2{0.0f, 0.0f}, glm::vec2{0.0f, 0.0f});
-    entityPlayer.AddComponent<TransformC>(glm::vec2{0.0f}, glm::vec2{1.0f});
+    entityPlayer.AddComponent<TransformC>(glm::vec2{0.0f, 2.0f}, glm::vec2{1.0f});
     entityPlayer.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox2.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
+    entityPlayer.AddComponent<DynamicColliderC>(false, glm::vec2{0.0f});
   }
 
   void Scene::Update()

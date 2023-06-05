@@ -4,21 +4,18 @@
 
 namespace Copium
 {
-  AssetRef::AssetRef(AssetHandle handle)
-    : handle{handle}
-  {}
+  struct AssetHandleUnloader {
+      void operator()(AssetHandle* handle) {
+        AssetManager::UnloadAsset(*handle);
+      }
+  };
 
-  AssetRef::~AssetRef()
-  {
-    if (refCounter.LastRef())
-    {
-      AssetManager::UnloadAsset(handle);
-    }
-  }
+  AssetRef::AssetRef(AssetHandle handle)
+    : handle{std::shared_ptr<AssetHandle>(new AssetHandle{handle}, AssetHandleUnloader{})}
+  {}
 
   AssetRef::operator AssetHandle() const
   {
-    return handle;
-
+    return *handle;
   }
 }

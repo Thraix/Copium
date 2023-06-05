@@ -11,18 +11,25 @@ namespace Copium
   public:
     void RunEntity(Entity entity, PlayerC& player, PhysicsC& physics) override
     {
-      float magnitude = 200.0f;
-      glm::vec2 force{0.0f};
-      if (Input::IsKeyDown(CP_KEY_W)) force.y += 1.0f;
-      if (Input::IsKeyDown(CP_KEY_S)) force.y -= 1.0f;
-      if (Input::IsKeyDown(CP_KEY_A)) force.x -= 1.0f;
-      if (Input::IsKeyDown(CP_KEY_D)) force.x += 1.0f;
-
-      if (force.x != 0 || force.y != 0)
+      const float MAX_JUMP_TIME = 0.2;
+      float force = 0.0f;
+      if (Input::IsKeyPressed(CP_KEY_SPACE))
       {
-        force = glm::normalize(force);
-        physics.force += force * magnitude;
+        player.jumpTimer.Start();
+        physics.velocity.y += 15;
       }
+      else if (!Input::IsKeyDown(CP_KEY_SPACE))
+      {
+        if (physics.velocity.y > 0)
+        {
+          physics.force.y -= 12;
+        }
+      }
+      if (Input::IsKeyDown(CP_KEY_A)) force -= 1.0f;
+      if (Input::IsKeyDown(CP_KEY_D)) force += 1.0f;
+
+      float magnitude = 75.0f;
+      physics.force.x += force * magnitude;
 
       if (Input::IsKeyPressed(CP_KEY_H))
       {

@@ -56,6 +56,7 @@ namespace Copium
   struct PlayerC
   {
     Entity camera;
+    Timer jumpTimer;
   };
 
   struct HealthC
@@ -65,5 +66,21 @@ namespace Copium
 
     Entity background;
     Entity foreground;
+  };
+
+  struct StaticColliderC
+  {
+    bool resolveCollision;
+  };
+
+  struct DynamicColliderC
+  {
+    bool resolveCollision;
+    glm::vec2 oldPosition;
+  };
+
+  struct PickupC
+  {
+
   };
 }
