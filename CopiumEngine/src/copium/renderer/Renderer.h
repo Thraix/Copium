@@ -21,7 +21,6 @@ namespace Copium
   private:
     DescriptorPool descriptorPool;
     IndexBuffer ibo;
-    AssetHandle emptyTexture;
     AssetHandle pipeline;
     std::vector<std::unique_ptr<Batch>> batches;
 

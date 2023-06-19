@@ -15,49 +15,49 @@ namespace Copium
 
   bool Input::IsKeyPressed(int keyCode)
   {
-    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range");
+    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range %d", keyCode);
     return keyEventList[keyCode] && keyDownList[keyCode];
   }
 
   bool Input::IsKeyReleased(int keyCode)
   {
-    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range");
+    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range %d", keyCode);
     return keyEventList[keyCode] && !keyDownList[keyCode];
   }
 
   bool Input::IsKeyDown(int keyCode)
   {
-    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range");
+    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range %d", keyCode);
     return keyDownList[keyCode];
   }
 
   bool Input::IsKeyUp(int keyCode)
   {
-    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range");
+    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range %d", keyCode);
     return !keyDownList[keyCode];
   }
 
   bool Input::IsMousePressed(int button)
   {
-    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range");
+    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range %d", button);
     return mouseEventList[button] && mouseDownList[button];
   }
 
   bool Input::IsMouseReleased(int button)
   {
-    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range");
+    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range %d", button);
     return mouseEventList[button] && !mouseDownList[button];
   }
 
   bool Input::IsMouseDown(int button)
   {
-    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range");
+    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range %d", button);
     return mouseDownList[button];
   }
 
   bool Input::IsMouseUp(int button)
   {
-    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range");
+    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range %d", button);
     return !mouseDownList[button];
   }
 
@@ -73,14 +73,14 @@ namespace Copium
 
   void Input::OnKey(int keyCode, bool pressed)
   {
-    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range");
+    CP_ASSERT(keyCode >= 0 && keyCode < MAX_NUM_KEYS, "KeyCode is out of range %d", keyCode);
     keyDownList[keyCode] = pressed;
     keyEventList[keyCode] = true;
   }
 
   void Input::OnMouse(int button, bool pressed)
   {
-    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range");
+    CP_ASSERT(button >= 0 && button < MAX_NUM_MOUSE_BUTTONS, "button is out of range %d", button);
     mouseDownList[button] = pressed;
     mouseEventList[button] = true;
   }

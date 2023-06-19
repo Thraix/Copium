@@ -212,6 +212,7 @@
     <ClCompile Include="src\copium\pipeline\DescriptorPool.cpp" />
     <ClCompile Include="src\copium\pipeline\DescriptorSet.cpp" />
     <ClCompile Include="src\copium\sampler\Font.cpp" />
+    <ClCompile Include="src\copium\sampler\SamplerCreator.cpp" />
     <ClCompile Include="src\copium\util\BoundingBox.cpp" />
     <ClCompile Include="src\copium\util\RuntimeException.cpp" />
     <ClCompile Include="src\copium\util\FileSystem.cpp" />
@@ -256,6 +257,8 @@
     <ClInclude Include="src\copium\ecs\ECSManager.h" />
     <ClInclude Include="src\copium\ecs\Entity.h" />
     <ClInclude Include="src\copium\ecs\EntitySet.h" />
+    <ClInclude Include="src\copium\example\AnimationSystem.h" />
+    <ClInclude Include="src\copium\example\DebugSystem.h" />
     <ClInclude Include="src\copium\example\PickupSystem.h" />
     <ClInclude Include="src\copium\ecs\Signal.h" />
     <ClInclude Include="src\copium\ecs\System.h" />
@@ -290,6 +293,7 @@
     <ClInclude Include="src\copium\example\RenderSystem.h" />
     <ClInclude Include="src\copium\example\MouseFollowSystem.h" />
     <ClInclude Include="src\copium\example\ColliderSystem.h" />
+    <ClInclude Include="src\copium\example\UiRenderSystem.h" />
     <ClInclude Include="src\copium\mesh\Mesh.h" />
     <ClInclude Include="src\copium\pipeline\ShaderBinding.h" />
     <ClInclude Include="src\copium\renderer\Batch.h" />
@@ -302,6 +306,7 @@
     <ClInclude Include="src\copium\buffer\CommandBuffer.h" />
     <ClInclude Include="src\copium\sampler\Font.h" />
     <ClInclude Include="src\copium\sampler\Glyph.h" />
+    <ClInclude Include="src\copium\sampler\SamplerCreator.h" />
     <ClInclude Include="src\copium\util\BoundingBox.h" />
     <ClInclude Include="src\copium\example\CollideSignal.h" />
     <ClInclude Include="src\copium\util\Common.h" />

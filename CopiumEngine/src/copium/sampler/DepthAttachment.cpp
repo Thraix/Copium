@@ -5,8 +5,8 @@
 
 namespace Copium
 {
-  DepthAttachment::DepthAttachment(int width, int height)
-    : Sampler{}
+  DepthAttachment::DepthAttachment(int width, int height, const SamplerCreator& samplerCreator)
+    : Sampler{samplerCreator}
   {
     InitializeDepthAttachment(width, height);
   }

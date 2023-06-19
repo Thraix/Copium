@@ -219,6 +219,9 @@
     <ClCompile Include="src\copium\event\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\copium\sampler\SamplerCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\copium\sampler\DepthAttachment.h">
@@ -504,6 +507,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\example\PickupSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\example\DebugSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\example\UiRenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\sampler\SamplerCreator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\example\AnimationSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

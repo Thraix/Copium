@@ -15,7 +15,7 @@ namespace Copium
     VkDeviceMemory imageMemory;
     VkImageView imageView;
   public:
-    DepthAttachment(int width, int height);
+    DepthAttachment(int width, int height, const SamplerCreator& samplerCreator);
     ~DepthAttachment() override;
 
     void Resize(int width, int height);

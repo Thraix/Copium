@@ -10,9 +10,12 @@ namespace Copium
   private:
     Entity first;
     Entity second;
+    bool resolved;
+    int xDir;
+    int yDir;
   public:
-    CollideSignal(Entity first, Entity second)
-      : first{first}, second{second}
+    CollideSignal(Entity first, Entity second, bool resolved, int xDir, int yDir)
+      : first{first}, second{second}, resolved{resolved}, xDir{xDir}, yDir{yDir}
     {}
 
     Entity GetFirst() const
@@ -23,6 +26,21 @@ namespace Copium
     Entity GetSecond() const
     {
       return second;
+    }
+
+    bool WasResolved() const
+    {
+      return resolved;
+    }
+
+    int GetXDir() const
+    {
+      return xDir;
+    }
+
+    int GetYDir() const
+    {
+      return yDir;
     }
 
     CP_SIGNAL_DECLERATION_DEFINITION();

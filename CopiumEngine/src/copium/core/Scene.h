@@ -13,11 +13,14 @@ namespace Copium
   {
   private:
     std::unique_ptr<Renderer> renderer;
+    std::unique_ptr<Renderer> uiRenderer;
     std::unique_ptr<ECSManager> ecs;
     std::unique_ptr<DescriptorSet> descriptorSetRenderer;
+    std::unique_ptr<DescriptorSet> uiDescriptorSetRenderer;
     glm::mat4 projectionMatrix;
     glm::mat4 viewMatrix;
     glm::mat4 invPvMatrix;
+    glm::mat4 uiProjectionMatrix;
   public:
     Scene(CommandBuffer& commandBuffer, DescriptorPool& descriptorPool);
     void Update();

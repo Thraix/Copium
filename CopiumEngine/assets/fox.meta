@@ -1,3 +1,4 @@
 [Texture2D]
 filepath=res/textures/texture.png
+mag-filter=nearest
 uuid=f49a5284-d666-0982-95ca-cf68cc3d4f45

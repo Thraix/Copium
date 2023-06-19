@@ -10,27 +10,23 @@
 
 namespace Copium
 {
-  class RenderSystem : public System<Renderable, TransformC>
+  class UiRenderSystem : public System<UiRenderable, TransformC>
   {
   private:
     // Find better way to store these?
     Renderer* renderer;
     DescriptorSet* descriptorSet;
     CommandBuffer* commandBuffer;
-    glm::mat4* viewMatrix;
     glm::mat4* projectionMatrix;
-
-    bool renderColliders = false;
   public:
-    RenderSystem(Renderer* renderer, DescriptorSet* descriptorSet, CommandBuffer* commandBuffer, glm::mat4* viewMatrix, glm::mat4* projectionMatrix)
+    UiRenderSystem(Renderer* renderer, DescriptorSet* descriptorSet, CommandBuffer* commandBuffer, glm::mat4* projectionMatrix)
       : renderer{renderer},
         descriptorSet{descriptorSet},
         commandBuffer{commandBuffer},
-        viewMatrix{viewMatrix},
         projectionMatrix{projectionMatrix}
     {}
 
-    void RunEntity(Entity entity, Renderable& renderable, TransformC& transform) override
+    void RunEntity(Entity entity, UiRenderable& uiRenderable, TransformC& transform)
     {
       if (entity.HasComponent<TextC>())
       {
@@ -49,28 +45,16 @@ namespace Copium
       }
     }
 
-    void RenderCollider(Entity entity, DynamicColliderC& dynamicCollider, TransformC& transform)
-    {
-      renderer->Quad(transform.position + transform.size * dynamicCollider.colliderOffset, transform.size * dynamicCollider.colliderSize, glm::vec3{0.8, 0.1, 0.1});
-    }
-
     void Run() override
     {
-      if (Input::IsKeyPressed(CP_KEY_K))
-        renderColliders = !renderColliders;
       UniformBuffer& uniformBuffer = descriptorSet->GetUniformBuffer("ubo");
       uniformBuffer.Set("projection", *projectionMatrix);
-      uniformBuffer.Set("view", *viewMatrix);
+      uniformBuffer.Set("view", glm::mat4{1.0f});
       uniformBuffer.Update();
 
       renderer->SetDescriptorSet(*descriptorSet);
       renderer->Begin(*commandBuffer);
       System::Run();
-      if (renderColliders)
-      {
-        manager->Each<DynamicColliderC, TransformC>([&](EntityId entityId, DynamicColliderC& dynamicCollider, TransformC& transform) { RenderCollider(Entity{manager, entityId}, dynamicCollider, transform); });
-      }
-
       renderer->End();
     }
   };

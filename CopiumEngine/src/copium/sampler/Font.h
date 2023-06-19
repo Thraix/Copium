@@ -16,6 +16,7 @@ namespace Copium
 
     std::map<char, Glyph> glyphs;
     float lineHeight;
+    float baseHeight;
   public:
     Font(const MetaFile& metaFile);
     ~Font() override;
@@ -24,10 +25,10 @@ namespace Copium
 
     const Glyph& GetGlyph(char c) const;
     float GetLineHeight() const;
+    float GetBaseHeight() const;
 
     BoundingBox GetTextBoundingBox(const std::string& str, float size) const;
   private:
-    void InitializeTextureImageFromFile(const std::string& filename);
     void InitializeTextureImageFromData(const uint8_t* rgbaData, int width, int height);
   };
 }

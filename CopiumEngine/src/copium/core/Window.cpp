@@ -118,6 +118,8 @@ namespace Copium
 
   void Window::KeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods)
   {
+    if (key == -1) // For some reason media keys count as keys with value -1
+      return;
     try
     {
       if (action == GLFW_PRESS)

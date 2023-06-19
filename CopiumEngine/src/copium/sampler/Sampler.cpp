@@ -4,9 +4,9 @@
 
 namespace Copium
 {
-  Sampler::Sampler()
+  Sampler::Sampler(const SamplerCreator& samplerCreator)
   {
-    InitializeSampler();
+    InitializeSampler(samplerCreator);
   }
 
   Sampler::~Sampler()
@@ -14,15 +14,15 @@ namespace Copium
     vkDestroySampler(Vulkan::GetDevice(), sampler, nullptr);
   }
 
-  void Sampler::InitializeSampler()
+  void Sampler::InitializeSampler(const SamplerCreator& samplerCreator)
   {
     VkPhysicalDeviceProperties properties{};
     vkGetPhysicalDeviceProperties(Vulkan::GetDevice().GetPhysicalDevice(), &properties);
 
     VkSamplerCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    createInfo.magFilter = VK_FILTER_LINEAR; // TODO: Some way to control this
-    createInfo.minFilter = VK_FILTER_LINEAR; // TODO: Some way to control this
+    createInfo.magFilter = samplerCreator.magFilter;
+    createInfo.minFilter = samplerCreator.minFilter;
     createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
     createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
     createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;

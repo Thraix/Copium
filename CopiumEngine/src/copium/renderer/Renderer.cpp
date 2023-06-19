@@ -15,8 +15,7 @@ namespace Copium
   Renderer::Renderer()
     : descriptorPool{},
       ibo{MAX_NUM_INDICES}, 
-      emptyTexture{AssetManager::RegisterRuntimeAsset("empty", std::make_unique<Texture2D>(std::vector<uint8_t>{0, 0, 0, 255}, 1, 1))},
-      samplers{MAX_NUM_TEXTURES, &AssetManager::GetAsset<Texture2D>(emptyTexture)}
+      samplers{MAX_NUM_TEXTURES, &AssetManager::GetAsset<Texture2D>(Vulkan::GetEmptyTexture2D())}
   {
     InitializeIndexBuffer();
     InitializeGraphicsPipeline();
@@ -24,7 +23,6 @@ namespace Copium
 
   Renderer::~Renderer()
   {
-    AssetManager::UnloadAsset(emptyTexture);
     AssetManager::UnloadAsset(pipeline);
   }
 
@@ -184,7 +182,7 @@ namespace Copium
   void Renderer::NextBatch()
   {
     batchIndex++;
-    std::fill(samplers.begin(), samplers.end(), &AssetManager::GetAsset<Texture2D>(emptyTexture));
+    std::fill(samplers.begin(), samplers.end(), &AssetManager::GetAsset<Texture2D>(Vulkan::GetEmptyTexture2D()));
     if (batchIndex >= batches.size())
     {
       batches.emplace_back(std::make_unique<Batch>(pipeline, descriptorPool, MAX_NUM_VERTICES, samplers));

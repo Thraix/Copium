@@ -7,6 +7,7 @@ namespace Copium
 {
 
   ColorAttachment::ColorAttachment(const MetaFile& metaFile)
+    : Sampler{SamplerCreator{metaFile.GetMetaClass("RenderTexture")}}
   {
     const MetaFileClass& metaClass = metaFile.GetMetaClass("RenderTexture");
     if (metaClass.HasValue("width"))
@@ -30,7 +31,8 @@ namespace Copium
     InitializeColorAttachment(width, height);
   }
 
-  ColorAttachment::ColorAttachment(int width, int height)
+  ColorAttachment::ColorAttachment(int width, int height, const SamplerCreator& samplerCreator)
+    : Sampler{samplerCreator}
   {
     InitializeColorAttachment(width, height);
   }
@@ -92,8 +94,8 @@ namespace Copium
     imageMemories.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
     for (size_t i = 0; i < images.size(); i++)
     {
-      Image::InitializeImage(width, height, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &images[i], &imageMemories[i]);
-      imageViews[i] = Image::InitializeImageView(images[i], VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+      Image::InitializeImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &images[i], &imageMemories[i]);
+      imageViews[i] = Image::InitializeImageView(images[i], VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
     }
   }
 }

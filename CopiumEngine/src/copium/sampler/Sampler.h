@@ -1,6 +1,7 @@
 #pragma once
 
 #include "copium/asset/Asset.h"
+#include "copium/sampler/SamplerCreator.h"
 #include "copium/util/Common.h"
 
 #include <vulkan/vulkan.hpp>
@@ -13,12 +14,13 @@ namespace Copium
   protected:
     VkSampler sampler;
   public:
-    Sampler();
+    // Sampler();
+    Sampler(const SamplerCreator& samplerCreator);
     virtual ~Sampler();
 
     virtual VkDescriptorImageInfo GetDescriptorImageInfo(int index) const = 0;
     operator VkSampler() const;
   private:
-    void InitializeSampler();
+    void InitializeSampler(const SamplerCreator& samplerCreator);
   };
 }

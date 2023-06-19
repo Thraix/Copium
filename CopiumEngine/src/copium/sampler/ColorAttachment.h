@@ -18,7 +18,7 @@ namespace Copium
     int height;
   public:
     ColorAttachment(const MetaFile& metaFile);
-    ColorAttachment(int width, int height);
+    ColorAttachment(int width, int height, const SamplerCreator& samplerCreator);
     ~ColorAttachment() override;
 
     void Resize(int width, int height);

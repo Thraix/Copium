@@ -18,6 +18,8 @@ namespace Copium
     static std::unique_ptr<Window> window;
     static std::unique_ptr<Device> device;
     static std::unique_ptr<SwapChain> swapChain;
+
+    static AssetHandle emptyTexture2D;
   public:
     static void Initialize();
     static void Destroy();
@@ -26,6 +28,6 @@ namespace Copium
     static Device& GetDevice();
     static SwapChain& GetSwapChain();
     static bool Valid();
- 
+    static AssetHandle GetEmptyTexture2D();
   };
 }

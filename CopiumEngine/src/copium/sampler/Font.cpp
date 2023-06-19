@@ -9,6 +9,7 @@
 namespace Copium
 {
   Font::Font(const MetaFile& metaFile)
+    : Sampler{SamplerCreator{metaFile.GetMetaClass("Font")}}
   {
     msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
     CP_ASSERT(ft, "Failed to initialize FreeType"); // TODO: Move to Vulkan singleton class?
@@ -66,6 +67,7 @@ namespace Copium
       this->glyphs.emplace((char)glyphGeom.getCodepoint(), glyph);
     }
     lineHeight = fontGeometry.getMetrics().lineHeight;
+    baseHeight = fontGeometry.getMetrics().ascenderY;
 
     msdfgen::destroyFont(font);
     msdfgen::deinitializeFreetype(ft);
@@ -97,6 +99,11 @@ namespace Copium
   float Font::GetLineHeight() const
   {
     return lineHeight;
+  }
+
+  float Font::GetBaseHeight() const
+  {
+    return baseHeight;
   }
 
   BoundingBox Font::GetTextBoundingBox(const std::string& str, float size) const
@@ -143,10 +150,10 @@ namespace Copium
     memcpy(data, rgbaData, bufferSize);
     stagingBuffer.Unmap();
 
-    Image::InitializeImage(width, height, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &image, &imageMemory);
-    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    Image::InitializeImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &image, &imageMemory);
+    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     Image::CopyBufferToImage(stagingBuffer, image, width, height);
-    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-    imageView = Image::InitializeImageView(image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    imageView = Image::InitializeImageView(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
   }
 }

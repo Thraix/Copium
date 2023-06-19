@@ -15,16 +15,24 @@ namespace Copium
     glm::mat4* viewMatrix;
     glm::mat4* projectionMatrix;
     glm::mat4* invPvMatrix;
+    glm::mat4* uiProjectionMatrix;
   public:
-    CameraUpdateSystem(glm::mat4* viewMatrix, glm::mat4* projectionMatrix, glm::mat4* invPvMatrix)
-      : viewMatrix{viewMatrix}, projectionMatrix{projectionMatrix}, invPvMatrix{invPvMatrix}
+    CameraUpdateSystem(glm::mat4* viewMatrix, glm::mat4* projectionMatrix, glm::mat4* invPvMatrix, glm::mat4* uiProjectionMatrix)
+      : viewMatrix{viewMatrix}, projectionMatrix{projectionMatrix}, invPvMatrix{invPvMatrix}, uiProjectionMatrix{uiProjectionMatrix}
     {}
 
     void RunEntity(Entity entity, CameraC& camera, TransformC& transform)
     {
-      *projectionMatrix = glm::ortho(camera.projection.l, camera.projection.r, camera.projection.b, camera.projection.t);
-      *viewMatrix = glm::translate(glm::scale(glm::mat4{1}, glm::vec3{1.0f / transform.size.x, 1.0f / transform.size.y, 1.0f}), glm::vec3{-transform.position.x, -transform.position.y, 0.0f});
-      *invPvMatrix = glm::inverse((*projectionMatrix) * (*viewMatrix));
+      if (camera.uiCamera)
+      {
+        *uiProjectionMatrix = glm::ortho(camera.projection.l, camera.projection.r, camera.projection.b, camera.projection.t);
+      }
+      else
+      {
+        *projectionMatrix = glm::ortho(camera.projection.l, camera.projection.r, camera.projection.b, camera.projection.t);
+        *viewMatrix = glm::translate(glm::scale(glm::mat4{1}, glm::vec3{1.0f / transform.size.x, 1.0f / transform.size.y, 1.0f}), glm::vec3{-transform.position.x, -transform.position.y, 0.0f});
+        *invPvMatrix = glm::inverse((*projectionMatrix) * (*viewMatrix));
+      }
     }
 
     void RunEntity(const Signal& signal, Entity entity, CameraC& camera, TransformC& transform) override
@@ -41,9 +49,19 @@ namespace Copium
       case EventType::WindowResize:
       {
         const WindowResizeEvent& windowResizeEvent = static_cast<const WindowResizeEvent&>(eventSignal.GetEvent());
-        float aspect = windowResizeEvent.GetWidth() / (float)windowResizeEvent.GetHeight();
-        camera.projection.r = aspect;
-        camera.projection.l = -aspect;
+        if (camera.uiCamera)
+        {
+          camera.projection.r = windowResizeEvent.GetWidth();
+          camera.projection.t = windowResizeEvent.GetHeight();
+          camera.projection.l = 0.0f;
+          camera.projection.b = 0.0f;
+        }
+        else
+        {
+          float aspect = windowResizeEvent.GetWidth() / (float)windowResizeEvent.GetHeight();
+          camera.projection.r = aspect;
+          camera.projection.l = -aspect;
+        }
         break;
       }
       }

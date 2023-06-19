@@ -15,6 +15,9 @@ namespace Copium
     glm::vec2 size;
   };
 
+  struct Renderable {};
+  struct UiRenderable {};
+
   struct ColorC
   {
     glm::vec3 color;
@@ -44,6 +47,7 @@ namespace Copium
   {
     BoundingBox projection;
     bool staticBoundingBox;
+    bool uiCamera;
   };
 
   struct PhysicsC
@@ -56,7 +60,7 @@ namespace Copium
   struct PlayerC
   {
     Entity camera;
-    Timer jumpTimer;
+    bool grounded;
   };
 
   struct HealthC
@@ -76,11 +80,33 @@ namespace Copium
   struct DynamicColliderC
   {
     bool resolveCollision;
+    glm::vec2 colliderOffset;
+    glm::vec2 colliderSize;
+
     glm::vec2 oldPosition;
   };
 
   struct PickupC
   {
 
+  };
+
+  struct DebugC
+  {
+    Entity playerEntity;
+  };
+
+  struct AnimationC
+  {
+    int sheetSizeX;
+    int sheetSizeY;
+    int sheetStartCoordX;
+    int sheetStartCoordY;
+    int images;
+    bool horizontal;
+    float time;
+
+    float timeElapsed;
+    int frame;
   };
 }
