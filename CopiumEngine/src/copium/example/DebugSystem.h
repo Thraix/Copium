@@ -9,7 +9,12 @@ namespace Copium
 {
   class DebugSystem : public System<DebugC, TextC, TransformC>
   {
+    BoundingBox* viewport;
   public:
+    DebugSystem(BoundingBox* viewport)
+      : viewport{viewport}
+    {}
+
     void RunEntity(Entity entity, DebugC& debug, TextC& text, TransformC& transform) override
     {
       const PlayerC& player = debug.playerEntity.GetComponent<PlayerC>();
@@ -23,7 +28,7 @@ namespace Copium
       text.text += String::Format("Grounded: %s", player.grounded ? "true" : "false");
 
       const Font& font = AssetManager::GetAsset<Font>(text.font);
-      transform.position.y = Vulkan::GetSwapChain().GetExtent().height - 10.0f - font.GetBaseHeight() * text.fontSize;
+      transform.position.y = viewport->GetSize().y - 10.0f - font.GetBaseHeight() * text.fontSize;
     }
   };
 }

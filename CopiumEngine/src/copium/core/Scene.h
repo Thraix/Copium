@@ -23,6 +23,7 @@ namespace Copium
     glm::mat4 viewMatrix;
     glm::mat4 invPvMatrix;
     glm::mat4 uiProjectionMatrix;
+    BoundingBox viewport;
   public:
     Scene(CommandBuffer& commandBuffer, DescriptorPool& descriptorPool);
     void Update();

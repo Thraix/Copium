@@ -3,14 +3,14 @@
 #include "copium/asset/AssetManager.h"
 #include "copium/core/Vulkan.h"
 #include "copium/event/EventDispatcher.h"
+#include "copium/event/Input.h"
 #include "copium/event/KeyPressEvent.h"
 #include "copium/event/MouseMoveEvent.h"
 #include "copium/event/MousePressEvent.h"
 #include "copium/event/MouseScrollEvent.h"
+#include "copium/event/ViewportResize.h"
 #include "copium/event/WindowFocusEvent.h"
-#include "copium/event/WindowResizeEvent.h"
 #include "copium/mesh/Vertex.h"
-#include "copium/mesh/VertexPassthrough.h"
 #include "copium/sampler/Font.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -35,17 +35,6 @@ namespace Copium
       4, 5, 6, 6, 7, 4
   };
 
-  const std::vector<VertexPassthrough> verticesPassthrough = {
-    VertexPassthrough{{-1.0f, -1.0f}},
-    VertexPassthrough{{-1.0f,  1.0f}},
-    VertexPassthrough{{ 1.0f,  1.0f}},
-    VertexPassthrough{{ 1.0f, -1.0f}},
-  };
-
-  const std::vector<uint16_t> indicesPassthrough = {
-      0, 1, 2, 2, 3, 0,
-  };
-
   Application::Application()
   {
     EventDispatcher::AddEventHandler(this);
@@ -63,7 +52,6 @@ namespace Copium
     vkDeviceWaitIdle(Vulkan::GetDevice());
     AssetManager::UnloadAsset(texture2D);
     AssetManager::UnloadAsset(graphicsPipeline);
-    AssetManager::UnloadAsset(graphicsPipelinePassthrough);
     AssetManager::UnloadAsset(framebuffer);
     EventDispatcher::RemoveEventHandler(this);
   }
@@ -88,11 +76,10 @@ namespace Copium
     scene->OnEvent(event);
     switch (event.GetType())
     {
-    case EventType::WindowResize:
+    case EventType::ViewportResize:
     {
-      const WindowResizeEvent& windowResizeEvent = static_cast<const WindowResizeEvent&>(event);
-      AssetManager::GetAsset<Framebuffer>(framebuffer).Resize(windowResizeEvent.GetWidth(), windowResizeEvent.GetHeight());
-      descriptorSetPassthrough->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
+      const ViewportResize& viewportResizeEvent = static_cast<const ViewportResize&>(event);
+      AssetManager::GetAsset<Framebuffer>(framebuffer).Resize(viewportResizeEvent.GetViewport().GetSize().x, viewportResizeEvent.GetViewport().GetSize().y);
       descriptorSetImGui->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
 
       return EventResult::Continue;
@@ -145,9 +132,6 @@ namespace Copium
     descriptorSet = AssetManager::GetAsset<Pipeline>(graphicsPipeline).CreateDescriptorSet(*descriptorPool, 0);
     descriptorSet->SetSampler(AssetManager::GetAsset<Texture2D>(texture2D), 1);
 
-    descriptorSetPassthrough = AssetManager::GetAsset<Pipeline>(graphicsPipelinePassthrough).CreateDescriptorSet(*descriptorPool, 0);
-    descriptorSetPassthrough->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
-
     descriptorSetImGui = Vulkan::GetImGuiInstance().CreateDescriptorSet();
     descriptorSetImGui->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
   }
@@ -155,13 +139,11 @@ namespace Copium
   void Application::InitializeGraphicsPipeline()
   {
     graphicsPipeline = AssetManager::LoadAsset<Pipeline>("pipeline.meta");
-    graphicsPipelinePassthrough = AssetManager::LoadAsset<Pipeline>("passthrough.meta");
   }
 
   void Application::InitializeMesh()
   {
     mesh = std::make_unique<Mesh>(vertices, indices);
-    meshPassthrough = std::make_unique<Mesh>(verticesPassthrough, indicesPassthrough);
   }
 
   void Application::InitializeCommandBuffer()
@@ -171,13 +153,31 @@ namespace Copium
 
   void Application::RecordCommandBuffer()
   {
+    Framebuffer& fb = AssetManager::GetAsset<Framebuffer>(framebuffer);
+
+    // TODO: Move this logic elsewhere
     Vulkan::GetImGuiInstance().Begin();
-    commandBuffer->Begin();
+
+    ImGui::SetNextWindowPos(ImVec2{0, 0});
+    ImGui::SetNextWindowSize(ImVec2{(float)Vulkan::GetWindow().GetWidth(), (float)Vulkan::GetWindow().GetHeight()});
+    ImGui::Begin("Docker", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus);
+    ImGui::DockSpace(ImGui::GetID("Dockspace"));
+    ImGui::End();
     ImGui::Begin("Viewport");
-    ImGui::Image(*descriptorSetImGui, ImVec2{480, 270}, ImVec2{0, 1}, ImVec2{1, 0});
+    BoundingBox viewport{ImGui::GetCursorScreenPos().x,
+                         ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y,
+                         ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
+                         ImGui::GetCursorScreenPos().y};
+    if (viewport.GetSize() != glm::vec2{fb.GetWidth(), fb.GetHeight()})
+    {
+      OnEvent(ViewportResize(viewport));
+      CP_INFO("Viewport resize");
+    }
+    ImGui::Image(*descriptorSetImGui, ImGui::GetContentRegionAvail(), ImVec2{0, 1}, ImVec2{1, 0});
     ImGui::End();
 
-    Framebuffer& fb = AssetManager::GetAsset<Framebuffer>(framebuffer);
+    commandBuffer->Begin();
+
     Pipeline& pl = AssetManager::GetAsset<Pipeline>(graphicsPipeline);
     fb.Bind(*commandBuffer);
     pl.Bind(*commandBuffer);
@@ -190,19 +190,14 @@ namespace Copium
     mesh->Bind(*commandBuffer);
     mesh->Render(*commandBuffer);
 
+    // TODO: Move this logic elsewhere and only have the Rendering part here
+    Input::PushViewport(viewport);
     scene->Update();
+    Input::PopViewport();
 
     fb.Unbind(*commandBuffer);
 
     Vulkan::GetSwapChain().BeginFrameBuffer(*commandBuffer);
-
-    Pipeline& plPassthrough = AssetManager::GetAsset<Pipeline>(graphicsPipelinePassthrough);
-    plPassthrough.Bind(*commandBuffer);
-    plPassthrough.SetDescriptorSet(*descriptorSetPassthrough);
-    plPassthrough.BindDescriptorSets(*commandBuffer);
-
-    meshPassthrough->Bind(*commandBuffer);
-    meshPassthrough->Render(*commandBuffer);
 
     Vulkan::GetImGuiInstance().End();
     Vulkan::GetImGuiInstance().Render(*commandBuffer);
@@ -219,13 +214,11 @@ namespace Copium
     Framebuffer& fb = AssetManager::GetAsset<Framebuffer>(framebuffer);
     float aspect = fb.GetWidth() / (float)fb.GetHeight();
 
-    {
-      UniformBuffer& uniformBuffer = descriptorSet->GetUniformBuffer("ubo");
-      uniformBuffer.Set("projection", glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f));
-      uniformBuffer.Set("view", glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-      uniformBuffer.Set("model", glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-      uniformBuffer.Set("lightPos", (glm::vec3)(glm::rotate(glm::mat4{1.0f}, time * glm::radians(45.0f), glm::vec3(0, 1, 0)) * glm::vec4{0.3, 0.1, 0, 1}));
-      uniformBuffer.Update();
-    }
+    UniformBuffer& uniformBuffer = descriptorSet->GetUniformBuffer("ubo");
+    uniformBuffer.Set("projection", glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f));
+    uniformBuffer.Set("view", glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    uniformBuffer.Set("model", glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+    uniformBuffer.Set("lightPos", (glm::vec3)(glm::rotate(glm::mat4{1.0f}, time * glm::radians(45.0f), glm::vec3(0, 1, 0)) * glm::vec4{0.3, 0.1, 0, 1}));
+    uniformBuffer.Update();
   }
 }

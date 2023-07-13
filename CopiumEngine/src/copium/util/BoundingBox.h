@@ -18,5 +18,8 @@ namespace Copium
     BoundingBox(glm::vec2 lb, glm::vec2 rt);
 
     glm::vec2 GetSize() const;
+
+    bool operator==(const BoundingBox& boundingBox) const;
+    bool operator!=(const BoundingBox& boundingBox) const;
   };
 }

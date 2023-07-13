@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "copium/event/InputCode.h"
+#include "copium/util/BoundingBox.h"
 
 #include <glm/glm.hpp>
 
@@ -19,6 +20,7 @@ namespace Copium
     static bool mouseDownList[MAX_NUM_MOUSE_BUTTONS];
     static bool mouseEventList[MAX_NUM_MOUSE_BUTTONS];
     static glm::vec2 mousePos;
+    static glm::vec2 mousePosViewport;
 
   public:
     // Will only be true for a single frame after the KeyPressEvent/KeyReleaseEvent
@@ -37,11 +39,14 @@ namespace Copium
 
     static glm::vec2 GetMouseWindowPos();
     static glm::vec2 GetMousePos();
+    static glm::vec2 GetMousePosViewport();
 
     static void OnKey(int keyCode, bool pressed);
     static void OnMouse(int buttion, bool pressed);
     static void OnMouseMove(glm::vec2 mousePos);
 
     static void Update();
+    static void PushViewport(const BoundingBox& viewport);
+    static void PopViewport();
   };
 }

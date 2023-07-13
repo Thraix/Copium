@@ -1,5 +1,0 @@
-[Pipeline]
-vert-filepath=res/shaders/passthrough.vert
-frag-filepath=res/shaders/passthrough.frag
-type=Passthrough
-uuid=8fdcfe12-5c69-cf29-2f31-e177d6267e4e

@@ -18,7 +18,7 @@ namespace Copium
 
     void RunEntity(Entity entity, MouseFollowC& mouseFollow, TransformC& transform)
     {
-      transform.position = (*invPvMatrix) * glm::vec4{Input::GetMousePos().x, Input::GetMousePos().y, 0.0f, 1.0f};
+      transform.position = (*invPvMatrix) * glm::vec4{Input::GetMousePosViewport().x, Input::GetMousePosViewport().y, 0.0f, 1.0f};
       transform.position -= transform.size * glm::vec2{0.5f};
     }
   };

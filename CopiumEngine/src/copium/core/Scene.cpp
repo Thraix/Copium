@@ -24,6 +24,7 @@
 #include "copium/example/PlayerControllerSystem.h"
 #include "copium/example/RenderSystem.h"
 #include "copium/example/UiRenderSystem.h"
+#include "copium/event/ViewportResize.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -49,7 +50,7 @@ namespace Copium
     ecs->AddSystem<CameraUpdateSystem>(&viewMatrix, &projectionMatrix, &invPvMatrix, &uiProjectionMatrix);
     ecs->AddSystem<MouseFollowSystem>(&invPvMatrix);
     ecs->AddSystem<FrameCountSystem>();
-    ecs->AddSystem<DebugSystem>();
+    ecs->AddSystem<DebugSystem>(&viewport);
     ecs->AddSystem<AnimationSystem>();
     ecs->AddSystem<RenderSystem>(renderer.get(), descriptorSetRenderer.get(), &commandBuffer, &viewMatrix, &projectionMatrix); // better way to store the RenderSystem data?
     ecs->AddSystem<UiRenderSystem>(uiRenderer.get(), uiDescriptorSetRenderer.get(), &commandBuffer, &uiProjectionMatrix);
@@ -66,7 +67,16 @@ namespace Copium
 
   EventResult Scene::OnEvent(const Event& event)
   {
+    switch (event.GetType())
+    {
+    case EventType::ViewportResize:
+      const ViewportResize& viewportResizeEvent = static_cast<const ViewportResize&>(event);
+      viewport = viewportResizeEvent.GetViewport();
+      break;
+    }
+    Input::PushViewport(viewport);
     ecs->UpdateSystems(EventSignal{event});
+    Input::PopViewport();
     return EventResult::Continue;
   }
 

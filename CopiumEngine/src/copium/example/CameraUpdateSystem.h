@@ -3,7 +3,7 @@
 #include "copium/ecs/System.h"
 #include "copium/example/Components.h"
 #include "copium/event/EventSignal.h"
-#include "copium/event/WindowResizeEvent.h"
+#include "copium/event/ViewportResize.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -46,19 +46,19 @@ namespace Copium
       const EventSignal& eventSignal = static_cast<const EventSignal&>(signal);
       switch (eventSignal.GetEvent().GetType())
       {
-      case EventType::WindowResize:
+      case EventType::ViewportResize:
       {
-        const WindowResizeEvent& windowResizeEvent = static_cast<const WindowResizeEvent&>(eventSignal.GetEvent());
+        const ViewportResize& viewportResize = static_cast<const ViewportResize&>(eventSignal.GetEvent());
         if (camera.uiCamera)
         {
-          camera.projection.r = windowResizeEvent.GetWidth();
-          camera.projection.t = windowResizeEvent.GetHeight();
+          camera.projection.r = viewportResize.GetViewport().GetSize().x;
+          camera.projection.t = viewportResize.GetViewport().GetSize().y;
           camera.projection.l = 0.0f;
           camera.projection.b = 0.0f;
         }
         else
         {
-          float aspect = windowResizeEvent.GetWidth() / (float)windowResizeEvent.GetHeight();
+          float aspect = viewportResize.GetViewport().GetSize().x / viewportResize.GetViewport().GetSize().y;
           camera.projection.r = aspect;
           camera.projection.l = -aspect;
         }

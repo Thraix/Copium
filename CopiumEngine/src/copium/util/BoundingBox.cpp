@@ -20,6 +20,16 @@ namespace Copium
 
   glm::vec2 BoundingBox::GetSize() const 
   {
-    return rt - lb;
+    return glm::abs(rt - lb);
+  }
+
+  bool BoundingBox::operator==(const BoundingBox& boundingBox) const
+  {
+    return l == boundingBox.l && b == boundingBox.b && r == boundingBox.r && t == boundingBox.t;
+  }
+
+  bool BoundingBox::operator!=(const BoundingBox& boundingBox) const
+  {
+    return !(*this == boundingBox);
   }
 }
