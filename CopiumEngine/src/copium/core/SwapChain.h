@@ -59,6 +59,7 @@ namespace Copium
     void Recreate();
 
     int GetFlightIndex() const;
+    int GetImageCount() const;
 
   private:
     void Initialize();

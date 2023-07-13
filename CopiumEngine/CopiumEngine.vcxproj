@@ -119,7 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLM_FORCE_LEFT_HANDED;GLFW_INCLUDE_VULKAN;GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;MSDF_ATLAS_PUBLIC=;MSDFGEN_PUBLIC=</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)ext/include/;$(ProjectDir)src/;$(SolutionDir)ext/repos/msdf-atlas-gen/;$(SolutionDir)ext/repos/msdf-atlas-gen/msdfgen/;$(SolutionDir)ext/repos/stb/;$(SolutionDir)ext/repos/glfw/include;$(ProjectDir)ext/repos/glm/;$(VULKAN_SDK)/Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ext/include/;$(ProjectDir)src/;$(SolutionDir)ext/repos/msdf-atlas-gen/;$(SolutionDir)ext/repos/msdf-atlas-gen/msdfgen/;$(SolutionDir)ext/repos/stb/;$(SolutionDir)ext/repos/glfw/include;$(ProjectDir)ext/repos/glm/;$(VULKAN_SDK)/Include;$(SolutionDir)ext/repos/imgui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -128,7 +128,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)libs\$(Platform)\$(Configuration)\;$(VULKAN_SDK)/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;msdfgen-core.lib;msdfgen-ext.lib;msdf-atlas-gen.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;imgui.lib;glfw3.lib;shaderc_combinedd.lib;msdfgen-core.lib;msdfgen-ext.lib;msdf-atlas-gen.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -147,7 +147,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLM_FORCE_LEFT_HANDED;GLFW_INCLUDE_VULKAN;GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;MSDF_ATLAS_PUBLIC=;MSDFGEN_PUBLIC=</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)ext/include/;$(ProjectDir)src/;$(SolutionDir)ext/repos/msdf-atlas-gen/;$(SolutionDir)ext/repos/msdf-atlas-gen/msdfgen/;$(SolutionDir)ext/repos/stb/;$(SolutionDir)ext/repos/glfw/include;$(ProjectDir)ext/repos/glm/;$(VULKAN_SDK)/Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ext/include/;$(ProjectDir)src/;$(SolutionDir)ext/repos/msdf-atlas-gen/;$(SolutionDir)ext/repos/msdf-atlas-gen/msdfgen/;$(SolutionDir)ext/repos/stb/;$(SolutionDir)ext/repos/glfw/include;$(ProjectDir)ext/repos/glm/;$(VULKAN_SDK)/Include;$(SolutionDir)ext/repos/imgui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -157,7 +157,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)libs\$(Platform)\$(Configuration)\;$(VULKAN_SDK)/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;glfw3.lib;shaderc_combined.lib;msdfgen-core.lib;msdfgen-ext.lib;msdf-atlas-gen.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;imgui.lib;glfw3.lib;shaderc_combined.lib;msdfgen-core.lib;msdfgen-ext.lib;msdf-atlas-gen.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -177,6 +177,7 @@
     <ClCompile Include="src\copium\core\Application.cpp" />
     <ClCompile Include="src\copium\buffer\Buffer.cpp" />
     <ClCompile Include="src\copium\core\Device.cpp" />
+    <ClCompile Include="src\copium\core\ImGuiInstance.cpp" />
     <ClCompile Include="src\copium\core\Scene.cpp" />
     <ClCompile Include="src\copium\core\Vulkan.cpp" />
     <ClCompile Include="src\copium\core\Window.cpp" />
@@ -247,6 +248,7 @@
     <ClInclude Include="src\copium\asset\AssetRef.h" />
     <ClInclude Include="src\copium\buffer\RendererVertexBuffer.h" />
     <ClInclude Include="src\copium\core\Device.h" />
+    <ClInclude Include="src\copium\core\ImGuiInstance.h" />
     <ClInclude Include="src\copium\core\Scene.h" />
     <ClInclude Include="src\copium\core\Vulkan.h" />
     <ClInclude Include="src\copium\core\Window.h" />

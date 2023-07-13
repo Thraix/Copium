@@ -15,6 +15,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <imgui.h>
+
 namespace Copium
 {
   const std::vector<Vertex> vertices = {
@@ -74,6 +76,7 @@ namespace Copium
       return true;
 
     RecordCommandBuffer();
+
     Vulkan::GetSwapChain().SubmitToGraphicsQueue(*commandBuffer);
 
     Vulkan::GetSwapChain().EndPresent();
@@ -164,6 +167,8 @@ namespace Copium
 
   void Application::RecordCommandBuffer()
   {
+    Vulkan::GetImGuiInstance().Begin();
+    ImGui::ShowDemoWindow();
     commandBuffer->Begin();
 
     Framebuffer& fb = AssetManager::GetAsset<Framebuffer>(framebuffer);
@@ -192,6 +197,9 @@ namespace Copium
 
     meshPassthrough->Bind(*commandBuffer);
     meshPassthrough->Render(*commandBuffer);
+
+    Vulkan::GetImGuiInstance().End();
+    Vulkan::GetImGuiInstance().Render(*commandBuffer);
 
     Vulkan::GetSwapChain().EndFrameBuffer(*commandBuffer);
     commandBuffer->End();

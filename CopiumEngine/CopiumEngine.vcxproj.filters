@@ -222,6 +222,9 @@
     <ClCompile Include="src\copium\sampler\SamplerCreator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\copium\core\ImGuiInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\copium\sampler\DepthAttachment.h">
@@ -522,6 +525,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\example\LevelGeneratorComponentListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\core\ImGuiInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,6 +18,16 @@ namespace Copium
     vkDestroyDevice(device, nullptr);
   }
 
+  uint32_t Device::GetGraphicsQueueFamily() const
+  {
+    return graphicsQueueIndex;
+  }
+
+  uint32_t Device::GetPresentQueueFamily() const
+  {
+    return presentQueueIndex;
+  }
+
   VkQueue Device::GetGraphicsQueue() const
   {
     return graphicsQueue;

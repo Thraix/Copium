@@ -18,5 +18,7 @@ namespace Copium
 
     std::vector<VkDescriptorSet> AllocateDescriptorSets(VkDescriptorSetLayout descriptorSetLayout);
     void FreeDescriptorSets(const std::vector<VkDescriptorSet>& descriptorSets);
+
+    operator VkDescriptorPool() const;
   };
 }

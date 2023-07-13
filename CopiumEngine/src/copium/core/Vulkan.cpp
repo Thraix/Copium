@@ -13,6 +13,7 @@ namespace Copium
   std::unique_ptr<Window> Vulkan::window;
   std::unique_ptr<Device> Vulkan::device;
   std::unique_ptr<SwapChain> Vulkan::swapChain;
+  std::unique_ptr<ImGuiInstance> Vulkan::imGuiInstance;
   AssetHandle Vulkan::emptyTexture2D;
 
   void Vulkan::Initialize()
@@ -21,6 +22,7 @@ namespace Copium
     window = std::make_unique<Window>("Copium Engine", 1440, 810, WindowMode::Windowed);
     device = std::make_unique<Device>();
     swapChain = std::make_unique<SwapChain>();
+    imGuiInstance = std::make_unique<ImGuiInstance>();
 
     AssetManager::RegisterAssetType<Texture2D>("Texture2D");
     AssetManager::RegisterAssetType<ColorAttachment>("RenderTexture");
@@ -39,6 +41,7 @@ namespace Copium
     AssetManager::UnloadAsset(emptyTexture2D);
     AssetManager::UnregisterAssetDir("assets/");
     AssetManager::Cleanup();
+    imGuiInstance.reset();
     swapChain.reset();
     device.reset();
     window.reset();
@@ -63,6 +66,11 @@ namespace Copium
   SwapChain& Vulkan::GetSwapChain()
   {
     return *swapChain;
+  }
+
+  ImGuiInstance& Vulkan::GetImGuiInstance()
+  {
+    return *imGuiInstance;
   }
 
   AssetHandle Vulkan::GetEmptyTexture2D()

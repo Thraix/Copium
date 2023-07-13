@@ -47,4 +47,9 @@ namespace Copium
   {
     vkFreeDescriptorSets(Vulkan::GetDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
   }
+
+  DescriptorPool::operator VkDescriptorPool() const
+  {
+    return descriptorPool;
+  }
 }

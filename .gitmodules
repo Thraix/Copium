@@ -16,3 +16,6 @@
 [submodule "ext/repos/shaderc"]
 	path = ext/repos/shaderc
 	url = git@github.com:google/shaderc.git
+[submodule "ext/repos/imgui"]
+	path = ext/repos/imgui
+	url = git@github.com:ocornut/imgui.git

@@ -189,9 +189,14 @@ namespace Copium
     InitializeFramebuffers();
   }
 
-  int SwapChain::GetFlightIndex() const 
+  int SwapChain::GetFlightIndex() const
   {
     return flightIndex;
+  }
+
+  int SwapChain::GetImageCount() const
+  {
+    return images.size();
   }
 
   void SwapChain::Initialize()

@@ -27,6 +27,8 @@ namespace Copium
     Device();
     ~Device();
     
+    uint32_t GetGraphicsQueueFamily() const;
+    uint32_t GetPresentQueueFamily() const;
     VkQueue GetGraphicsQueue() const;
     VkQueue GetPresentQueue() const;
     VkCommandPool GetCommandPool() const;
