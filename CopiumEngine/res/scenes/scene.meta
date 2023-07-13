@@ -1,0 +1,121 @@
+[LevelGenerator]
+
+---
+[Transform]
+position=0.1 -0.4
+size=0.8 0.8
+
+[Texture]
+texture-uuid=3e9ef1a2-59ba-2e4d-b2cd-f5efaa531af7
+
+[StaticCollider]
+resolve-collision=false
+
+[Pickup]
+[Renderable]
+
+---
+[Transform]
+position=0.1 0.1
+size=0.2 0.2
+
+[Texture]
+texture-uuid=f49a5284-d666-0982-95ca-cf68cc3d4f45
+
+[MouseFollow]
+[Renderable]
+
+---
+[Transform]
+position=10 10
+size=0
+
+[Text]
+font=3e9ef1a2-59ba-2e4d-b2cd-f5efaa531af7
+text=0 fps
+font-size=20
+
+[FrameCount]
+[UiRenderable]
+
+---
+[Camera]
+static-bounding-box=false
+ui-camera=false
+
+[Transform]
+position=0 0
+size=2 2
+
+---
+[Camera]
+static-bounding-box=false
+ui-camera=false
+
+[Transform]
+position=0 0
+size=2 2
+
+[Uuid]
+uuid=a14e2328-ebce-5026-e5ab-495daf8c3660
+
+---
+[Camera]
+static-bounding-box=false
+ui-camera=true
+
+[Transform]
+position=0 0
+size=1 1
+
+---
+
+[Player]
+camera-uuid=a14e2328-ebce-5026-e5ab-495daf8c3660
+
+[Transform]
+position=0 2
+size=1 1
+
+[Health]
+health=10
+
+[Physics]
+mass=0.1
+
+[Texture]
+texture-uuid=0964e525-22c3-4d25-d5c6-a162965f6e8d
+tex-coord=0 0
+tex-size=0.25 0.25
+
+[Animation]
+sheet-size=4 4
+sheet-coord=0 3
+images=4
+horizontal=true
+time=0.5
+
+[DynamicCollider]
+resolve-collision=false
+collider-offset=0.4375 0
+collider-size=0.125 0.65625
+
+[Uuid]
+uuid=09617c73-2b1e-0a83-db81-3ae3b5971c11
+
+[Renderable]
+
+---
+[Transform]
+position=10 800
+size=1 1
+
+[Text]
+font=3e9ef1a2-59ba-2e4d-b2cd-f5efaa531af7
+text=
+font-size=20
+
+[Debug]
+player-uuid=09617c73-2b1e-0a83-db81-3ae3b5971c11
+
+[UiRenderable]

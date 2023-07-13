@@ -22,9 +22,9 @@ namespace Copium
 
     std::string ToString() const;
 
-    bool operator==(const Uuid& rhs);
-    bool operator!=(const Uuid& rhs);
-    bool operator<(const Uuid& rhs);
+    bool operator==(const Uuid& rhs) const;
+    bool operator!=(const Uuid& rhs) const;
+    bool operator<(const Uuid& rhs) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Uuid& uuid);
 

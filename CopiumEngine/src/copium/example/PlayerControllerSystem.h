@@ -30,20 +30,20 @@ namespace Copium
       animation.time = 0.5;
       if (Input::IsKeyDown(CP_KEY_A)) {
         force -= 1.0f;
-        animation.sheetStartCoordY = 0;
+        animation.sheetCoord.y = 0;
         animation.time = 0.2;
       }
 
       if (Input::IsKeyDown(CP_KEY_D)) {
         force += 1.0f;
-        animation.sheetStartCoordY = 1;
+        animation.sheetCoord.y = 1;
         animation.time = 0.2;
       }
 
-      if (force == 0.0f && animation.sheetStartCoordY == 1)
-        animation.sheetStartCoordY = 3;
-      if (force == 0.0f && animation.sheetStartCoordY == 0)
-        animation.sheetStartCoordY = 2;
+      if (force == 0.0f && animation.sheetCoord.y == 1)
+        animation.sheetCoord.y = 3;
+      if (force == 0.0f && animation.sheetCoord.y == 0)
+        animation.sheetCoord.y = 2;
 
       float magnitude = 75.0f;
       physics.force.x += force * magnitude;

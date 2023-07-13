@@ -10,7 +10,7 @@
 
 namespace Copium
 {
-  class RenderSystem : public System<Renderable, TransformC>
+  class RenderSystem : public System<RenderableC, TransformC>
   {
   private:
     // Find better way to store these?
@@ -30,7 +30,7 @@ namespace Copium
         projectionMatrix{projectionMatrix}
     {}
 
-    void RunEntity(Entity entity, Renderable& renderable, TransformC& transform) override
+    void RunEntity(Entity entity, RenderableC& renderable, TransformC& transform) override
     {
       if (entity.HasComponent<TextC>())
       {

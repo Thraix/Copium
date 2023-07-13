@@ -2,6 +2,7 @@
 
 #include "copium/asset/AssetRef.h"
 #include "copium/ecs/Entity.h"
+#include "copium/util/Uuid.h"
 
 #include <string>
 
@@ -15,8 +16,8 @@ namespace Copium
     glm::vec2 size;
   };
 
-  struct Renderable {};
-  struct UiRenderable {};
+  struct RenderableC {};
+  struct UiRenderableC {};
 
   struct ColorC
   {
@@ -53,14 +54,16 @@ namespace Copium
   struct PhysicsC
   {
     float mass;
-    glm::vec2 force;
-    glm::vec2 velocity;
+
+    glm::vec2 force{};
+    glm::vec2 velocity{};
   };
 
   struct PlayerC
   {
     Entity camera;
-    bool grounded;
+
+    bool grounded = false;
   };
 
   struct HealthC
@@ -68,8 +71,8 @@ namespace Copium
     int current;
     int max;
 
-    Entity background;
-    Entity foreground;
+    Entity background{};
+    Entity foreground{};
   };
 
   struct StaticColliderC
@@ -83,7 +86,7 @@ namespace Copium
     glm::vec2 colliderOffset;
     glm::vec2 colliderSize;
 
-    glm::vec2 oldPosition;
+    glm::vec2 oldPosition{};
   };
 
   struct PickupC
@@ -98,15 +101,23 @@ namespace Copium
 
   struct AnimationC
   {
-    int sheetSizeX;
-    int sheetSizeY;
-    int sheetStartCoordX;
-    int sheetStartCoordY;
+    glm::ivec2 sheetCoord;
+    glm::ivec2 sheetSize;
     int images;
     bool horizontal;
     float time;
 
-    float timeElapsed;
-    int frame;
+    float timeElapsed = 0.0f;
+    int frame = 0;
+  };
+
+  struct UuidC
+  {
+    Uuid uuid;
+  };
+
+  struct LevelGeneratorC
+  {
+    std::vector<Entity> entities;
   };
 }

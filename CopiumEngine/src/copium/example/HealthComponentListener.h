@@ -16,12 +16,12 @@ namespace Copium
       health.background = Entity::Create(manager);
       health.background.AddComponent<TransformC>(glm::vec2{0.0f, 0.0f}, glm::vec2{0.5f, 0.05f});
       health.background.AddComponent<ColorC>(glm::vec3{0.152f, 0.14f, 0.207f});
-      health.background.AddComponent<Renderable>();
+      health.background.AddComponent<RenderableC>();
 
       health.foreground = Entity::Create(manager);
       health.foreground.AddComponent<TransformC>(glm::vec2{0.0f, 0.0f}, glm::vec2{0.5f * std::clamp(health.current, 0, health.max) / (float)health.max, 0.05f});
       health.foreground.AddComponent<ColorC>(glm::vec3{0.581f, 0.393f, 0.462f});
-      health.foreground.AddComponent<Renderable>();
+      health.foreground.AddComponent<RenderableC>();
     }
 
     void Removed(EntityId entityId, HealthC& health) override

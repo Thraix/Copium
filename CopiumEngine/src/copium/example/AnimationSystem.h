@@ -16,16 +16,16 @@ namespace Copium
         animation.frame = (animation.frame + 1) % animation.images;
       }
       if (animation.horizontal) {
-        texture.texCoord1.x = (animation.sheetStartCoordX + animation.frame) / (float)animation.sheetSizeX;
-        texture.texCoord2.x = (animation.sheetStartCoordX + animation.frame + 1) / (float)animation.sheetSizeX;
-        texture.texCoord1.y = (animation.sheetStartCoordY) / (float)animation.sheetSizeY;
-        texture.texCoord2.y = (animation.sheetStartCoordY + 1) / (float)animation.sheetSizeY;
+        texture.texCoord1.x = (animation.sheetCoord.x + animation.frame) / (float)animation.sheetSize.x;
+        texture.texCoord2.x = (animation.sheetCoord.x + animation.frame + 1) / (float)animation.sheetSize.x;
+        texture.texCoord1.y = (animation.sheetCoord.y) / (float)animation.sheetSize.y;
+        texture.texCoord2.y = (animation.sheetCoord.y + 1) / (float)animation.sheetSize.y;
       }
       else {
-        texture.texCoord1.x = (animation.sheetStartCoordX) / (float)animation.sheetSizeX;
-        texture.texCoord2.x = (animation.sheetStartCoordX + 1) / (float)animation.sheetSizeX;
-        texture.texCoord1.y = (animation.sheetStartCoordY + animation.frame) / (float)animation.sheetSizeY;
-        texture.texCoord2.y = (animation.sheetStartCoordY + animation.frame + 1) / (float)animation.sheetSizeY;
+        texture.texCoord1.x = (animation.sheetCoord.x) / (float)animation.sheetSize.x;
+        texture.texCoord2.x = (animation.sheetCoord.x + 1) / (float)animation.sheetSize.x;
+        texture.texCoord1.y = (animation.sheetCoord.y + animation.frame) / (float)animation.sheetSize.y;
+        texture.texCoord2.y = (animation.sheetCoord.y + animation.frame + 1) / (float)animation.sheetSize.y;
       }
     }
   };

@@ -521,5 +521,8 @@
     <ClInclude Include="src\copium\example\AnimationSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\copium\example\LevelGeneratorComponentListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

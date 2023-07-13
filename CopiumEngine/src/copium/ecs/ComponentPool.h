@@ -4,6 +4,7 @@
 #include "copium/ecs/EntitySet.h"
 #include "copium/ecs/ComponentPoolBase.h"
 #include "copium/ecs/ComponentListener.h"
+#include "copium/util/Common.h"
 
 #include <vector>
 

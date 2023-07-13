@@ -61,6 +61,11 @@ namespace Copium
     LoadMetaFile(stream);
   }
 
+  const std::map<std::string, MetaFileClass>& MetaFile::GetMetaFileClasses()
+  {
+    return classes;
+  }
+
   bool MetaFile::HasMetaClass(const std::string& className) const
   {
     return classes.find(className) != classes.end();
@@ -161,19 +166,18 @@ namespace Copium
   {
     std::vector<MetaFile> metaFiles;
     std::ifstream stream{file};
-    if(stream)
+
+    CP_ASSERT(stream, "Failed to read file: %s", file.c_str());
+
+    MetaFile meta;
+    while(!stream.eof())
     {
-      MetaFile meta;
-      while(!stream.eof())
-      {
-        MetaFile meta{};
-        stream >> meta;
-        if(meta.classes.empty())
-          continue;
-        metaFiles.emplace_back(meta);
-      }
-      return metaFiles;
+      MetaFile meta{};
+      stream >> meta;
+      if(meta.classes.empty())
+        continue;
+      metaFiles.emplace_back(meta);
     }
-    return {};
+    return metaFiles;
   }
 }

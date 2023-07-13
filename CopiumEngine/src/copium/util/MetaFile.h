@@ -40,6 +40,8 @@ namespace Copium
       MetaFile(std::istream& stream);
 
       bool HasMetaClass(const std::string& className) const;
+
+      const std::map<std::string, MetaFileClass>& GetMetaFileClasses();
       MetaFileClass& GetMetaClass(const std::string& className);
       const MetaFileClass& GetMetaClass(const std::string& className) const;
       const std::string& GetFilePath()  const;

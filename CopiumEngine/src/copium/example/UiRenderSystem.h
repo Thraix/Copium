@@ -10,7 +10,7 @@
 
 namespace Copium
 {
-  class UiRenderSystem : public System<UiRenderable, TransformC>
+  class UiRenderSystem : public System<UiRenderableC, TransformC>
   {
   private:
     // Find better way to store these?
@@ -26,7 +26,7 @@ namespace Copium
         projectionMatrix{projectionMatrix}
     {}
 
-    void RunEntity(Entity entity, UiRenderable& uiRenderable, TransformC& transform)
+    void RunEntity(Entity entity, UiRenderableC& uiRenderable, TransformC& transform)
     {
       if (entity.HasComponent<TextC>())
       {

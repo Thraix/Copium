@@ -1,9 +1,11 @@
 #pragma once
 
-#include "copium/renderer/Renderer.h"
 #include "copium/ecs/ECSManager.h"
+#include "copium/ecs/Entity.h"
 #include "copium/event/Event.h"
 #include "copium/event/EventResult.h"
+#include "copium/renderer/Renderer.h"
+#include "copium/util/Uuid.h"
 
 #include <memory>
 
@@ -25,5 +27,12 @@ namespace Copium
     Scene(CommandBuffer& commandBuffer, DescriptorPool& descriptorPool);
     void Update();
     EventResult OnEvent(const Event& event);
+  private:
+    void Deserialize(const std::string& file);
+    Entity GetEntity(const Uuid& uuid) const;
+
+    glm::vec2 ReadVec2Opt(const MetaFileClass& metaClass, const std::string& key, glm::vec2 vec);
+    glm::ivec2 ReadVec2Opt(const MetaFileClass& metaClass, const std::string& key, glm::ivec2 vec);
+    bool ReadBoolOpt(const MetaFileClass& metaClass, const std::string& key, bool vec);
   };
 }

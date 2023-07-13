@@ -10,6 +10,7 @@ namespace Copium
     std::shared_ptr<AssetHandle> handle;
 
   public:
+    AssetRef();
     AssetRef(AssetHandle handle);
 
     operator AssetHandle() const;

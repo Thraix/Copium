@@ -55,17 +55,17 @@ namespace Copium
     return string;
   }
 
-  bool Uuid::operator==(const Uuid& rhs)
+  bool Uuid::operator==(const Uuid& rhs) const
   {
     return msb == rhs.msb && lsb == rhs.lsb;
   }
 
-  bool Uuid::operator!=(const Uuid& rhs)
+  bool Uuid::operator!=(const Uuid& rhs) const
   {
     return !(*this == rhs);
   }
 
-  bool Uuid::operator<(const Uuid& rhs)
+  bool Uuid::operator<(const Uuid& rhs) const
   {
     if (msb != rhs.msb)
       return msb < rhs.msb;

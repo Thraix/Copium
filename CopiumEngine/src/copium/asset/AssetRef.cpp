@@ -10,6 +10,8 @@ namespace Copium
       }
   };
 
+  AssetRef::AssetRef() = default;
+
   AssetRef::AssetRef(AssetHandle handle)
     : handle{std::shared_ptr<AssetHandle>(new AssetHandle{handle}, AssetHandleUnloader{})}
   {}

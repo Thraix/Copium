@@ -259,6 +259,7 @@
     <ClInclude Include="src\copium\ecs\EntitySet.h" />
     <ClInclude Include="src\copium\example\AnimationSystem.h" />
     <ClInclude Include="src\copium\example\DebugSystem.h" />
+    <ClInclude Include="src\copium\example\LevelGeneratorComponentListener.h" />
     <ClInclude Include="src\copium\example\PickupSystem.h" />
     <ClInclude Include="src\copium\ecs\Signal.h" />
     <ClInclude Include="src\copium\ecs\System.h" />

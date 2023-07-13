@@ -7,16 +7,17 @@
 #include "copium/ecs/Entity.h"
 #include "copium/ecs/System.h"
 #include "copium/event/MouseMoveEvent.h"
+#include "copium/example/AnimationSystem.h"
 #include "copium/example/CameraFollowPlayerSystem.h"
 #include "copium/example/CameraUpdateSystem.h"
 #include "copium/example/ColliderSystem.h"
 #include "copium/example/Components.h"
 #include "copium/example/DebugSystem.h"
-#include "copium/example/AnimationSystem.h"
 #include "copium/example/FrameCountSystem.h"
 #include "copium/example/HealthChangeSystem.h"
 #include "copium/example/HealthComponentListener.h"
 #include "copium/example/HealthDisplaySystem.h"
+#include "copium/example/LevelGeneratorComponentListener.h"
 #include "copium/example/MouseFollowSystem.h"
 #include "copium/example/PhysicsSystem.h"
 #include "copium/example/PickupSystem.h"
@@ -53,110 +54,9 @@ namespace Copium
     ecs->AddSystem<RenderSystem>(renderer.get(), descriptorSetRenderer.get(), &commandBuffer, &viewMatrix, &projectionMatrix); // better way to store the RenderSystem data?
     ecs->AddSystem<UiRenderSystem>(uiRenderer.get(), uiDescriptorSetRenderer.get(), &commandBuffer, &uiProjectionMatrix);
     ecs->SetComponentListener<HealthComponentListener>();
+    ecs->SetComponentListener<LevelGeneratorComponentListener>();
 
-    // TODO: Load from scene file
-    for (int y = 0; y < 20; y++)
-    {
-      {
-        Entity entity = Entity::Create(ecs.get());
-        entity.AddComponent<TransformC>(glm::vec2{-10.0f, -10.0f + y * 1.0}, glm::vec2{1.0f, 1.0f});
-        if(y == 0 || y == 19)
-          entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{0.25f, 1.0f});
-        else
-          entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.75f, 0.0f}, glm::vec2{1.0f, 1.0f});
-        entity.AddComponent<StaticColliderC>(true);
-        entity.AddComponent<Renderable>();
-      }
-      {
-        Entity entity = Entity::Create(ecs.get());
-        entity.AddComponent<TransformC>(glm::vec2{10.0f, -10.0f + y * 1.0}, glm::vec2{1.0f, 1.0f});
-        if(y == 0 || y == 19)
-          entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.5f, 0.0f}, glm::vec2{0.75f, 1.0f});
-        else
-          entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.75f, 0.0f}, glm::vec2{1.0f, 1.0f});
-        entity.AddComponent<StaticColliderC>(true);
-        entity.AddComponent<Renderable>();
-      }
-    }
-    for (int x = 1; x < 20; x++)
-    {
-      {
-        Entity entity = Entity::Create(ecs.get());
-        entity.AddComponent<TransformC>(glm::vec2{-10.0f + x * 1.0, -10.0f}, glm::vec2{1.0f, 1.0f});
-        entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.25f, 0.0f}, glm::vec2{0.5f, 1.0f});
-        entity.AddComponent<StaticColliderC>(true);
-        entity.AddComponent<Renderable>();
-      }
-      {
-        Entity entity = Entity::Create(ecs.get());
-        entity.AddComponent<TransformC>(glm::vec2{-10.0f + x * 1.0, 10.0f}, glm::vec2{1.0f, 1.0f});
-        entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.25f, 0.0f}, glm::vec2{0.5f, 1.0f});
-        entity.AddComponent<StaticColliderC>(true);
-        entity.AddComponent<Renderable>();
-      }
-    }
-    for (int y = 0; y < 10; y++)
-    {
-      for (int x = 0; x < 10; x++)
-      {
-        Entity entity = Entity::Create(ecs.get());
-        entity.AddComponent<TransformC>(glm::vec2{-10.0f + x * 1.6f + 0.4f, -10.0f + y * 1.6 + 0.4f}, glm::vec2{0.8f, 0.8f});
-        entity.AddComponent<ColorC>(glm::vec3{x * 0.1f, y * 0.1f, 1.0f});
-        entity.AddComponent<StaticColliderC>(false);
-        entity.AddComponent<PickupC>();
-        entity.AddComponent<Renderable>();
-      }
-    }
-
-    float aspect = Vulkan::GetSwapChain().GetExtent().width / (float)Vulkan::GetSwapChain().GetExtent().height;
-    Entity entityFox = Entity::Create(ecs.get());
-    entityFox.AddComponent<TransformC>(glm::vec2{-0.9f, -0.4f}, glm::vec2{0.8f, 0.8f});
-    entityFox.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
-    entityFox.AddComponent<StaticColliderC>(true);
-    entityFox.AddComponent<Renderable>();
-
-    Entity entityFontAtlas = Entity::Create(ecs.get());
-    entityFontAtlas.AddComponent<TransformC>(glm::vec2{0.1f, -0.4f}, glm::vec2{0.8, 0.8});
-    entityFontAtlas.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("font.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
-    entityFontAtlas.AddComponent<StaticColliderC>(false);
-    entityFontAtlas.AddComponent<PickupC>();
-    entityFontAtlas.AddComponent<Renderable>();
-
-    Entity entityMouse = Entity::Create(ecs.get());
-    entityMouse.AddComponent<TransformC>(glm::vec2(0.1), glm::vec2{0.2});
-    entityMouse.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("fox.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f});
-    entityMouse.AddComponent<MouseFollowC>();
-    entityMouse.AddComponent<Renderable>();
-
-    Entity entityText = Entity::Create(ecs.get());
-    entityText.AddComponent<TransformC>(glm::vec2{-aspect * 10.0f + 0.1f, 9.4f}, glm::vec2{1.0});
-    entityText.AddComponent<TextC>(AssetRef{AssetManager::LoadAsset("font.meta")}, std::to_string(0) + " fps", 0.6f);
-    entityText.AddComponent<FrameCountC>();
-    entityText.AddComponent<Renderable>();
-
-    Entity entityCamera = Entity::Create(ecs.get());
-    entityCamera.AddComponent<CameraC>(BoundingBox(-aspect, -1.0f, aspect, 1.0f), false, false);
-    entityCamera.AddComponent<TransformC>(glm::vec2{0.0f}, glm::vec2{2.0f});
-
-    Entity entityUiCamera = Entity::Create(ecs.get());
-    entityUiCamera.AddComponent<CameraC>(BoundingBox(0.0f, 0.0f, Vulkan::GetSwapChain().GetExtent().width, Vulkan::GetSwapChain().GetExtent().height), false, true);
-    entityUiCamera.AddComponent<TransformC>(glm::vec2{0.0f}, glm::vec2{1.0f});
-
-    Entity entityPlayer = Entity::Create(ecs.get());
-    entityPlayer.AddComponent<PlayerC>(entityCamera, false);
-    entityPlayer.AddComponent<HealthC>(10, 10);
-    entityPlayer.AddComponent<PhysicsC>(0.1f, glm::vec2{0.0f, 0.0f}, glm::vec2{0.0f, 0.0f});
-    entityPlayer.AddComponent<TransformC>(glm::vec2{0.0f, 2.0f}, glm::vec2{1.0f});
-    entityPlayer.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("character.meta")}, glm::vec2{0.0f, 0.0f}, glm::vec2{0.25f, 1.0f});
-    entityPlayer.AddComponent<AnimationC>(4, 4, 0, 3, 4, true, 0.5f);
-    entityPlayer.AddComponent<DynamicColliderC>(false, glm::vec2{14.0f / 32.0f, 0.0f / 32.0f}, glm::vec2{4.0f / 32.0f, 21.0f / 32.0f}, glm::vec2{0.0f});
-    entityPlayer.AddComponent<Renderable>();
-
-    Entity entityDebug = Entity::Create(ecs.get());
-    entityDebug.AddComponent<DebugC>(entityPlayer);
-    entityDebug.AddComponent<TextC>(AssetRef(AssetManager::LoadAsset("font.meta")), "", 20.0f);
-    entityDebug.AddComponent<TransformC>(glm::vec2{10.0f, Vulkan::GetSwapChain().GetExtent().height - 10.0f}, glm::vec2{1.0f});
-    entityDebug.AddComponent<UiRenderable>();
+    Deserialize("res/scenes/scene.meta");
   }
 
   void Scene::Update()
@@ -168,5 +68,172 @@ namespace Copium
   {
     ecs->UpdateSystems(EventSignal{event});
     return EventResult::Continue;
+  }
+
+  void Scene::Deserialize(const std::string& file)
+  {
+    float aspect = Vulkan::GetSwapChain().GetExtent().width / (float)Vulkan::GetSwapChain().GetExtent().height;
+
+    std::vector<MetaFile> metaFiles = MetaFile::ReadList(file);
+
+    for (auto& metaFile : metaFiles)
+    {
+      Entity entity = Entity::Create(ecs.get());
+      for (auto& [name, metaClass] : metaFile.GetMetaFileClasses())
+      {
+        try
+        {
+          char* endPtr;
+          if (name == "Transform")
+          {
+            TransformC transform;
+            transform.position = ReadVec2Opt(metaClass, "position", glm::vec2{0.0f, 0.0f});
+            transform.size = ReadVec2Opt(metaClass, "size", glm::vec2{1.0f, 1.0f});
+            entity.AddComponent<TransformC>(transform);
+          }
+          else if (name == "Texture")
+          {
+            TextureC texture;
+            texture.asset = AssetRef{AssetManager::LoadAsset(Uuid{metaClass.GetValue("texture-uuid")})};
+            texture.texCoord1 = ReadVec2Opt(metaClass, "tex-coord", glm::vec2{0.0f, 0.0f});
+            texture.texCoord2 = texture.texCoord1 + ReadVec2Opt(metaClass, "tex-size", glm::vec2{1.0f, 1.0f} - texture.texCoord1);
+            entity.AddComponent<TextureC>(texture);
+          }
+          else if (name == "StaticCollider")
+          {
+            StaticColliderC staticCollider;
+            staticCollider.resolveCollision = ReadBoolOpt(metaClass, "resolve-collision", true);
+            entity.AddComponent<StaticColliderC>(staticCollider);
+          }
+          else if (name == "DynamicCollider")
+          {
+            DynamicColliderC dynamicCollider;
+            dynamicCollider.resolveCollision = ReadBoolOpt(metaClass, "resolve-collision", true);
+            dynamicCollider.colliderOffset = ReadVec2Opt(metaClass, "collider-offset", glm::vec2{0.0f, 0.0f});
+            dynamicCollider.colliderSize = ReadVec2Opt(metaClass, "collider-size", glm::vec2{1.0f, 1.0f});
+            entity.AddComponent<DynamicColliderC>(dynamicCollider);
+          }
+          else if (name == "Text")
+          {
+            TextC text;
+            text.font = AssetRef{AssetManager::LoadAsset(Uuid{metaClass.GetValue("font")})};
+            text.text = metaClass.GetValue("text");
+            text.fontSize = std::strtof(metaClass.GetValue("font-size").c_str(), &endPtr);
+            entity.AddComponent<TextC>(text);
+          }
+          else if (name == "Camera")
+          {
+            CameraC camera;
+            camera.staticBoundingBox = ReadBoolOpt(metaClass, "static-bounding-box", false);
+            camera.uiCamera = ReadBoolOpt(metaClass, "ui-camera", false);
+            if (camera.uiCamera)
+              camera.projection = BoundingBox(0, 0, Vulkan::GetSwapChain().GetExtent().width, Vulkan::GetSwapChain().GetExtent().height);
+            else
+              camera.projection = BoundingBox(-aspect, -1.0f, aspect, 1.0f);
+            entity.AddComponent<CameraC>(camera);
+          }
+          else if (name == "Uuid")
+          {
+            UuidC uuid;
+            uuid.uuid = Uuid{metaClass.GetValue("uuid")};
+            entity.AddComponent<UuidC>(uuid);
+          }
+          else if (name == "Player")
+          {
+            PlayerC player;
+            player.camera = GetEntity(Uuid{metaClass.GetValue("camera-uuid")});
+            entity.AddComponent<PlayerC>(player);
+          }
+          else if (name == "Health")
+          {
+            HealthC health;
+            health.max = std::strtol(metaClass.GetValue("health").c_str(), &endPtr, 10);
+            health.current = health.max;
+            entity.AddComponent<HealthC>(health);
+          }
+          else if (name == "Physics")
+          {
+            PhysicsC physics;
+            physics.mass = std::strtof(metaClass.GetValue("mass").c_str(), &endPtr);
+            entity.AddComponent<PhysicsC>(physics);
+          }
+          else if (name == "Animation")
+          {
+            AnimationC animation;
+            animation.sheetCoord = ReadVec2Opt(metaClass, "sheet-coord", glm::ivec2{0, 0});
+            animation.sheetSize = ReadVec2Opt(metaClass, "sheet-size", glm::ivec2{1, 1});
+            animation.images = std::strtol(metaClass.GetValue("images").c_str(), &endPtr, 10);
+            animation.horizontal = ReadBoolOpt(metaClass, "horizontal", true);
+            animation.time = std::strtof(metaClass.GetValue("time").c_str(), &endPtr);
+            entity.AddComponent<AnimationC>(animation);
+          }
+          else if (name == "Debug")
+          {
+            DebugC debug;
+            debug.playerEntity = GetEntity(Uuid{metaClass.GetValue("player-uuid")});
+            entity.AddComponent<DebugC>(debug);
+          }
+          else if (name == "Renderable")
+            entity.AddComponent<RenderableC>();
+          else if (name == "Pickup")
+            entity.AddComponent<PickupC>();
+          else if (name == "FrameCount")
+            entity.AddComponent<FrameCountC>();
+          else if (name == "MouseFollow")
+            entity.AddComponent<MouseFollowC>();
+          else if (name == "UiRenderable")
+            entity.AddComponent<UiRenderableC>();
+          else if(name == "LevelGenerator")
+            entity.AddComponent<LevelGeneratorC>();
+          else
+            CP_WARN("Unknown component: %s", name.c_str());
+        }
+        catch (RuntimeException& exception) { CP_ERR("Invalid %s component: %s", name.c_str(), exception.GetErrorMessage().c_str()); }
+      }
+    }
+  }
+
+  Entity Scene::GetEntity(const Uuid& uuid) const
+  {
+    Entity entity{ecs.get(),ecs->Find<UuidC>([&](EntityId entity, const UuidC& uuidArg) { return uuid == uuidArg.uuid; })};
+    CP_ASSERT(entity, "Failed to find entity with Uuid=%s", uuid.ToString().c_str());
+
+    return entity;
+  }
+
+  glm::vec2 Scene::ReadVec2Opt(const MetaFileClass& metaClass, const std::string& key, glm::vec2 vec)
+  {
+    if (!metaClass.HasValue(key))
+      return vec;
+
+    const std::string& value = metaClass.GetValue(key);
+    char* endPos;
+    vec.x = std::strtof(value.c_str(), &endPos);
+    vec.y = std::strtof(endPos, &endPos);
+    return vec;
+  }
+
+  glm::ivec2 Scene::ReadVec2Opt(const MetaFileClass& metaClass, const std::string& key, glm::ivec2 vec)
+  {
+    if (!metaClass.HasValue(key))
+      return vec;
+
+    const std::string& value = metaClass.GetValue(key);
+    char* endPos;
+    vec.x = std::strtof(value.c_str(), &endPos);
+    vec.y = std::strtof(endPos, &endPos);
+    return vec;
+  }
+
+
+  bool Scene::ReadBoolOpt(const MetaFileClass& metaClass, const std::string& key, bool vec)
+  {
+    if (!metaClass.HasValue(key))
+      return vec;
+
+    const std::string& value = metaClass.GetValue(key);
+    if (value == "true")
+      return true;
+    return false;
   }
 }
