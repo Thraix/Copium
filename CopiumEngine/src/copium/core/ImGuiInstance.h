@@ -4,6 +4,7 @@
 
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/pipeline/DescriptorPool.h"
+#include "copium/pipeline/DescriptorSet.h"
 
 namespace Copium
 {
@@ -13,6 +14,8 @@ namespace Copium
 
   private:
     std::unique_ptr<DescriptorPool> descriptorPool;
+    VkDescriptorSetLayout descriptorSetLayout;
+    std::set<ShaderBinding> shaderBindings;
 
   public:
     ImGuiInstance();
@@ -22,7 +25,12 @@ namespace Copium
     void End();
     void Render(CommandBuffer& commandBuffer);
 
+    std::unique_ptr<DescriptorSet> CreateDescriptorSet();
+
   private:
+    void InitializeImGui();
+    void InitializeDescriptorSetLayout();
+
     static void CheckVkResult(VkResult err);
   };
 }

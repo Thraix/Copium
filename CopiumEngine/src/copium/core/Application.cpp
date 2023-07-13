@@ -93,6 +93,7 @@ namespace Copium
       const WindowResizeEvent& windowResizeEvent = static_cast<const WindowResizeEvent&>(event);
       AssetManager::GetAsset<Framebuffer>(framebuffer).Resize(windowResizeEvent.GetWidth(), windowResizeEvent.GetHeight());
       descriptorSetPassthrough->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
+      descriptorSetImGui->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
 
       return EventResult::Continue;
     }
@@ -146,6 +147,9 @@ namespace Copium
 
     descriptorSetPassthrough = AssetManager::GetAsset<Pipeline>(graphicsPipelinePassthrough).CreateDescriptorSet(*descriptorPool, 0);
     descriptorSetPassthrough->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
+
+    descriptorSetImGui = Vulkan::GetImGuiInstance().CreateDescriptorSet();
+    descriptorSetImGui->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
   }
 
   void Application::InitializeGraphicsPipeline()
@@ -168,8 +172,10 @@ namespace Copium
   void Application::RecordCommandBuffer()
   {
     Vulkan::GetImGuiInstance().Begin();
-    ImGui::ShowDemoWindow();
     commandBuffer->Begin();
+    ImGui::Begin("Viewport");
+    ImGui::Image(*descriptorSetImGui, ImVec2{480, 270}, ImVec2{0, 1}, ImVec2{1, 0});
+    ImGui::End();
 
     Framebuffer& fb = AssetManager::GetAsset<Framebuffer>(framebuffer);
     Pipeline& pl = AssetManager::GetAsset<Pipeline>(graphicsPipeline);

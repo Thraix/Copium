@@ -25,6 +25,7 @@ namespace Copium
     std::unique_ptr<DescriptorPool> descriptorPool;
     std::unique_ptr<DescriptorSet> descriptorSet;
     std::unique_ptr<DescriptorSet> descriptorSetPassthrough;
+    std::unique_ptr<DescriptorSet> descriptorSetImGui;
     std::unique_ptr<Scene> scene;
     std::unique_ptr<Mesh> mesh;
     std::unique_ptr<Mesh> meshPassthrough;
