@@ -154,18 +154,40 @@ namespace Copium
     ImGui::Begin("Entity Tree View");
     ecs->Each<SerializableC>([&](EntityId entityId, SerializableC& serializable) {
       Entity entity{ecs.get(), entityId};
-    std::string name;
-    if (entity.HasComponent<NameC>())
-      name = entity.GetComponent<NameC>().name;
-    if (name.empty())
-      name = String::Format("Entity %u", entity.GetId());
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-    if (selectedEntity == entity)
-      flags |= ImGuiTreeNodeFlags_Selected;
-    ImGui::TreeNodeEx(name.c_str(), flags);
-    if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-      selectedEntity = entity;
-      });
+      std::string name;
+      if (entity.HasComponent<NameC>())
+        name = entity.GetComponent<NameC>().name;
+      if (name.empty())
+        name = String::Format("Entity %u", entity.GetId());
+      ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+      if (selectedEntity == entity)
+        flags |= ImGuiTreeNodeFlags_Selected;
+      ImGui::TreeNodeEx(name.c_str(), flags);
+
+      if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+      {
+          ImGui::SetDragDropPayload("ENTITY_UUID", &entity.GetComponent<UuidC>().uuid, sizeof(Uuid));
+          ImGui::Text(name.c_str());
+          ImGui::EndDragDropSource();
+      }
+      else if (ImGui::IsMouseReleased(0) && ImGui::IsItemHovered() && !ImGui::IsItemToggledOpen())
+        selectedEntity = entity;
+
+      if (ImGui::BeginPopupContextItem())
+      {
+        for (auto& componentHandler : componentHandlers)
+        {
+          if (!componentHandler->IsFlagComponent() && !componentHandler->HasComponent(entity))
+          {
+            if (ImGui::Selectable(String::Format("Add %s", componentHandler->GetName().c_str()).c_str()))
+            {
+              componentHandler->AddDefaultComponent(entity);
+            }
+          }
+        }
+        ImGui::EndPopup();
+      }
+    });
     ImGui::End();
   }
 

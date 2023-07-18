@@ -4,7 +4,7 @@
 
 namespace Copium
 {
-  glm::vec2 ComponentHandlerBase::ReadVec2Opt(const MetaFileClass& metaClass, const std::string& key, glm::vec2 vec)
+  glm::vec2 ComponentHandlerBase::ReadVec2Opt(const MetaFileClass& metaClass, const std::string& key, glm::vec2 vec) const
   {
     if (!metaClass.HasValue(key))
       return vec;
@@ -16,7 +16,7 @@ namespace Copium
     return vec;
   }
 
-  glm::ivec2 ComponentHandlerBase::ReadVec2Opt(const MetaFileClass& metaClass, const std::string& key, glm::ivec2 vec)
+  glm::ivec2 ComponentHandlerBase::ReadVec2Opt(const MetaFileClass& metaClass, const std::string& key, glm::ivec2 vec) const
   {
     if (!metaClass.HasValue(key))
       return vec;
@@ -29,7 +29,7 @@ namespace Copium
   }
 
 
-  bool ComponentHandlerBase::ReadBoolOpt(const MetaFileClass& metaClass, const std::string& key, bool vec)
+  bool ComponentHandlerBase::ReadBoolOpt(const MetaFileClass& metaClass, const std::string& key, bool vec) const
   {
     if (!metaClass.HasValue(key))
       return vec;

@@ -12,7 +12,7 @@ namespace Copium
   public:
     NameComponentHandler() : ComponentHandler{"Name", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       NameC name;
       name.name = metaClass.GetValue("name");
@@ -20,12 +20,12 @@ namespace Copium
     }
 
   protected:
-    void Gui(NameC& name) override
+    void Gui(NameC& name) const override
     {
       ImGui::InputText("Name##Name", &name.name);
     }
 
-    NameC Create(Entity entity) override
+    NameC Create(Entity entity) const override
     {
       return NameC{String::Format("Entity %d", entity.GetId())};
     }
@@ -36,7 +36,7 @@ namespace Copium
   public:
     TransformComponentHandler() : ComponentHandler{"Transform", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       TransformC transform;
       transform.position = ReadVec2Opt(metaClass, "position", glm::vec2{0.0f, 0.0f});
@@ -45,13 +45,13 @@ namespace Copium
     }
 
   protected:
-    void Gui(TransformC& transform) override
+    void Gui(TransformC& transform) const override
     {
       ImGui::DragFloat2("Position", (float*)&transform.position);
       ImGui::DragFloat2("Size", (float*)&transform.size);
     }
 
-    TransformC Create(Entity entity) override
+    TransformC Create(Entity entity) const override
     {
       return TransformC{glm::vec2{0, 0}, glm::vec2{1, 1}};
     }
@@ -62,7 +62,7 @@ namespace Copium
   public:
     TextureComponentHandler() : ComponentHandler{"Texture", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       TextureC texture;
       texture.asset = AssetRef{AssetManager::LoadAsset(Uuid{metaClass.GetValue("texture-uuid")})};
@@ -72,7 +72,7 @@ namespace Copium
     }
 
   protected:
-    void Gui(TextureC& texture) override
+    void Gui(TextureC& texture) const override
     {
       Asset& asset = AssetManager::GetAsset<Texture2D>(texture.asset);
       ImGui::Text("Asset: %s", asset.GetName().c_str());
@@ -80,7 +80,7 @@ namespace Copium
       ImGui::DragFloat2("Tex Coord 2", (float*)&texture.texCoord2, 0.01, 0.0f, 1.0f);
     }
 
-    TextureC Create(Entity entity) override
+    TextureC Create(Entity entity) const override
     {
       return TextureC{AssetRef{AssetManager::DuplicateAsset(Vulkan::GetEmptyTexture2D())}, glm::vec2{0, 0}, glm::vec2{1, 1}};
     }
@@ -91,7 +91,7 @@ namespace Copium
   public:
     TextComponentHandler() : ComponentHandler{"Text", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       char* endPtr;
       TextC text;
@@ -102,7 +102,7 @@ namespace Copium
     }
 
   protected:
-    void Gui(TextC& text) override
+    void Gui(TextC& text) const override
     {
       Asset& asset = AssetManager::GetAsset<Font>(text.font);
       ImGui::Text(asset.GetName().c_str());
@@ -110,7 +110,7 @@ namespace Copium
       ImGui::DragFloat("Font Size", &text.fontSize);
     }
 
-    TextC Create(Entity entity) override
+    TextC Create(Entity entity) const override
     {
       return TextC{AssetRef{AssetManager::LoadAsset<Font>("font.meta")}, "", 20.0f};
     }
@@ -121,7 +121,7 @@ namespace Copium
   public:
     StaticColliderComponentHandler() : ComponentHandler{"Static Collider", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       StaticColliderC staticCollider;
       staticCollider.resolveCollision = ReadBoolOpt(metaClass, "resolve-collision", true);
@@ -129,12 +129,12 @@ namespace Copium
     }
 
   protected:
-    void Gui(StaticColliderC& staticCollider) override
+    void Gui(StaticColliderC& staticCollider) const override
     {
       ImGui::Checkbox("Resolve Collision##StaticCollider", &staticCollider.resolveCollision);
     }
 
-    StaticColliderC Create(Entity entity) override
+    StaticColliderC Create(Entity entity) const override
     {
       return StaticColliderC{false};
     }
@@ -145,7 +145,7 @@ namespace Copium
   public:
     DynamicColliderComponentHandler() : ComponentHandler{"Dynamic Collider", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       DynamicColliderC dynamicCollider;
       dynamicCollider.resolveCollision = ReadBoolOpt(metaClass, "resolve-collision", true);
@@ -155,14 +155,14 @@ namespace Copium
     }
 
   protected:
-    void Gui(DynamicColliderC& dynamicCollider) override
+    void Gui(DynamicColliderC& dynamicCollider) const override
     {
       ImGui::Checkbox("Resolve Collision##DynamicCollider", &dynamicCollider.resolveCollision);
       ImGui::DragFloat2("Collider Offset", (float*)&dynamicCollider.colliderOffset, 0.01);
       ImGui::DragFloat2("Collider Size", (float*)&dynamicCollider.colliderSize, 0.01);
     }
 
-    DynamicColliderC Create(Entity entity) override
+    DynamicColliderC Create(Entity entity) const override
     {
       return DynamicColliderC{true, glm::vec2{0, 0}, glm::vec2{1, 1}};
     }
@@ -173,7 +173,7 @@ namespace Copium
   public:
     PlayerComponentHandler() : ComponentHandler{"Player", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       PlayerC player;
       player.camera = GetEntity(entity.GetManager(), Uuid{metaClass.GetValue("camera-uuid")});
@@ -181,17 +181,14 @@ namespace Copium
     }
 
   protected:
-    void Gui(PlayerC& player) override
+    void Gui(PlayerC& player) const override
     {
-      if (player.camera)
-        ImGui::Text("Camera: %s", player.camera.GetComponent<NameC>().name.c_str());
-      else
-        ImGui::Text("No camera attached");
+      EntityGui("Camera", &player.camera);
     }
 
-    PlayerC Create(Entity entity) override
+    PlayerC Create(Entity entity) const override
     {
-      return PlayerC{};
+      return PlayerC{Entity{entity.GetManager()}};
     }
   };
 
@@ -202,7 +199,7 @@ namespace Copium
   public:
     CameraComponentHandler(BoundingBox* viewport) : ComponentHandler{"Camera", false}, viewport{viewport} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       float aspect = viewport->GetSize().x / viewport->GetSize().y;
 
@@ -217,13 +214,13 @@ namespace Copium
     }
 
   protected:
-    void Gui(CameraC& camera) override
+    void Gui(CameraC& camera) const override
     {
       ImGui::Checkbox("Static", &camera.staticBoundingBox);
       ImGui::Checkbox("Ui camera", &camera.uiCamera); // TODO: If this changes, the bounding box should be modified if it is not static
     }
 
-    CameraC Create(Entity entity) override
+    CameraC Create(Entity entity) const override
     {
       return CameraC{BoundingBox{-1.0f, -1.0f, 1.0f, 1.0f}, false, false};
     }
@@ -234,7 +231,7 @@ namespace Copium
   public:
     UuidComponentHandler() : ComponentHandler{"Uuid", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       UuidC uuid;
       uuid.uuid = Uuid{metaClass.GetValue("uuid")};
@@ -242,7 +239,7 @@ namespace Copium
     }
 
   protected:
-    void ComponentGui(Entity entity) override {}
+    void ComponentGui(Entity entity) const override {}
   };
 
   class HealthComponentHandler : public ComponentHandler<HealthC>
@@ -250,7 +247,7 @@ namespace Copium
   public:
     HealthComponentHandler() : ComponentHandler{"Health", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       char* endPtr;
       HealthC health;
@@ -260,12 +257,12 @@ namespace Copium
     }
 
   protected:
-    void Gui(HealthC& health) override
+    void Gui(HealthC& health) const override
     {
       ImGui::DragInt("Max Health", &health.max);
     }
 
-    HealthC Create(Entity entity) override
+    HealthC Create(Entity entity) const override
     {
       return HealthC{10, 10};
     }
@@ -276,7 +273,7 @@ namespace Copium
   public:
     PhysicsComponentHandler() : ComponentHandler{"Physics", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       char* endPtr;
       PhysicsC physics;
@@ -285,12 +282,12 @@ namespace Copium
     }
 
   protected:
-    void Gui(PhysicsC& physics) override
+    void Gui(PhysicsC& physics) const override
     {
       ImGui::DragFloat("Mass", &physics.mass);
     }
 
-    PhysicsC Create(Entity entity) override
+    PhysicsC Create(Entity entity) const override
     {
       return PhysicsC{10.0f};
     }
@@ -301,7 +298,7 @@ namespace Copium
   public:
     AnimationComponentHandler() : ComponentHandler{"Animation", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       char* endPtr;
       AnimationC animation;
@@ -314,7 +311,7 @@ namespace Copium
     }
 
   protected:
-    void Gui(AnimationC& animation) override
+    void Gui(AnimationC& animation) const override
     {
       ImGui::DragInt2("Sheet Size", (int*)&animation.sheetSize);
       ImGui::DragInt2("Sheet Coord", (int*)&animation.sheetCoord, 1, 0, std::max(animation.sheetSize.x, animation.sheetSize.y));
@@ -323,7 +320,7 @@ namespace Copium
       ImGui::Checkbox("Horizontal", &animation.horizontal);
     }
 
-    AnimationC Create(Entity entity) override
+    AnimationC Create(Entity entity) const override
     {
       return AnimationC{glm::ivec2{0, 0}, glm::ivec2{1, 1}, 1, true, 1.0f};
     }
@@ -334,7 +331,7 @@ namespace Copium
   public:
     DebugComponentHandler() : ComponentHandler{"Debug", false} {}
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       DebugC debug;
       debug.playerEntity = GetEntity(entity.GetManager(), Uuid{metaClass.GetValue("player-uuid")});
@@ -342,17 +339,14 @@ namespace Copium
     }
 
   protected:
-    void Gui(DebugC& debug) override
+    void Gui(DebugC& debug) const override
     {
-      if (debug.playerEntity)
-        ImGui::Text("Player: %s", debug.playerEntity.GetComponent<NameC>().name.c_str());
-      else
-        ImGui::Text("No player attached");
+      EntityGui("Player", &debug.playerEntity);
     }
 
-    DebugC Create(Entity entity) override
+    DebugC Create(Entity entity) const override
     {
-      return DebugC{};
+      return DebugC{Entity{entity.GetManager()}};
     }
   };
 }

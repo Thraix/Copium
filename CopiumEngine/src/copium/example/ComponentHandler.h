@@ -3,6 +3,7 @@
 #include "copium/example/ComponentHandlerBase.h"
 
 #include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
 
 namespace Copium
 {
@@ -19,21 +20,20 @@ namespace Copium
     {
       serializedName = name;
       serializedName.erase(std::remove(serializedName.begin(), serializedName.end(), ' '), serializedName.end());
-      CP_INFO("%s", serializedName.c_str());
     }
 
-    void Serialize(Entity entity, MetaFile& metaFile) override
+    void Serialize(Entity entity, MetaFile& metaFile) const override
     {
       if(entity.HasComponent<Component>())
         metaFile.AddMetaClass(serializedName, MetaFileClass{});
     }
 
-    void Deserialize(Entity entity, const MetaFileClass& metaClass) override
+    void Deserialize(Entity entity, const MetaFileClass& metaClass) const override
     {
       entity.AddComponent<Component>();
     }
 
-    void ComponentGui(Entity entity) override
+    void ComponentGui(Entity entity) const override
     {
       if (flagComponent)
         FlagComponentGui(entity);
@@ -51,11 +51,27 @@ namespace Copium
       return serializedName;
     }
 
-  protected:
-    virtual void Gui(Component& component) {}
-    virtual Component Create(Entity entity) { return Component{}; }
+    bool IsFlagComponent() const override
+    {
+      return flagComponent;
+    }
 
-    void FlagComponentGui(Entity entity)
+    void AddDefaultComponent(Entity entity) const override
+    {
+      Component component = Create(entity);
+      entity.AddComponent<Component>(component);
+    }
+
+    bool HasComponent(Entity entity) const override
+    {
+      return entity.HasComponent<Component>();
+    }
+
+  protected:
+    virtual void Gui(Component& component) const {}
+    virtual Component Create(Entity entity) const { return Component{}; }
+
+    void FlagComponentGui(Entity entity) const
     {
       bool shouldHaveComponent = entity.HasComponent<Component>();
       ImGui::Checkbox(name.c_str(), &shouldHaveComponent);
@@ -68,25 +84,42 @@ namespace Copium
         entity.RemoveComponent<Component>();
     }
 
-    void DataComponentGui(Entity entity)
+    void DataComponentGui(Entity entity) const
     {
-      if (entity.HasComponent<Component>())
+      if (!entity.HasComponent<Component>())
+        return;
+
+      Component& component = entity.GetComponent<Component>();
+      if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
       {
-        Component& component = entity.GetComponent<Component>();
-        if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-        {
-          Gui(component);
-          if (ImGui::Button(std::string("Delete " + name).c_str()))
-            entity.RemoveComponent<Component>();
-        }
-      }
-      else
-      {
-        // TODO: These buttons should probably be in a context menu when you right-click the entity instead
-        if (ImGui::Button(std::string("Add " + name).c_str()))
-          entity.AddComponent<Component>(Create(entity));
+        Gui(component);
+        if (ImGui::Button(std::string("Delete " + name).c_str()))
+          entity.RemoveComponent<Component>();
+        ImGui::NewLine();
       }
     }
 
+    void EntityGui(const std::string& name, Entity* entity) const
+    {
+      ImGui::Text(name.c_str());
+      ImGui::SameLine();
+      std::string str;
+      if (*entity)
+        str = entity->GetComponent<NameC>().name;
+      else
+        str = "(drag and drop an entity)";
+      ImGui::BeginDisabled();
+      ImGui::InputText("##EntityGui", &str);
+      ImGui::EndDisabled();
+      if (ImGui::BeginDragDropTarget())
+      {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_UUID"))
+          *entity = GetEntity(entity->GetManager(), *(Uuid*)payload->Data);
+        ImGui::EndDragDropTarget();
+      }
+      ImGui::SameLine();
+      if (ImGui::Button("x"))
+        entity->Invalidate();
+    }
   };
 }
