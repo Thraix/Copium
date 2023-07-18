@@ -33,7 +33,7 @@ namespace Copium
     // TODO: Make the working directory always be relative to the assets folder
     //       By looking at where the executable is, since that should always be in the bin folder (it currently isn't though)
     AssetManager::RegisterAssetDir("assets/");
-    emptyTexture2D = AssetManager::RegisterRuntimeAsset("empty_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{0, 0, 0, 255}, 1, 1, SamplerCreator{}));
+    emptyTexture2D = AssetManager::RegisterRuntimeAsset("empty_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 0, 255, 255}, 1, 1, SamplerCreator{}));
   }
 
   void Vulkan::Destroy()

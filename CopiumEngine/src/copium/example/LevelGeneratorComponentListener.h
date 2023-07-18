@@ -23,6 +23,7 @@ namespace Copium
             entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.75f, 0.0f}, glm::vec2{1.0f, 1.0f});
           entity.AddComponent<StaticColliderC>(true);
           entity.AddComponent<RenderableC>();
+          levelGenerator.entities.emplace_back(entity);
         }
         {
           Entity entity = Entity::Create(manager);
@@ -33,6 +34,7 @@ namespace Copium
             entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.75f, 0.0f}, glm::vec2{1.0f, 1.0f});
           entity.AddComponent<StaticColliderC>(true);
           entity.AddComponent<RenderableC>();
+          levelGenerator.entities.emplace_back(entity);
         }
       }
       for (int x = 1; x < 20; x++)
@@ -43,6 +45,7 @@ namespace Copium
           entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.25f, 0.0f}, glm::vec2{0.5f, 1.0f});
           entity.AddComponent<StaticColliderC>(true);
           entity.AddComponent<RenderableC>();
+          levelGenerator.entities.emplace_back(entity);
         }
         {
           Entity entity = Entity::Create(manager);
@@ -50,6 +53,7 @@ namespace Copium
           entity.AddComponent<TextureC>(AssetRef{AssetManager::LoadAsset("stone.meta")}, glm::vec2{0.25f, 0.0f}, glm::vec2{0.5f, 1.0f});
           entity.AddComponent<StaticColliderC>(true);
           entity.AddComponent<RenderableC>();
+          levelGenerator.entities.emplace_back(entity);
         }
       }
       for (int y = 0; y < 10; y++)
@@ -62,6 +66,7 @@ namespace Copium
           entity.AddComponent<StaticColliderC>(false);
           entity.AddComponent<PickupC>();
           entity.AddComponent<RenderableC>();
+          levelGenerator.entities.emplace_back(entity);
         }
       }
     }

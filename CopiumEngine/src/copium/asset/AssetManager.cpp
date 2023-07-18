@@ -100,6 +100,16 @@ namespace Copium
     // TODO: Reload the assetCache to see if a new file has appeared with that uuid
   }
 
+  AssetHandle AssetManager::DuplicateAsset(AssetHandle handle)
+  {
+    auto it = assets.find(handle);
+    CP_ASSERT(it != assets.end(), "Failed to find asset with handle=%d", handle);
+
+    CP_DEBUG("Duplicating asset: %s", it->second->GetName().c_str());
+    it->second->metaData.loadCount++;
+    return handle;
+  }
+
   void AssetManager::UnloadAsset(AssetHandle handle)
   {
     auto it = assets.find(handle);
@@ -108,7 +118,7 @@ namespace Copium
       CP_WARN("Asset not loaded");
       return;
     }
-    CP_DEBUG("Unloading Asset: %s", it->second->GetName().c_str());
+    CP_DEBUG("Unloading Asset: %s (%d instances left)", it->second->GetName().c_str(), it->second->metaData.loadCount - 1);
 
     it->second->metaData.loadCount--;
     if (it->second->metaData.loadCount > 0)
@@ -119,6 +129,11 @@ namespace Copium
     else
       pathToAssetCache.erase(it->second->GetName());
     assets.erase(it);
+  }
+
+  const std::vector<AssetFile>& AssetManager::GetAssetFiles()
+  {
+    return cachedAssetFiles;
   }
 
   void AssetManager::Cleanup() 
@@ -141,7 +156,7 @@ namespace Copium
     auto it = nameToAssetCache.find(name);
     CP_ASSERT(it == nameToAssetCache.end(), "Asset already exists: %s", name);
 
-    AssetHandle  handle = runtimeAssetHandle++;
+    AssetHandle handle = runtimeAssetHandle++;
     Asset* asset2 = assets.emplace(handle, std::move(asset)).first->second.get();
     asset2->metaData.handle = handle;
     asset2->metaData.name = name;

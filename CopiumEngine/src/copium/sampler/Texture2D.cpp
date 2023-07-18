@@ -27,6 +27,10 @@ namespace Copium
 
   Texture2D::~Texture2D()
   {
+    // TODO: Do we want to queue the deletion and have it wait for idle once every frame instead?
+    //       Something like:
+    //       Vulkan::GetDevice().QueueIdleCommand([]() { Texture2D::Destroy(image, imageMemory, imageView); });
+    vkDeviceWaitIdle(Vulkan::GetDevice());
     vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
     vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
     vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);

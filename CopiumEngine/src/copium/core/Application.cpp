@@ -79,7 +79,11 @@ namespace Copium
     case EventType::ViewportResize:
     {
       const ViewportResize& viewportResizeEvent = static_cast<const ViewportResize&>(event);
-      AssetManager::GetAsset<Framebuffer>(framebuffer).Resize(viewportResizeEvent.GetViewport().GetSize().x, viewportResizeEvent.GetViewport().GetSize().y);
+      glm::vec2 size = viewportResizeEvent.GetViewport().GetSize();
+      if (size.x == 0 || size.y == 0)
+        return EventResult::Continue;
+
+      AssetManager::GetAsset<Framebuffer>(framebuffer).Resize(size.x, size.y);
       descriptorSetImGui->SetSampler(AssetManager::GetAsset<Framebuffer>(framebuffer).GetColorAttachment(), 0);
 
       return EventResult::Continue;
@@ -157,6 +161,7 @@ namespace Copium
 
     // TODO: Move this logic elsewhere
     Vulkan::GetImGuiInstance().Begin();
+    ImGui::ShowDemoWindow();
 
     ImGui::SetNextWindowPos(ImVec2{0, 0});
     ImGui::SetNextWindowSize(ImVec2{(float)Vulkan::GetWindow().GetWidth(), (float)Vulkan::GetWindow().GetHeight()});

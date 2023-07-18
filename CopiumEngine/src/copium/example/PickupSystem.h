@@ -24,7 +24,7 @@ namespace Copium
         }
         else if (collideSignal.GetSecond().HasComponent<PickupC>())
         {
-          if (collideSignal.GetFirst().HasComponent<PlayerC>())
+          if (collideSignal.GetFirst().HasComponent<PlayerC>() && collideSignal.GetFirst().HasComponent<HealthC>())
           {
             collideSignal.GetSecond().Destroy();
             collideSignal.GetFirst().GetComponent<HealthC>().current++;

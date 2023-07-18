@@ -34,6 +34,7 @@ namespace Copium
     void SetSampler(const Sampler& sampler, uint32_t binding, int arrayIndex = 0);
     void SetSamplerDynamic(const Sampler& sampler, uint32_t binding, int arrayIndex = 0);
     void SetSamplers(const std::vector<const Sampler*>& sampler, uint32_t binding);
+    void SetSamplersDynamic(const std::vector<const Sampler*>& samplers, uint32_t binding);
     UniformBuffer& GetUniformBuffer(const std::string& uniformBuffer);
     uint32_t GetSetIndex() const;
 

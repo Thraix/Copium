@@ -187,6 +187,7 @@ namespace Copium
     {
       batches.emplace_back(std::make_unique<Batch>(pipeline, descriptorPool, MAX_NUM_VERTICES, samplers));
     }
+    batches[batchIndex]->GetDescriptorSet().SetSamplersDynamic(samplers, 0);
     mappedVertexBuffer = (char*)batches[batchIndex]->GetVertexBuffer().Map() + batches[batchIndex]->GetVertexBuffer().GetPosition(Vulkan::GetSwapChain().GetFlightIndex());
     quadCount = 0;
     textureCount = 0;

@@ -1,6 +1,30 @@
+[Name]
+name=Level Generator
+
 [LevelGenerator]
 
 ---
+[Name]
+name=Block
+
+[Transform]
+position=2 -8.5
+size=1 1
+
+[Texture]
+texture-uuid=0c83bab1-9406-94fe-2068-6ea324dacb27
+tex-coord=0.75 0
+tex-size=0.25 1
+
+[StaticCollider]
+resolve-collision=true
+
+[Renderable]
+
+---
+[Name]
+name=Pickup
+
 [Transform]
 position=0.1 -0.4
 size=0.8 0.8
@@ -15,6 +39,9 @@ resolve-collision=false
 [Renderable]
 
 ---
+[Name]
+name=Mouse Follower
+
 [Transform]
 position=0.1 0.1
 size=0.2 0.2
@@ -26,6 +53,9 @@ texture-uuid=f49a5284-d666-0982-95ca-cf68cc3d4f45
 [Renderable]
 
 ---
+[Name]
+name=Fps counter
+
 [Transform]
 position=10 10
 size=0
@@ -39,15 +69,9 @@ font-size=20
 [UiRenderable]
 
 ---
-[Camera]
-static-bounding-box=false
-ui-camera=false
+[Name]
+name=Camera
 
-[Transform]
-position=0 0
-size=2 2
-
----
 [Camera]
 static-bounding-box=false
 ui-camera=false
@@ -60,6 +84,9 @@ size=2 2
 uuid=a14e2328-ebce-5026-e5ab-495daf8c3660
 
 ---
+[Name]
+name=Ui Camera
+
 [Camera]
 static-bounding-box=false
 ui-camera=true
@@ -69,6 +96,8 @@ position=0 0
 size=1 1
 
 ---
+[Name]
+name=Player
 
 [Player]
 camera-uuid=a14e2328-ebce-5026-e5ab-495daf8c3660
@@ -106,6 +135,9 @@ uuid=09617c73-2b1e-0a83-db81-3ae3b5971c11
 [Renderable]
 
 ---
+[Name]
+name=Debug Info
+
 [Transform]
 position=10 800
 size=1 1

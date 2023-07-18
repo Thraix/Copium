@@ -83,6 +83,25 @@ namespace Copium
     }
   }
 
+  void DescriptorSet::SetSamplersDynamic(const std::vector<const Sampler*>& samplers, uint32_t binding)
+  {
+    std::vector<VkWriteDescriptorSet> descriptorWrites{samplers.size()};
+    for (size_t i = 0; i < samplers.size(); i++)
+    {
+      VkDescriptorImageInfo imageInfo = samplers[i]->GetDescriptorImageInfo(Vulkan::GetSwapChain().GetFlightIndex());
+      descriptorWrites[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      descriptorWrites[i].dstSet = descriptorSets[Vulkan::GetSwapChain().GetFlightIndex()];
+      descriptorWrites[i].dstBinding = binding;
+      descriptorWrites[i].dstArrayElement = i;
+      descriptorWrites[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      descriptorWrites[i].descriptorCount = 1;
+      descriptorWrites[i].pBufferInfo = nullptr;
+      descriptorWrites[i].pImageInfo = &imageInfo;
+      descriptorWrites[i].pTexelBufferView = nullptr;
+    }
+    vkUpdateDescriptorSets(Vulkan::GetDevice(), descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+  }
+
   UniformBuffer& DescriptorSet::GetUniformBuffer(const std::string& uniformBuffer)
   {
     auto it = uniformBuffers.find(uniformBuffer);

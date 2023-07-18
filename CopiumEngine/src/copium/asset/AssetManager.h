@@ -31,8 +31,10 @@ namespace Copium
     static Asset& GetAsset(AssetHandle handle);
     static Asset& LoadAsset(const std::string& assetPath);
     static Asset& LoadAsset(const Uuid& uuid);
+    static AssetHandle DuplicateAsset(AssetHandle handle);
     static void UnloadAsset(AssetHandle handle);
     static Asset& RegisterRuntimeAsset(const std::string& name, std::unique_ptr<Asset>&& asset);
+    static const std::vector<AssetFile>& GetAssetFiles();
     static void Cleanup();
 
     template <typename AssetType>

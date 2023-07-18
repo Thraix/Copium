@@ -3,6 +3,7 @@
 #include "copium/asset/AssetRef.h"
 #include "copium/ecs/Entity.h"
 #include "copium/util/Uuid.h"
+#include "copium/util/BoundingBox.h"
 
 #include <string>
 
@@ -15,9 +16,6 @@ namespace Copium
     glm::vec2 position;
     glm::vec2 size;
   };
-
-  struct RenderableC {};
-  struct UiRenderableC {};
 
   struct ColorC
   {
@@ -37,12 +35,6 @@ namespace Copium
     std::string text;
     float fontSize;
   };
-
-  struct MouseFollowC
-  {};
-
-  struct FrameCountC
-  {};
 
   struct CameraC
   {
@@ -89,10 +81,6 @@ namespace Copium
     glm::vec2 oldPosition{};
   };
 
-  struct PickupC
-  {
-
-  };
 
   struct DebugC
   {
@@ -120,4 +108,16 @@ namespace Copium
   {
     std::vector<Entity> entities;
   };
+
+  struct NameC
+  {
+    std::string name;
+  };
+
+  struct RenderableC {};
+  struct UiRenderableC {};
+  struct SerializableC {};
+  struct PickupC {};
+  struct MouseFollowC {};
+  struct FrameCountC {};
 }

@@ -10,6 +10,9 @@ namespace Copium
   public:
     void RunEntity(Entity entity, PlayerC& player, TransformC& transform) override
     {
+      if (!ValidateEntity<TransformC>(player.camera))
+        return;
+
       TransformC& cameraTransform = player.camera.GetComponent<TransformC>();
       glm::vec2 wantedPos = transform.position + transform.size * 0.5f;
       cameraTransform.position -= (cameraTransform.position - wantedPos) * 0.10f;

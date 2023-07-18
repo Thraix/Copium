@@ -26,6 +26,7 @@
     <ClCompile Include="..\..\repos\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\repos\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\..\repos\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\repos\imgui\misc\cpp\imgui_stdlib.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
