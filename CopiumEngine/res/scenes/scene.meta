@@ -8,7 +8,7 @@ name=Level Generator
 name=Block
 
 [Transform]
-position=2 -8.5
+position=0 -8.5
 size=1 1
 
 [Texture]
@@ -49,7 +49,7 @@ size=0.2 0.2
 [Texture]
 texture-uuid=f49a5284-d666-0982-95ca-cf68cc3d4f45
 
-[MouseFollow]
+[MouseFollower]
 [Renderable]
 
 ---
@@ -65,7 +65,7 @@ font=3e9ef1a2-59ba-2e4d-b2cd-f5efaa531af7
 text=0 fps
 font-size=20
 
-[FrameCount]
+[FrameCounter]
 [UiRenderable]
 
 ---

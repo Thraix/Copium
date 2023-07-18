@@ -228,6 +228,9 @@
     <ClCompile Include="src\copium\event\ViewportResize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\copium\example\ComponentHandlerBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\copium\sampler\DepthAttachment.h">
@@ -534,6 +537,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\event\ViewportResize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\example\ComponentHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\example\ComponentHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\example\ComponentHandlerBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

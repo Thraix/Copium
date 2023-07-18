@@ -201,6 +201,7 @@
     <ClCompile Include="src\copium\event\ViewportResize.cpp" />
     <ClCompile Include="src\copium\event\WindowFocusEvent.cpp" />
     <ClCompile Include="src\copium\event\WindowResizeEvent.cpp" />
+    <ClCompile Include="src\copium\example\ComponentHandlerBase.cpp" />
     <ClCompile Include="src\copium\mesh\Mesh.cpp" />
     <ClCompile Include="src\copium\pipeline\ShaderBinding.cpp" />
     <ClCompile Include="src\copium\renderer\Batch.cpp" />
@@ -262,6 +263,9 @@
     <ClInclude Include="src\copium\ecs\EntitySet.h" />
     <ClInclude Include="src\copium\event\ViewportResize.h" />
     <ClInclude Include="src\copium\example\AnimationSystem.h" />
+    <ClInclude Include="src\copium\example\ComponentHandler.h" />
+    <ClInclude Include="src\copium\example\ComponentHandlerBase.h" />
+    <ClInclude Include="src\copium\example\ComponentHandlers.h" />
     <ClInclude Include="src\copium\example\DebugSystem.h" />
     <ClInclude Include="src\copium\example\LevelGeneratorComponentListener.h" />
     <ClInclude Include="src\copium\example\PickupSystem.h" />

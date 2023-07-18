@@ -21,7 +21,7 @@ namespace Copium
 
   void IndexBuffer::Draw(const CommandBuffer& commandBuffer, int indices)
   {
-    CP_ASSERT(indices > 0 && indices <= indexCount, "amount of indices is out of range");
+    CP_ASSERT(indices >= 0 && indices <= indexCount, "amount of indices is out of range");
     vkCmdDrawIndexed(commandBuffer, indices, 1, 0, 0, 0);
   }
 }
