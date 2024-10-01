@@ -32,6 +32,7 @@ namespace Copium
     void BindDescriptorSets(const CommandBuffer& commandBuffer);
 
     std::unique_ptr<DescriptorSet> CreateDescriptorSet(DescriptorPool& descriptorPool, int setIndex) const;
+    DescriptorSet CreateDescriptorSetRef(DescriptorPool& descriptorPool, int setIndex) const;
 
   private:
     void InitializeDescriptorSetLayout(const PipelineCreator& creator);

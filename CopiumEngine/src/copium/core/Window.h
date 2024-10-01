@@ -38,6 +38,7 @@ namespace Copium
     GLFWwindow* GetWindow();
 
     void GrabMouse(bool grap);
+    bool IsMouseGrabbed() const;
 
   private:
     void InitializeWindow(const std::string& windowName, int width, int height, WindowMode mode);

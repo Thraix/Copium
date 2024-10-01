@@ -63,6 +63,11 @@ namespace Copium
       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
   }
 
+  bool Window::IsMouseGrabbed() const
+  {
+    return glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
+  }
+
   void Window::InitializeWindow(const std::string& windowName, int width, int height, WindowMode mode)
   {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);

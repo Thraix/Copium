@@ -97,6 +97,20 @@ namespace Copium
     return std::make_unique<DescriptorSet>(descriptorPool, descriptorSetLayouts[setIndex], bindings);
   }
 
+  // TODO: Attempt to move implementation to only use this instead
+  DescriptorSet Pipeline::CreateDescriptorSetRef(DescriptorPool& descriptorPool, int setIndex) const
+  {
+    std::set<ShaderBinding> bindings;
+    for (auto& binding : shaderReflector.bindings)
+    {
+      if (binding.set != setIndex)
+        continue;
+      bindings.emplace(binding);
+    }
+
+    return DescriptorSet{descriptorPool, descriptorSetLayouts[setIndex], bindings};
+  }
+
   void Pipeline::InitializeDescriptorSetLayout(const PipelineCreator& creator)
   {
     boundDescriptorSets.resize(creator.descriptorSetLayouts.size());
