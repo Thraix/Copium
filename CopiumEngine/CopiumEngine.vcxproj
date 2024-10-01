@@ -41,7 +41,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -80,6 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <OutDir>$(SolutionDir)libs\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -117,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLM_FORCE_LEFT_HANDED;GLFW_INCLUDE_VULKAN;GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;MSDF_ATLAS_PUBLIC=;MSDFGEN_PUBLIC=</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLM_FORCE_LEFT_HANDED;GLFW_INCLUDE_VULKAN;GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;MSDF_ATLAS_PUBLIC=;MSDFGEN_PUBLIC=;WIN32</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)ext/include/;$(ProjectDir)src/;$(SolutionDir)ext/repos/msdf-atlas-gen/;$(SolutionDir)ext/repos/msdf-atlas-gen/msdfgen/;$(SolutionDir)ext/repos/stb/;$(SolutionDir)ext/repos/glfw/include;$(ProjectDir)ext/repos/glm/;$(VULKAN_SDK)/Include;$(SolutionDir)ext/repos/imgui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -174,11 +175,9 @@
     <ClCompile Include="src\copium\asset\AssetManager.cpp" />
     <ClCompile Include="src\copium\asset\AssetRef.cpp" />
     <ClCompile Include="src\copium\buffer\RendererVertexBuffer.cpp" />
-    <ClCompile Include="src\copium\core\Application.cpp" />
     <ClCompile Include="src\copium\buffer\Buffer.cpp" />
     <ClCompile Include="src\copium\core\Device.cpp" />
     <ClCompile Include="src\copium\core\ImGuiInstance.cpp" />
-    <ClCompile Include="src\copium\core\Scene.cpp" />
     <ClCompile Include="src\copium\core\Vulkan.cpp" />
     <ClCompile Include="src\copium\core\Window.cpp" />
     <ClCompile Include="src\copium\ecs\ComponentPoolBase.cpp" />
@@ -201,7 +200,6 @@
     <ClCompile Include="src\copium\event\ViewportResize.cpp" />
     <ClCompile Include="src\copium\event\WindowFocusEvent.cpp" />
     <ClCompile Include="src\copium\event\WindowResizeEvent.cpp" />
-    <ClCompile Include="src\copium\example\ComponentHandlerBase.cpp" />
     <ClCompile Include="src\copium\mesh\Mesh.cpp" />
     <ClCompile Include="src\copium\pipeline\ShaderBinding.cpp" />
     <ClCompile Include="src\copium\renderer\Batch.cpp" />
@@ -223,7 +221,6 @@
     <ClCompile Include="src\copium\sampler\Image.cpp" />
     <ClCompile Include="src\copium\buffer\IndexBuffer.cpp" />
     <ClCompile Include="src\copium\core\Instance.cpp" />
-    <ClCompile Include="src\copium\main.cpp" />
     <ClCompile Include="src\copium\pipeline\Pipeline.cpp" />
     <ClCompile Include="src\copium\pipeline\PipelineCreator.cpp" />
     <ClCompile Include="src\copium\core\QueueFamilies.cpp" />
@@ -251,7 +248,6 @@
     <ClInclude Include="src\copium\buffer\RendererVertexBuffer.h" />
     <ClInclude Include="src\copium\core\Device.h" />
     <ClInclude Include="src\copium\core\ImGuiInstance.h" />
-    <ClInclude Include="src\copium\core\Scene.h" />
     <ClInclude Include="src\copium\core\Vulkan.h" />
     <ClInclude Include="src\copium\core\Window.h" />
     <ClInclude Include="src\copium\ecs\ComponentListener.h" />
@@ -262,13 +258,6 @@
     <ClInclude Include="src\copium\ecs\Entity.h" />
     <ClInclude Include="src\copium\ecs\EntitySet.h" />
     <ClInclude Include="src\copium\event\ViewportResize.h" />
-    <ClInclude Include="src\copium\example\AnimationSystem.h" />
-    <ClInclude Include="src\copium\example\ComponentHandler.h" />
-    <ClInclude Include="src\copium\example\ComponentHandlerBase.h" />
-    <ClInclude Include="src\copium\example\ComponentHandlers.h" />
-    <ClInclude Include="src\copium\example\DebugSystem.h" />
-    <ClInclude Include="src\copium\example\LevelGeneratorComponentListener.h" />
-    <ClInclude Include="src\copium\example\PickupSystem.h" />
     <ClInclude Include="src\copium\ecs\Signal.h" />
     <ClInclude Include="src\copium\ecs\System.h" />
     <ClInclude Include="src\copium\ecs\SystemBase.h" />
@@ -290,26 +279,12 @@
     <ClInclude Include="src\copium\event\MouseScrollEvent.h" />
     <ClInclude Include="src\copium\event\WindowFocusEvent.h" />
     <ClInclude Include="src\copium\event\WindowResizeEvent.h" />
-    <ClInclude Include="src\copium\example\CameraFollowPlayerSystem.h" />
-    <ClInclude Include="src\copium\example\CameraUpdateSystem.h" />
-    <ClInclude Include="src\copium\example\Components.h" />
-    <ClInclude Include="src\copium\example\FrameCountSystem.h" />
-    <ClInclude Include="src\copium\example\HealthChangeSystem.h" />
-    <ClInclude Include="src\copium\example\HealthComponentListener.h" />
-    <ClInclude Include="src\copium\example\HealthDisplaySystem.h" />
-    <ClInclude Include="src\copium\example\PhysicsSystem.h" />
-    <ClInclude Include="src\copium\example\PlayerControllerSystem.h" />
-    <ClInclude Include="src\copium\example\RenderSystem.h" />
-    <ClInclude Include="src\copium\example\MouseFollowSystem.h" />
-    <ClInclude Include="src\copium\example\ColliderSystem.h" />
-    <ClInclude Include="src\copium\example\UiRenderSystem.h" />
     <ClInclude Include="src\copium\mesh\Mesh.h" />
     <ClInclude Include="src\copium\pipeline\ShaderBinding.h" />
     <ClInclude Include="src\copium\renderer\Batch.h" />
     <ClInclude Include="src\copium\renderer\Renderer.h" />
     <ClInclude Include="src\copium\renderer\RendererVertex.h" />
     <ClInclude Include="src\copium\sampler\DepthAttachment.h" />
-    <ClInclude Include="src\copium\core\Application.h" />
     <ClInclude Include="src\copium\sampler\ColorAttachment.h" />
     <ClInclude Include="src\copium\buffer\Buffer.h" />
     <ClInclude Include="src\copium\buffer\CommandBuffer.h" />
@@ -317,7 +292,6 @@
     <ClInclude Include="src\copium\sampler\Glyph.h" />
     <ClInclude Include="src\copium\sampler\SamplerCreator.h" />
     <ClInclude Include="src\copium\util\BoundingBox.h" />
-    <ClInclude Include="src\copium\example\CollideSignal.h" />
     <ClInclude Include="src\copium\util\Common.h" />
     <ClInclude Include="src\copium\core\DebugMessenger.h" />
     <ClInclude Include="src\copium\pipeline\DescriptorSet.h" />

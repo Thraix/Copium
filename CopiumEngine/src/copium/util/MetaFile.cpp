@@ -123,6 +123,9 @@ namespace Copium
       if(trimmedLine.empty())
         continue;
 
+      if (trimmedLine[0] == '/' && trimmedLine[1] == '/')
+        continue;
+
       if(trimmedLine == "---")
       {
         return;

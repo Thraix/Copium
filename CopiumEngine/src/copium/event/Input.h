@@ -48,5 +48,7 @@ namespace Copium
     static void Update();
     static void PushViewport(const BoundingBox& viewport);
     static void PopViewport();
+
+    static std::string KeyToString(int key);
   };
 }

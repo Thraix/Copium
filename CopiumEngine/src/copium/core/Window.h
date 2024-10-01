@@ -37,6 +37,8 @@ namespace Copium
     VkSurfaceKHR GetSurface() const;
     GLFWwindow* GetWindow();
 
+    void GrabMouse(bool grap);
+
   private:
     void InitializeWindow(const std::string& windowName, int width, int height, WindowMode mode);
     void InitializeSurface();

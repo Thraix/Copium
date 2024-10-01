@@ -11,7 +11,7 @@ namespace Copium
     CP_DELETE_COPY_AND_MOVE_CTOR(DescriptorPool);
   private:
     VkDescriptorPool descriptorPool;
-    static const int DESCRIPTOR_SET_COUNT = 100;
+    static const int DESCRIPTOR_SET_COUNT = 1000000;
   public:
     DescriptorPool();
     ~DescriptorPool();

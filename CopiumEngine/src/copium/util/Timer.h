@@ -13,5 +13,6 @@ namespace Copium
 
     void Start();
     double Elapsed();
+    double ElapsedRestart();
   };
 }

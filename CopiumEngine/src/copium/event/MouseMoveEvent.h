@@ -10,9 +10,11 @@ namespace Copium
   {
   private:
     glm::vec2 pos;
+    glm::vec2 delta;
   public:
-    MouseMoveEvent(glm::vec2 pos);
+    MouseMoveEvent(glm::vec2 pos, glm::vec2 delta);
 
     glm::vec2 GetPos() const;
+    glm::vec2 GetDelta() const;
   };
 }

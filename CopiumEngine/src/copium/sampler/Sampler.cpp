@@ -23,9 +23,9 @@ namespace Copium
     createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     createInfo.magFilter = samplerCreator.magFilter;
     createInfo.minFilter = samplerCreator.minFilter;
-    createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    createInfo.addressModeU = samplerCreator.addressMode;
+    createInfo.addressModeV = samplerCreator.addressMode;
+    createInfo.addressModeW = samplerCreator.addressMode;
     createInfo.anisotropyEnable = VK_TRUE;
     createInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
     createInfo.unnormalizedCoordinates = VK_FALSE;

@@ -15,4 +15,14 @@ namespace Copium
   {
     return std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - startTime).count();
   }
+
+  double Timer::ElapsedRestart()
+  {
+    std::chrono::time_point<std::chrono::steady_clock> newTime = std::chrono::high_resolution_clock::now();
+
+    double elapsedTime = std::chrono::duration<double>(newTime - startTime).count();
+    startTime = newTime;
+
+    return elapsedTime;
+  }
 }

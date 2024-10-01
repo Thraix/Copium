@@ -13,6 +13,8 @@ namespace Copium
       minFilter = GetFilterFromString(metaClass.GetValue("min-filter"));
     if (metaClass.HasValue("mag-filter"))
       magFilter = GetFilterFromString(metaClass.GetValue("mag-filter"));
+    if (metaClass.HasValue("address-mode"))
+      addressMode = GetAddressModeFromString(metaClass.GetValue("address-mode"));
   }
 
   void SamplerCreator::SetMinFilter(VkFilter minFilter)
@@ -33,5 +35,15 @@ namespace Copium
       return VK_FILTER_LINEAR;
     else
       CP_ABORT("Invalid texture filtering: %s", str.c_str());
+  }
+
+  VkSamplerAddressMode SamplerCreator::GetAddressModeFromString(const std::string& str) const
+  {
+    if (str == "clamp-to-edge")
+      return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    else if (str == "repeat")
+      return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    else
+      CP_ABORT("Invalid texture address mode: %s", str.c_str());
   }
 }

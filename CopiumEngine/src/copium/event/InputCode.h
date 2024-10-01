@@ -2,6 +2,12 @@
 
 #include "copium/util/Enum.h"
 
+#define CP_MOUSE_LEFT           0
+#define CP_MOUSE_RIGHT          1
+#define CP_MOUSE_MIDDLE         2
+#define CP_MOUSE_BACK           3
+#define CP_MOUSE_FORWARD        4
+
 #define CP_KEY_SPACE            32
 #define CP_KEY_APOSTROPHE       39
 #define CP_KEY_COMMA            44
@@ -122,3 +128,4 @@
 #define CP_KEY_RIGHT_ALT        346
 #define CP_KEY_RIGHT_SUPER      347
 #define CP_KEY_MENU             348
+#define CP_KEY_UNBOUND          0xffffffff

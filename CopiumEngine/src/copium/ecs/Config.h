@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <numeric>
+#include <limits>
 
 namespace Copium
 {

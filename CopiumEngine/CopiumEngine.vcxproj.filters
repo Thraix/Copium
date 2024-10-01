@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\copium\core\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\copium\buffer\Buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -55,9 +52,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\copium\core\Instance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\copium\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\copium\pipeline\Pipeline.cpp">
@@ -198,9 +192,6 @@
     <ClCompile Include="src\copium\ecs\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\copium\core\Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\copium\asset\AssetRef.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -228,15 +219,9 @@
     <ClCompile Include="src\copium\event\ViewportResize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\copium\example\ComponentHandlerBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\copium\sampler\DepthAttachment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\core\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\sampler\ColorAttachment.h">
@@ -443,9 +428,6 @@
     <ClInclude Include="src\copium\ecs\ComponentPoolBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\copium\core\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\copium\asset\AssetRef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -461,31 +443,10 @@
     <ClInclude Include="src\copium\ecs\SystemOrderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\copium\example\FrameCountSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\Components.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\MouseFollowSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\RenderSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\copium\ecs\Signal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\event\EventSignal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\CameraUpdateSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\PlayerControllerSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\PhysicsSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\event\Input.h">
@@ -494,58 +455,16 @@
     <ClInclude Include="src\copium\event\InputCode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\copium\example\CameraFollowPlayerSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\HealthDisplaySystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\HealthChangeSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\copium\ecs\ComponentListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\copium\example\HealthComponentListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\ColliderSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\CollideSignal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\PickupSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\DebugSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\UiRenderSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\copium\sampler\SamplerCreator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\AnimationSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\LevelGeneratorComponentListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\core\ImGuiInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\event\ViewportResize.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\ComponentHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\ComponentHandlers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\copium\example\ComponentHandlerBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

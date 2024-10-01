@@ -7,10 +7,8 @@ namespace Copium
 {
   Instance::Instance(const std::string& applicationName)
   {
-    timer.Start();
     InitializeInstance(applicationName);
     InitializeDebugMessenger();
-    CP_INFO("Initialized Vulkan in %f seconds", timer.Elapsed());
   }
 
   Instance::~Instance()

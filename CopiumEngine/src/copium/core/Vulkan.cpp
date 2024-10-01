@@ -6,6 +6,7 @@
 #include "copium/sampler/Font.h"
 #include "copium/pipeline/Pipeline.h"
 #include "copium/buffer/Framebuffer.h"
+#include "copium/util/Timer.h"
 
 namespace Copium
 {
@@ -18,12 +19,16 @@ namespace Copium
 
   void Vulkan::Initialize()
   {
+    Timer timer;
+    timer.Start();
     instance = std::make_unique<Instance>("Copium Engine");
     window = std::make_unique<Window>("Copium Engine", 1440, 810, WindowMode::Windowed);
     device = std::make_unique<Device>();
     swapChain = std::make_unique<SwapChain>();
     imGuiInstance = std::make_unique<ImGuiInstance>();
+    CP_INFO("Initialized Vulkan in %f seconds", timer.Elapsed());
 
+    timer.Start();
     AssetManager::RegisterAssetType<Texture2D>("Texture2D");
     AssetManager::RegisterAssetType<ColorAttachment>("RenderTexture");
     AssetManager::RegisterAssetType<Pipeline>("Pipeline");
@@ -34,6 +39,7 @@ namespace Copium
     //       By looking at where the executable is, since that should always be in the bin folder (it currently isn't though)
     AssetManager::RegisterAssetDir("assets/");
     emptyTexture2D = AssetManager::RegisterRuntimeAsset("empty_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 0, 255, 255}, 1, 1, SamplerCreator{}));
+    CP_INFO("Initialized AssetManager in %f seconds", timer.Elapsed());
   }
 
   void Vulkan::Destroy()

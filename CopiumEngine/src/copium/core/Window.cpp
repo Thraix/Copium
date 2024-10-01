@@ -55,6 +55,14 @@ namespace Copium
     return window;
   }
 
+  void Window::GrabMouse(bool grab)
+  {
+    if (grab)
+      glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    else
+      glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  }
+
   void Window::InitializeWindow(const std::string& windowName, int width, int height, WindowMode mode)
   {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -160,8 +168,9 @@ namespace Copium
   {
     Window* window = (Window*)glfwGetWindowUserPointer(glfwWindow);
     glm::vec2 pos{xpos / window->width * 2.0 - 1.0, -(ypos / window->height * 2.0 - 1.0)};
+    glm::vec2 oldMousePos = Input::GetMousePos();
     Input::OnMouseMove(pos);
-    EventDispatcher::QueueEvent(MouseMoveEvent{pos});
+    EventDispatcher::QueueEvent(MouseMoveEvent{pos, pos - oldMousePos});
   }
 
   void Window::WindowFocusCallback(GLFWwindow* glfwWindow, int focused)

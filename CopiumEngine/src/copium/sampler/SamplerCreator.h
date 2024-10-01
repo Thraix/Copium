@@ -9,8 +9,9 @@ namespace Copium
   {
     friend class Sampler;
   private:
-    VkFilter minFilter = VK_FILTER_LINEAR;
-    VkFilter magFilter = VK_FILTER_LINEAR;
+    VkFilter minFilter{VK_FILTER_LINEAR};
+    VkFilter magFilter{VK_FILTER_LINEAR};
+    VkSamplerAddressMode addressMode{VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE};
 
   public:
     SamplerCreator();
@@ -21,5 +22,6 @@ namespace Copium
 
   private:
     VkFilter GetFilterFromString(const std::string& str) const;
+    VkSamplerAddressMode GetAddressModeFromString(const std::string& str) const;
   };
 }

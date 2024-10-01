@@ -1,7 +1,6 @@
 #pragma once
 
 #include "copium/core/DebugMessenger.h"
-#include "copium/util/Timer.h"
 
 #include <GLFW/glfw3.h>
 #include <set>
@@ -21,8 +20,6 @@ namespace Copium
     VkQueue graphicsQueue;
     VkQueue presentQueue;
     // TODO end
-
-    Timer timer;
 
   public:
     Instance(const std::string& applicationName);
