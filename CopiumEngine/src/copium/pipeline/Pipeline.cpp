@@ -42,6 +42,7 @@ namespace Copium
     else if (type == "Mesh")
     {
       creator.SetVertexDescriptor(Vertex::GetDescriptor());
+      creator.SetBlending(metaFileClass.GetValue("alpha-blending", "false") == "true" ? true : false);
     }
     InitializeDescriptorSetLayout(creator);
     InitializePipeline(creator);

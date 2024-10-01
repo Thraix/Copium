@@ -21,7 +21,7 @@ namespace Copium
         return offset;
       offset += GetUniformTypeOffset(uniformElem.first);
     }
-    CP_ABORT("Uniform not found=%s", uniform);
+    CP_ABORT("Uniform not found=%s", uniform.c_str());
   }
 
   uint32_t ShaderBinding::GetUniformSize(const std::string& uniform) const
@@ -31,7 +31,7 @@ namespace Copium
       if (uniformElem.second == uniform)
         return GetUniformTypeSize(uniformElem.first);
     }
-    CP_ABORT("Uniform not found=%s", uniform);
+    CP_ABORT("Uniform not found=%s", uniform.c_str());
   }
 
   UniformType ShaderBinding::GetUniformType(const std::string& uniform) const
@@ -41,7 +41,7 @@ namespace Copium
       if (uniformElem.second == uniform)
         return uniformElem.first;
     }
-    CP_ABORT("Uniform not found=%s", uniform);
+    CP_ABORT("Uniform not found=%s", uniform.c_str());
   }
 
   uint32_t ShaderBinding::GetUniformBufferSize() const

@@ -72,4 +72,12 @@ namespace Copium
   {
     Buffer::Update(buffer.data(), Vulkan::GetSwapChain().GetFlightIndex());
   }
+
+  void UniformBuffer::UpdateStatic()
+  {
+    for (int i = 0; i < SwapChain::MAX_FRAMES_IN_FLIGHT; i++)
+    {
+      Buffer::Update(buffer.data(), i);
+    }
+  }
 }

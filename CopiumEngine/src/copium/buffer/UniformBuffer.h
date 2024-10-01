@@ -30,5 +30,6 @@ namespace Copium
     void Set(const std::string& str, int data);
 
     void Update();
+    void UpdateStatic();
   };
 }
