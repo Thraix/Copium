@@ -47,7 +47,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -80,11 +80,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <OutDir>$(SolutionDir)libs\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)../libs\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <OutDir>$(ProjectDir)../libs\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -120,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLM_FORCE_LEFT_HANDED;GLFW_INCLUDE_VULKAN;GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;MSDF_ATLAS_PUBLIC=;MSDFGEN_PUBLIC=;WIN32</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)ext/include/;$(ProjectDir)src/;$(SolutionDir)ext/repos/msdf-atlas-gen/;$(SolutionDir)ext/repos/msdf-atlas-gen/msdfgen/;$(SolutionDir)ext/repos/stb/;$(SolutionDir)ext/repos/glfw/include;$(ProjectDir)ext/repos/glm/;$(VULKAN_SDK)/Include;$(SolutionDir)ext/repos/imgui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src/;$(ProjectDir)../ext/repos/msdf-atlas-gen/;$(ProjectDir)../ext/repos/msdf-atlas-gen/msdfgen/;$(ProjectDir)../ext/repos/stb/;$(ProjectDir)../ext/repos/glfw/include;$(ProjectDir)../ext/repos/glm/;$(VULKAN_SDK)/Include;$(ProjectDir)../ext/repos/freetype/;$(ProjectDir)../ext/repos/imgui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -128,7 +129,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)libs\$(Platform)\$(Configuration)\;$(VULKAN_SDK)/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)../libs\$(Platform)\$(Configuration)\;$(VULKAN_SDK)/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;imgui.lib;glfw3.lib;shaderc_combinedd.lib;msdfgen-core.lib;msdfgen-ext.lib;msdf-atlas-gen.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -146,9 +147,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLM_FORCE_LEFT_HANDED;GLFW_INCLUDE_VULKAN;GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;MSDF_ATLAS_PUBLIC=;MSDFGEN_PUBLIC=</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLM_FORCE_LEFT_HANDED;GLFW_INCLUDE_VULKAN;GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;MSDF_ATLAS_PUBLIC=;MSDFGEN_PUBLIC=;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)ext/include/;$(ProjectDir)src/;$(SolutionDir)ext/repos/msdf-atlas-gen/;$(SolutionDir)ext/repos/msdf-atlas-gen/msdfgen/;$(SolutionDir)ext/repos/stb/;$(SolutionDir)ext/repos/glfw/include;$(ProjectDir)ext/repos/glm/;$(VULKAN_SDK)/Include;$(SolutionDir)ext/repos/imgui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src/;$(ProjectDir)../ext/repos/msdf-atlas-gen/;$(ProjectDir)../ext/repos/msdf-atlas-gen/msdfgen/;$(ProjectDir)../ext/repos/stb/;$(ProjectDir)../ext/repos/glfw/include;$(ProjectDir)ext/repos/glm/;$(VULKAN_SDK)/Include;$(ProjectDir)../ext/repos/freetype/;$(ProjectDir)../ext/repos/imgui/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -157,7 +158,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)libs\$(Platform)\$(Configuration)\;$(VULKAN_SDK)/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)../libs\$(Platform)\$(Configuration)\;$(VULKAN_SDK)/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;imgui.lib;glfw3.lib;shaderc_combined.lib;msdfgen-core.lib;msdfgen-ext.lib;msdf-atlas-gen.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>

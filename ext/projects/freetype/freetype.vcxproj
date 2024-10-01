@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)ext/repos/freetype/include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)libs\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(ProjectDir)../../repos/freetype/include;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)../../../libs\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)ext/repos/freetype/include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)libs\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(ProjectDir)../../repos/freetype/include;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)../../../libs\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

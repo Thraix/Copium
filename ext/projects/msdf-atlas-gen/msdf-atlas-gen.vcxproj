@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)ext/repos/msdf-atlas-gen/msdfgen;$(SolutionDir)ext/repos/msdf-atlas-gen/artery-font-format</IncludePath>
-    <OutDir>$(SolutionDir)libs/$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)../../repos/msdf-atlas-gen/msdfgen;$(ProjectDir)../../repos/msdf-atlas-gen/artery-font-format</IncludePath>
+    <OutDir>$(ProjectDir)../../../libs/$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)libs/$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)ext/repos/msdf-atlas-gen/msdfgen;$(SolutionDir)ext/repos/msdf-atlas-gen/artery-font-format</IncludePath>
+    <OutDir>$(ProjectDir)../../../libs/$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)../../repos/msdf-atlas-gen/msdfgen;$(ProjectDir)../../repos/msdf-atlas-gen/artery-font-format</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
