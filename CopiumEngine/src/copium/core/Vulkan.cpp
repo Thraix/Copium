@@ -1,11 +1,11 @@
 #include "copium/core/Vulkan.h"
 
 #include "copium/asset/AssetManager.h"
-#include "copium/sampler/Texture2D.h"
+#include "copium/buffer/Framebuffer.h"
+#include "copium/pipeline/Pipeline.h"
 #include "copium/sampler/ColorAttachment.h"
 #include "copium/sampler/Font.h"
-#include "copium/pipeline/Pipeline.h"
-#include "copium/buffer/Framebuffer.h"
+#include "copium/sampler/Texture2D.h"
 #include "copium/util/Timer.h"
 
 namespace Copium
@@ -15,7 +15,7 @@ namespace Copium
   std::unique_ptr<Device> Vulkan::device;
   std::unique_ptr<SwapChain> Vulkan::swapChain;
   std::unique_ptr<ImGuiInstance> Vulkan::imGuiInstance;
-  AssetHandle Vulkan::emptyTexture2D;
+  AssetHandle<Texture2D> Vulkan::emptyTexture2D;
 
   void Vulkan::Initialize()
   {
@@ -38,13 +38,13 @@ namespace Copium
     // TODO: Make the working directory always be relative to the assets folder
     //       By looking at where the executable is, since that should always be in the bin folder (it currently isn't though)
     AssetManager::RegisterAssetDir("assets/");
-    emptyTexture2D = AssetManager::RegisterRuntimeAsset("empty_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 0, 255, 255}, 1, 1, SamplerCreator{}));
+    emptyTexture2D = AssetHandle<Texture2D>{"empty_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 0, 255, 255}, 1, 1, SamplerCreator{})};
     CP_INFO("Initialized AssetManager in %f seconds", timer.Elapsed());
   }
 
   void Vulkan::Destroy()
   {
-    AssetManager::UnloadAsset(emptyTexture2D);
+    emptyTexture2D.UnloadAsset();
     AssetManager::UnregisterAssetDir("assets/");
     AssetManager::Cleanup();
     imGuiInstance.reset();
@@ -79,7 +79,7 @@ namespace Copium
     return *imGuiInstance;
   }
 
-  AssetHandle Vulkan::GetEmptyTexture2D()
+  AssetHandle<Texture2D> Vulkan::GetEmptyTexture2D()
   {
     return emptyTexture2D;
   }

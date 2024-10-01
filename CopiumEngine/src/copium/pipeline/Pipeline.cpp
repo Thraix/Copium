@@ -18,9 +18,9 @@ namespace Copium
     VkRenderPass renderPass;
     if (metaFileClass.HasValue("framebuffer-uuid"))
     {
-      Framebuffer& fb = AssetManager::LoadAsset<Framebuffer>(Uuid{metaFileClass.GetValue("framebuffer-uuid")});
+      framebuffer = AssetRef<Framebuffer>(Uuid{metaFileClass.GetValue("framebuffer-uuid")});
+      Framebuffer& fb = framebuffer.GetAsset();
       renderPass = fb.GetRenderPass();
-      framebuffer = fb;
     }
     else
     {
@@ -61,10 +61,6 @@ namespace Copium
     for (auto&& descriptorSetLayout : descriptorSetLayouts)
     {
       vkDestroyDescriptorSetLayout(Vulkan::GetDevice(), descriptorSetLayout, nullptr);
-    }
-    if (framebuffer != NULL_ASSET_HANDLE)
-    {
-      AssetManager::UnloadAsset(framebuffer);
     }
   }
 

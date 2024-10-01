@@ -1,7 +1,9 @@
 #pragma once
 
 #include "copium/asset/Asset.h"
+#include "copium/asset/AssetRef.h"
 #include "copium/buffer/CommandBuffer.h"
+#include "copium/buffer/Framebuffer.h"
 #include "copium/pipeline/DescriptorSet.h"
 #include "copium/pipeline/PipelineCreator.h"
 #include "copium/util/Common.h"
@@ -20,7 +22,7 @@ namespace Copium
     std::vector<VkDescriptorSet> boundDescriptorSets;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
-    AssetHandle framebuffer;
+    AssetRef<Framebuffer> framebuffer;
 
   public:
 

@@ -192,9 +192,6 @@
     <ClCompile Include="src\copium\ecs\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\copium\asset\AssetRef.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\copium\ecs\SystemPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -465,6 +462,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\event\ViewportResize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\asset\AssetHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

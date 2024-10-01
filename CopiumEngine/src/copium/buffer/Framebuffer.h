@@ -2,6 +2,7 @@
 
 #include "copium/asset/Asset.h"
 #include "copium/asset/AssetMeta.h"
+#include "copium/asset/AssetRef.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/sampler/ColorAttachment.h"
 #include "copium/sampler/DepthAttachment.h"
@@ -15,7 +16,7 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Framebuffer);
   private:
-    AssetHandle colorAttachment;
+    AssetRef<ColorAttachment> colorAttachment;
     std::unique_ptr<DepthAttachment> depthAttachment;
     std::vector<VkFramebuffer> framebuffers;
     VkRenderPass renderPass;

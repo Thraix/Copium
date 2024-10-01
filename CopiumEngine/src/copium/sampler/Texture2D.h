@@ -18,6 +18,7 @@ namespace Copium
     ~Texture2D() override;
 
     VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;
+
   private:
     void InitializeTextureImageFromFile(const std::string& filename);
     void InitializeTextureImageFromData(const uint8_t* rgbaData, int width, int height);

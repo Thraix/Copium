@@ -7,12 +7,12 @@
 
 namespace Copium
 {
-  using AssetHandle = uint64_t;
-  static constexpr int NULL_ASSET_HANDLE = 0;
+  static constexpr int NULL_ASSET_ID = 0;
+  using AssetId = uint32_t;
 
   struct AssetMeta
   {
-    AssetHandle handle;
+    AssetId id;
     std::string name;
     Uuid uuid;
     bool isRuntime = false;

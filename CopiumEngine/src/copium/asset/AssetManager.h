@@ -17,22 +17,22 @@ namespace Copium
     using CreateAssetFunc = std::function<Asset&(const MetaFile& metaFile, const std::string& str)>;
     static std::map<std::string, CreateAssetFunc> assetTypes;
     static std::vector<std::string> assetDirs;
-    static std::map<AssetHandle, std::unique_ptr<Asset>> assets;
+    static std::map<AssetId, std::unique_ptr<Asset>> assets;
 
-    static std::map<std::string, AssetHandle> pathToAssetCache;
-    static std::map<std::string, AssetHandle> nameToAssetCache;
-    static AssetHandle assetHandle;
-    static AssetHandle runtimeAssetHandle;
+    static std::map<std::string, AssetId> pathToAssetCache;
+    static std::map<std::string, AssetId> nameToAssetCache;
+    static AssetId assetId;
+    static AssetId runtimeAssetId;
 
     static std::vector<AssetFile> cachedAssetFiles; // TODO: Make a set?
   public:
     static void RegisterAssetDir(std::string assetDir);
     static void UnregisterAssetDir(std::string assetDir);
-    static Asset& GetAsset(AssetHandle handle);
+    static Asset& GetAsset(AssetId id);
     static Asset& LoadAsset(const std::string& assetPath);
     static Asset& LoadAsset(const Uuid& uuid);
-    static AssetHandle DuplicateAsset(AssetHandle handle);
-    static void UnloadAsset(AssetHandle handle);
+    static AssetId DuplicateAsset(AssetId id);
+    static void UnloadAsset(AssetId id);
     static Asset& RegisterRuntimeAsset(const std::string& name, std::unique_ptr<Asset>&& asset);
     static const std::vector<AssetFile>& GetAssetFiles();
     static void Cleanup();
@@ -61,9 +61,9 @@ namespace Copium
     }
 
     template <typename AssetT>
-    static AssetT& GetAsset(AssetHandle handle) 
+    static AssetT& GetAsset(AssetId id) 
     {
-      Asset& asset = GetAsset(handle);
+      Asset& asset = GetAsset(id);
       AssetT* assetT = dynamic_cast<AssetT*>(&asset);
       CP_ASSERT(assetT, "Invalid Asset cast");
       return *assetT;
@@ -83,10 +83,10 @@ namespace Copium
     template <typename T>
     static Asset& CreateAsset(const MetaFile& metaFile, const std::string& metaFileClass)
     {
-      AssetHandle handle = assetHandle++;
-      pathToAssetCache.emplace(metaFile.GetFilePath(), handle);
-      Asset& asset = *assets.emplace(handle, std::make_unique<T>(metaFile)).first->second.get();
-      asset.metaData.handle = handle;
+      AssetId id = assetId++;
+      pathToAssetCache.emplace(metaFile.GetFilePath(), id);
+      Asset& asset = *assets.emplace(id, std::make_unique<T>(metaFile)).first->second.get();
+      asset.metaData.id = id;
       asset.metaData.name = metaFile.GetFilePath();
       asset.metaData.uuid = Uuid{metaFile.GetMetaClass(metaFileClass).GetValue("uuid")};
       asset.metaData.isRuntime = false;

@@ -16,12 +16,10 @@ namespace Copium
     Asset();
     virtual ~Asset();
 
-    AssetHandle GetHandle() const;
     const std::string& GetName() const;
     Uuid GetUuid() const;
-    bool isRuntime() const;
-
-    operator AssetHandle() const;
+    bool IsRuntime() const;
+    AssetId GetId() const;
 
   private:
     AssetMeta metaData;

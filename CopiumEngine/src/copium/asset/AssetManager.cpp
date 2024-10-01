@@ -13,12 +13,12 @@ namespace Copium
 {
   std::vector<std::string> AssetManager::assetDirs;
   std::map<std::string, AssetManager::CreateAssetFunc> AssetManager::assetTypes;
-  std::map<AssetHandle, std::unique_ptr<Asset>> AssetManager::assets;
-  std::map<std::string, AssetHandle> AssetManager::pathToAssetCache;
-  std::map<std::string, AssetHandle> AssetManager::nameToAssetCache;
+  std::map<AssetId, std::unique_ptr<Asset>> AssetManager::assets;
+  std::map<std::string, AssetId> AssetManager::pathToAssetCache;
+  std::map<std::string, AssetId> AssetManager::nameToAssetCache;
   std::vector<AssetFile> AssetManager::cachedAssetFiles;
-  AssetHandle AssetManager::assetHandle = 1;
-  AssetHandle AssetManager::runtimeAssetHandle = (1 << 31) + 1;
+  AssetId AssetManager::assetId = 1;
+  AssetId AssetManager::runtimeAssetId = (1 << 31) + 1;
 
   void AssetManager::RegisterAssetDir(std::string assetDir)
   {
@@ -58,9 +58,9 @@ namespace Copium
     }
   }
 
-  Asset& AssetManager::GetAsset(AssetHandle handle)
+  Asset& AssetManager::GetAsset(AssetId id)
   {
-    auto it = assets.find(handle);
+    auto it = assets.find(id);
     CP_ASSERT(it != assets.end(), "Asset not loaded");
     return *it->second.get();
   }
@@ -100,19 +100,19 @@ namespace Copium
     // TODO: Reload the assetCache to see if a new file has appeared with that uuid
   }
 
-  AssetHandle AssetManager::DuplicateAsset(AssetHandle handle)
+  AssetId AssetManager::DuplicateAsset(AssetId id)
   {
-    auto it = assets.find(handle);
-    CP_ASSERT(it != assets.end(), "Failed to find asset with handle=%d", handle);
+    auto it = assets.find(id);
+    CP_ASSERT(it != assets.end(), "Failed to find asset with id=%d", id);
 
     CP_DEBUG("Duplicating asset: %s", it->second->GetName().c_str());
     it->second->metaData.loadCount++;
-    return handle;
+    return id;
   }
 
-  void AssetManager::UnloadAsset(AssetHandle handle)
+  void AssetManager::UnloadAsset(AssetId id)
   {
-    auto it = assets.find(handle);
+    auto it = assets.find(id);
     if (it == assets.end())
     {
       CP_WARN("Asset not loaded");
@@ -124,7 +124,7 @@ namespace Copium
     if (it->second->metaData.loadCount > 0)
       return;
 
-    if (it->second->isRuntime())
+    if (it->second->IsRuntime())
       nameToAssetCache.erase(it->second->GetName());
     else
       pathToAssetCache.erase(it->second->GetName());
@@ -143,7 +143,7 @@ namespace Copium
     CP_WARN("Performing auto clean up of %d non unloaded assets", assets.size());
     while (!assets.empty())
     {
-      UnloadAsset(assets.begin()->second->GetHandle());
+      UnloadAsset(assets.begin()->second->GetId());
     }
     CP_ASSERT(nameToAssetCache.empty(), "Name To Asset Cache not empty after full unload");
     CP_ASSERT(pathToAssetCache.empty(), "Path To Asset Cache not empty after full unload");
@@ -156,13 +156,13 @@ namespace Copium
     auto it = nameToAssetCache.find(name);
     CP_ASSERT(it == nameToAssetCache.end(), "Asset already exists: %s", name);
 
-    AssetHandle handle = runtimeAssetHandle++;
-    Asset* asset2 = assets.emplace(handle, std::move(asset)).first->second.get();
-    asset2->metaData.handle = handle;
+    AssetId id = runtimeAssetId++;
+    Asset* asset2 = assets.emplace(id, std::move(asset)).first->second.get();
+    asset2->metaData.id = id;
     asset2->metaData.name = name;
     asset2->metaData.uuid = Uuid();
     asset2->metaData.isRuntime = true;
-    nameToAssetCache.emplace(name, handle);
+    nameToAssetCache.emplace(name, id);
     return *asset2;
   }
 

@@ -1,11 +1,13 @@
 #pragma once
 
+#include "copium/asset/AssetHandle.h"
 #include "copium/core/Device.h"
 #include "copium/core/Instance.h"
 #include "copium/core/SwapChain.h"
 #include "copium/core/Window.h"
 #include "copium/core/ImGuiInstance.h"
 #include "copium/util/Common.h"
+#include "copium/sampler/Texture2D.h"
 
 #include <memory>
 
@@ -21,7 +23,7 @@ namespace Copium
     static std::unique_ptr<SwapChain> swapChain;
     static std::unique_ptr<ImGuiInstance> imGuiInstance;
 
-    static AssetHandle emptyTexture2D;
+    static AssetHandle<Texture2D> emptyTexture2D;
   public:
     static void Initialize();
     static void Destroy();
@@ -31,6 +33,6 @@ namespace Copium
     static SwapChain& GetSwapChain();
     static ImGuiInstance& GetImGuiInstance();
     static bool Valid();
-    static AssetHandle GetEmptyTexture2D();
+    static AssetHandle<Texture2D> GetEmptyTexture2D();
   };
 }

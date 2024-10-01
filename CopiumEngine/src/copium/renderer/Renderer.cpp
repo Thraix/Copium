@@ -15,15 +15,14 @@ namespace Copium
   Renderer::Renderer()
     : descriptorPool{},
       ibo{MAX_NUM_INDICES}, 
-      samplers{MAX_NUM_TEXTURES, &AssetManager::GetAsset<Texture2D>(Vulkan::GetEmptyTexture2D())}
+      pipeline{"renderer.meta"}, // TODO: should be a runtime renderer pipeline or passed in constructor
+      samplers{MAX_NUM_TEXTURES, &Vulkan::GetEmptyTexture2D().GetAsset()}
   {
     InitializeIndexBuffer();
-    InitializeGraphicsPipeline();
   }
 
   Renderer::~Renderer()
   {
-    AssetManager::UnloadAsset(pipeline);
   }
 
   void Renderer::Quad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color)
@@ -94,7 +93,7 @@ namespace Copium
 
   void Renderer::Begin(CommandBuffer& commandBuffer)
   {
-    AssetManager::GetAsset<Pipeline>(pipeline).Bind(commandBuffer);
+    pipeline.GetAsset().Bind(commandBuffer);
     ibo.Bind(commandBuffer);
     batchIndex = -1;
     NextBatch();
@@ -108,12 +107,12 @@ namespace Copium
 
   Pipeline& Renderer::GetGraphicsPipeline()
   {
-    return AssetManager::GetAsset<Pipeline>(pipeline);
+    return pipeline.GetAsset();
   }
 
   void Renderer::SetDescriptorSet(const DescriptorSet& descriptorSet)
   {
-    AssetManager::GetAsset<Pipeline>(pipeline).SetDescriptorSet(descriptorSet);
+    pipeline.GetAsset().SetDescriptorSet(descriptorSet);
   }
 
   void Renderer::InitializeIndexBuffer() 
@@ -132,11 +131,6 @@ namespace Copium
       indices[i * 6 + 5] = i * 4 + 3;
     }
     ibo.UpdateStaging(indices.data());
-  }
-
-  void Renderer::InitializeGraphicsPipeline()
-  {
-    pipeline = AssetManager::LoadAsset<Pipeline>("renderer.meta");
   }
 
   int Renderer::AllocateSampler(const Sampler& sampler)
@@ -174,15 +168,16 @@ namespace Copium
   {
     batches[batchIndex]->GetVertexBuffer().Unmap();
     batches[batchIndex]->GetVertexBuffer().Bind(*currentCommandBuffer);
-    AssetManager::GetAsset<Pipeline>(pipeline).SetDescriptorSet(batches[batchIndex]->GetDescriptorSet());
-    AssetManager::GetAsset<Pipeline>(pipeline).BindDescriptorSets(*currentCommandBuffer);
+    Pipeline& p = pipeline.GetAsset();
+    p.SetDescriptorSet(batches[batchIndex]->GetDescriptorSet());
+    p.BindDescriptorSets(*currentCommandBuffer);
     ibo.Draw(*currentCommandBuffer, quadCount * 6);
   }
 
   void Renderer::NextBatch()
   {
     batchIndex++;
-    std::fill(samplers.begin(), samplers.end(), &AssetManager::GetAsset<Texture2D>(Vulkan::GetEmptyTexture2D()));
+    std::fill(samplers.begin(), samplers.end(), &Vulkan::GetEmptyTexture2D().GetAsset());
     if (batchIndex >= batches.size())
     {
       batches.emplace_back(std::make_unique<Batch>(pipeline, descriptorPool, MAX_NUM_VERTICES, samplers));

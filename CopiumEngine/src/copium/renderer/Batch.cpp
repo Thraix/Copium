@@ -5,9 +5,9 @@
 
 namespace Copium
 {
-  Batch::Batch(AssetHandle pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers)
+  Batch::Batch(AssetRef<Pipeline>& pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers)
     : vertexBuffer{RendererVertex::GetDescriptor(), vertexCount},
-      descriptorSet{AssetManager::GetAsset<Pipeline>(pipeline).CreateDescriptorSet(descriptorPool, 0)}
+      descriptorSet{pipeline.GetAsset().CreateDescriptorSet(descriptorPool, 0)}
   {}
 
   RendererVertexBuffer& Batch::GetVertexBuffer()

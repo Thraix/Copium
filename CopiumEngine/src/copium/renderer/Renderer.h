@@ -1,6 +1,7 @@
 #pragma once
 
 #include "copium/asset/AssetMeta.h"
+#include "copium/asset/AssetRef.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/buffer/IndexBuffer.h"
 #include "copium/buffer/RendererVertexBuffer.h"
@@ -21,7 +22,7 @@ namespace Copium
   private:
     DescriptorPool descriptorPool;
     IndexBuffer ibo;
-    AssetHandle pipeline;
+    AssetRef<Pipeline> pipeline;
     std::vector<std::unique_ptr<Batch>> batches;
 
     // Temporary data during a render
@@ -47,7 +48,6 @@ namespace Copium
     void SetDescriptorSet(const DescriptorSet& descriptorSet);
   private:
     void InitializeIndexBuffer();
-    void InitializeGraphicsPipeline();
 
     int AllocateSampler(const Sampler& sampler);
     void AllocateQuad();

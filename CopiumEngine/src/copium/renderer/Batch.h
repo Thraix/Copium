@@ -1,6 +1,7 @@
 #pragma once
 
 #include "copium/asset/AssetMeta.h"
+#include "copium/asset/AssetRef.h"
 #include "copium/buffer/RendererVertexBuffer.h"
 #include "copium/pipeline/DescriptorSet.h"
 #include "copium/pipeline/Pipeline.h"
@@ -15,7 +16,7 @@ namespace Copium
     RendererVertexBuffer vertexBuffer;
     std::unique_ptr<DescriptorSet> descriptorSet;
   public:
-    Batch(AssetHandle pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers);
+    Batch(AssetRef<Pipeline>& pipeline, DescriptorPool& descriptorPool, int vertexCount, const std::vector<const Sampler*> samplers);
     RendererVertexBuffer& GetVertexBuffer();
     DescriptorSet& GetDescriptorSet();
   };

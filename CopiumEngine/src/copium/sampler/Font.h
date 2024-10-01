@@ -28,6 +28,7 @@ namespace Copium
     float GetBaseHeight() const;
 
     BoundingBox GetTextBoundingBox(const std::string& str, float size) const;
+
   private:
     void InitializeTextureImageFromData(const uint8_t* rgbaData, int width, int height);
   };

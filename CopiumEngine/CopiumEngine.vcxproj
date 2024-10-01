@@ -173,7 +173,6 @@
     <ClCompile Include="src\copium\asset\Asset.cpp" />
     <ClCompile Include="src\copium\asset\AssetFile.cpp" />
     <ClCompile Include="src\copium\asset\AssetManager.cpp" />
-    <ClCompile Include="src\copium\asset\AssetRef.cpp" />
     <ClCompile Include="src\copium\buffer\RendererVertexBuffer.cpp" />
     <ClCompile Include="src\copium\buffer\Buffer.cpp" />
     <ClCompile Include="src\copium\core\Device.cpp" />
@@ -242,6 +241,7 @@
   <ItemGroup>
     <ClInclude Include="src\copium\asset\Asset.h" />
     <ClInclude Include="src\copium\asset\AssetFile.h" />
+    <ClInclude Include="src\copium\asset\AssetHandle.h" />
     <ClInclude Include="src\copium\asset\AssetManager.h" />
     <ClInclude Include="src\copium\asset\AssetMeta.h" />
     <ClInclude Include="src\copium\asset\AssetRef.h" />

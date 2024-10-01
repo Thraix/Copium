@@ -5,11 +5,6 @@ namespace Copium
   Asset::Asset() = default;
   Asset::~Asset() = default;
 
-  AssetHandle Asset::GetHandle() const
-  {
-    return metaData.handle;
-  }
-
   const std::string& Asset::GetName() const
   {
     return metaData.name;
@@ -20,13 +15,13 @@ namespace Copium
     return metaData.uuid;
   }
 
-  bool Asset::isRuntime() const
+  bool Asset::IsRuntime() const
   {
     return metaData.isRuntime;
   }
 
-  Asset::operator AssetHandle() const
+  AssetId Asset::GetId() const
   {
-    return metaData.handle;
+    return metaData.id;
   }
 }

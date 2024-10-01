@@ -10,8 +10,8 @@ namespace Copium
   Framebuffer::Framebuffer(const MetaFile& metaFile)
   {
     const MetaFileClass& metaClass = metaFile.GetMetaClass("Framebuffer");
-    ColorAttachment& attachment = AssetManager::LoadAsset<ColorAttachment>(Uuid{metaClass.GetValue("rendertexture-uuid")});
-    colorAttachment = attachment;
+    colorAttachment = AssetRef<ColorAttachment>(Uuid{metaClass.GetValue("rendertexture-uuid")});
+    ColorAttachment& attachment = colorAttachment.GetAsset();
     width = attachment.GetWidth();
     height = attachment.GetHeight();
     InitializeDepthBuffer();
@@ -33,7 +33,6 @@ namespace Copium
     for (auto& framebuffer : framebuffers)
       vkDestroyFramebuffer(Vulkan::GetDevice(), framebuffer, nullptr);
     vkDestroyRenderPass(Vulkan::GetDevice(), renderPass, nullptr);
-    AssetManager::UnloadAsset(colorAttachment);
   }
 
   void Framebuffer::Resize(uint32_t width, uint32_t height)
@@ -43,7 +42,7 @@ namespace Copium
     this->height = height;
     for (auto&& framebuffer : framebuffers)
       vkDestroyFramebuffer(Vulkan::GetDevice(), framebuffer, nullptr);
-    AssetManager::GetAsset<ColorAttachment>(colorAttachment).Resize(width, height);
+    colorAttachment.GetAsset().Resize(width, height);
     depthAttachment->Resize(width, height);
     InitializeFramebuffers();
   }
@@ -96,7 +95,7 @@ namespace Copium
 
   const ColorAttachment& Framebuffer::GetColorAttachment() const
   {
-    return AssetManager::GetAsset<ColorAttachment>(colorAttachment);
+    return colorAttachment.GetAsset();
   }
 
   uint32_t Framebuffer::GetWidth() const
@@ -186,7 +185,7 @@ namespace Copium
   void Framebuffer::InitializeFramebuffers()
   {
     framebuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
-    const ColorAttachment& attachment = AssetManager::GetAsset<ColorAttachment>(colorAttachment);
+    const ColorAttachment& attachment = colorAttachment.GetAsset();
     for (size_t i = 0; i < framebuffers.size(); ++i)
     {
       std::vector<VkImageView> attachments{attachment.GetImageView(i), depthAttachment->GetImageView()};
