@@ -28,12 +28,12 @@ namespace Copium
 
     ShaderReflector shaderReflector;
     VertexDescriptor vertexDescriptor{};
-    VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-    VkCullModeFlags cullMode = VK_CULL_MODE_FRONT_BIT;
-    VkFrontFace frontFace = VK_FRONT_FACE_CLOCKWISE;
-    VkRenderPass renderPass = VK_NULL_HANDLE;
-    bool depthTest = true;
-    bool blending = false;
+    VkPrimitiveTopology topology{VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST};
+    VkCullModeFlags cullMode{VK_CULL_MODE_FRONT_BIT};
+    VkFrontFace frontFace{VK_FRONT_FACE_CLOCKWISE};
+    VkRenderPass renderPass{VK_NULL_HANDLE};
+    bool depthTest{true};
+    bool blending{false};
 
   public:
     PipelineCreator(VkRenderPass renderPass, const std::string& vertexShader, const std::string& fragmentShader);

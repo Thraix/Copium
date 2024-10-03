@@ -7,6 +7,7 @@
 #include "copium/renderer/RendererVertex.h"
 #include "copium/mesh/VertexPassthrough.h"
 #include "copium/mesh/Vertex.h"
+#include "copium/renderer/LineVertex.h"
 #include "copium/util/FileSystem.h"
 
 namespace Copium
@@ -43,6 +44,11 @@ namespace Copium
     {
       creator.SetVertexDescriptor(Vertex::GetDescriptor());
       creator.SetBlending(metaFileClass.GetValue("alpha-blending", "false") == "true" ? true : false);
+    }
+    else if (type == "LineRenderer")
+    {
+      creator.SetVertexDescriptor(LineVertex::GetDescriptor());
+      creator.SetPrimitiveTopology(VK_PRIMITIVE_TOPOLOGY_LINE_LIST);
     }
     InitializeDescriptorSetLayout(creator);
     InitializePipeline(creator);
