@@ -216,9 +216,6 @@
     <ClCompile Include="src\copium\event\ViewportResize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\copium\renderer\LineVertex.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\copium\renderer\LineRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -477,6 +474,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\copium\renderer\LineRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\copium\renderer\LineVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

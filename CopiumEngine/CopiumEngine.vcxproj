@@ -202,7 +202,6 @@
     <ClCompile Include="src\copium\event\WindowResizeEvent.cpp" />
     <ClCompile Include="src\copium\mesh\Mesh.cpp" />
     <ClCompile Include="src\copium\renderer\LineVertex.cpp" />
-    <ClCompile Include="src\copium\renderer\LineVertex.h" />
     <ClCompile Include="src\copium\pipeline\ShaderBinding.cpp" />
     <ClCompile Include="src\copium\renderer\Batch.cpp" />
     <ClCompile Include="src\copium\renderer\LineRenderer.cpp" />
@@ -287,6 +286,7 @@
     <ClInclude Include="src\copium\pipeline\ShaderBinding.h" />
     <ClInclude Include="src\copium\renderer\Batch.h" />
     <ClInclude Include="src\copium\renderer\LineRenderer.h" />
+    <ClInclude Include="src\copium\renderer\LineVertex.h" />
     <ClInclude Include="src\copium\renderer\Renderer.h" />
     <ClInclude Include="src\copium\renderer\RendererVertex.h" />
     <ClInclude Include="src\copium\sampler\DepthAttachment.h" />

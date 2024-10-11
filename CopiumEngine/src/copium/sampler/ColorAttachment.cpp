@@ -39,12 +39,17 @@ namespace Copium
 
   ColorAttachment::~ColorAttachment()
   {
-    for (auto&& image : images)
-      vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
-    for (auto&& imageMemory : imageMemories)
-      vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
-    for (auto&& imageView : imageViews)
-      vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
+    std::vector<VkImage> imagesCpy = images;
+    std::vector<VkDeviceMemory> imageMemoriesCpy = imageMemories;
+    std::vector<VkImageView> imageViewsCpy = imageViews;
+    Vulkan::GetDevice().QueueIdleCommand([imagesCpy, imageMemoriesCpy, imageViewsCpy]() {
+      for (auto&& image : imagesCpy)
+        vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
+      for (auto&& imageMemory : imageMemoriesCpy)
+        vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
+      for (auto&& imageView : imageViewsCpy)
+        vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
+    });
   }
 
   void ColorAttachment::Resize(int width, int height)

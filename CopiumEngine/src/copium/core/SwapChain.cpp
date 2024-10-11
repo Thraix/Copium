@@ -179,7 +179,7 @@ namespace Copium
       glfwWaitEvents();
     }
 
-    vkDeviceWaitIdle(Vulkan::GetDevice());
+    Vulkan::GetDevice().WaitIdle();
 
     Destroy();
 

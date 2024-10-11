@@ -44,11 +44,13 @@ namespace Copium
     {
       creator.SetVertexDescriptor(Vertex::GetDescriptor());
       creator.SetBlending(metaFileClass.GetValue("alpha-blending", "false") == "true" ? true : false);
+      creator.SetDepthTest(metaFileClass.GetValue("depth-test", "true") == "true" ? true : false);
     }
     else if (type == "LineRenderer")
     {
       creator.SetVertexDescriptor(LineVertex::GetDescriptor());
       creator.SetPrimitiveTopology(VK_PRIMITIVE_TOPOLOGY_LINE_LIST);
+      creator.SetDepthTest(metaFileClass.GetValue("depth-test", "false") == "true" ? true : false);
     }
     InitializeDescriptorSetLayout(creator);
     InitializePipeline(creator);
@@ -63,12 +65,17 @@ namespace Copium
 
   Pipeline::~Pipeline()
   {
-    vkDestroyPipeline(Vulkan::GetDevice(), graphicsPipeline, nullptr);
-    vkDestroyPipelineLayout(Vulkan::GetDevice(), pipelineLayout, nullptr);
-    for (auto&& descriptorSetLayout : descriptorSetLayouts)
-    {
-      vkDestroyDescriptorSetLayout(Vulkan::GetDevice(), descriptorSetLayout, nullptr);
-    }
+    VkPipeline graphicsPipelineCpy = graphicsPipeline;
+    VkPipelineLayout pipelineLayoutCpy = pipelineLayout;
+    std::vector<VkDescriptorSetLayout> descriptorSetLayoutsCpy = descriptorSetLayouts;
+    Vulkan::GetDevice().QueueIdleCommand([graphicsPipelineCpy, pipelineLayoutCpy, descriptorSetLayoutsCpy]() {
+      vkDestroyPipeline(Vulkan::GetDevice(), graphicsPipelineCpy, nullptr);
+      vkDestroyPipelineLayout(Vulkan::GetDevice(), pipelineLayoutCpy, nullptr);
+      for (auto&& descriptorSetLayout : descriptorSetLayoutsCpy)
+      {
+        vkDestroyDescriptorSetLayout(Vulkan::GetDevice(), descriptorSetLayout, nullptr);
+      }
+    });
   }
 
   void Pipeline::Bind(const CommandBuffer& commandBuffer)

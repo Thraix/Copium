@@ -30,14 +30,18 @@ namespace Copium
 
   Framebuffer::~Framebuffer()
   {
-    for (auto& framebuffer : framebuffers)
-      vkDestroyFramebuffer(Vulkan::GetDevice(), framebuffer, nullptr);
-    vkDestroyRenderPass(Vulkan::GetDevice(), renderPass, nullptr);
+    std::vector<VkFramebuffer> framebuffersCpy = framebuffers;
+    VkRenderPass renderPassCpy = renderPass;
+    Vulkan::GetDevice().QueueIdleCommand([framebuffersCpy, renderPassCpy]() {
+      for (auto& framebuffer : framebuffersCpy)
+        vkDestroyFramebuffer(Vulkan::GetDevice(), framebuffer, nullptr);
+      vkDestroyRenderPass(Vulkan::GetDevice(), renderPassCpy, nullptr);
+    });
   }
 
   void Framebuffer::Resize(uint32_t width, uint32_t height)
   {
-    vkDeviceWaitIdle(Vulkan::GetDevice());
+    Vulkan::GetDevice().WaitIdle();
     this->width = width;
     this->height = height;
     for (auto&& framebuffer : framebuffers)

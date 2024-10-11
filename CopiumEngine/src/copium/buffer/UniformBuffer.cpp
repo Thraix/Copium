@@ -23,7 +23,11 @@ namespace Copium
   {
     CP_ASSERT(binding.GetUniformType(str) == UniformType::Mat3, "Uniform type missmatch = %s", str.c_str());
     uint32_t offset = binding.GetUniformOffset(str);
-    memcpy(buffer.data() + offset, &data, sizeof(glm::mat3));
+    // memcpy(buffer.data() + offset,      &data[0], sizeof(glm::vec3));
+    // memcpy(buffer.data() + offset + 16, &data[1], sizeof(glm::vec3));
+    // memcpy(buffer.data() + offset + 32, &data[2], sizeof(glm::vec3));
+    glm::mat4x3 mat43{data};
+    memcpy(buffer.data() + offset, &mat43, sizeof(glm::mat4x3));
   }
 
   void UniformBuffer::Set(const std::string& str, const glm::mat4& data)

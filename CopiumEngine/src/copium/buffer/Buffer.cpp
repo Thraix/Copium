@@ -30,8 +30,12 @@ namespace Copium
 
   Buffer::~Buffer()
   {
-    vkFreeMemory(Vulkan::GetDevice(), memory, nullptr);
-    vkDestroyBuffer(Vulkan::GetDevice(), handle, nullptr);
+    VkDeviceMemory memoryCpy = memory;
+    VkBuffer handleCpy = handle;
+    Vulkan::GetDevice().QueueIdleCommand([memoryCpy, handleCpy]() {
+      vkFreeMemory(Vulkan::GetDevice(), memoryCpy, nullptr);
+      vkDestroyBuffer(Vulkan::GetDevice(), handleCpy, nullptr);
+    });
   }
 
   void Buffer::Update(void* indexData, int index)

@@ -16,6 +16,7 @@ namespace Copium
   std::unique_ptr<SwapChain> Vulkan::swapChain;
   std::unique_ptr<ImGuiInstance> Vulkan::imGuiInstance;
   AssetHandle<Texture2D> Vulkan::emptyTexture2D;
+  AssetHandle<Texture2D> Vulkan::whiteTexture2D;
 
   void Vulkan::Initialize()
   {
@@ -39,16 +40,19 @@ namespace Copium
     //       By looking at where the executable is, since that should always be in the bin folder (it currently isn't though)
     AssetManager::RegisterAssetDir("assets/");
     emptyTexture2D = AssetHandle<Texture2D>{"empty_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 0, 255, 255}, 1, 1, SamplerCreator{})};
+    whiteTexture2D = AssetHandle<Texture2D>{"white_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 255, 255, 255}, 1, 1, SamplerCreator{})};
     CP_INFO("Initialized AssetManager in %f seconds", timer.Elapsed());
   }
 
   void Vulkan::Destroy()
   {
     emptyTexture2D.UnloadAsset();
+    whiteTexture2D.UnloadAsset();
     AssetManager::UnregisterAssetDir("assets/");
     AssetManager::Cleanup();
     imGuiInstance.reset();
     swapChain.reset();
+    device->WaitIdle();
     device.reset();
     window.reset();
     instance.reset();
@@ -77,6 +81,11 @@ namespace Copium
   ImGuiInstance& Vulkan::GetImGuiInstance()
   {
     return *imGuiInstance;
+  }
+
+  AssetHandle<Texture2D> Vulkan::GetWhiteTexture2D()
+  {
+    return whiteTexture2D;
   }
 
   AssetHandle<Texture2D> Vulkan::GetEmptyTexture2D()

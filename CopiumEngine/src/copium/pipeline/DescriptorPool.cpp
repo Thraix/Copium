@@ -25,7 +25,10 @@ namespace Copium
 
   DescriptorPool::~DescriptorPool()
   {
-    vkDestroyDescriptorPool(Vulkan::GetDevice(), descriptorPool, nullptr);
+    VkDescriptorPool descriptorPoolCpy = descriptorPool;
+    Vulkan::GetDevice().QueueIdleCommand([descriptorPoolCpy]() {
+      vkDestroyDescriptorPool(Vulkan::GetDevice(), descriptorPoolCpy, nullptr);
+    });
   }
 
   std::vector<VkDescriptorSet> DescriptorPool::AllocateDescriptorSets(VkDescriptorSetLayout descriptorSetLayout)
@@ -45,7 +48,11 @@ namespace Copium
 
   void DescriptorPool::FreeDescriptorSets(const std::vector<VkDescriptorSet>& descriptorSets)
   {
-    vkFreeDescriptorSets(Vulkan::GetDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
+    VkDescriptorPool descriptorPoolCpy = descriptorPool;
+    std::vector<VkDescriptorSet> descriptorSetsCpy = descriptorSets;
+    Vulkan::GetDevice().QueueIdleCommand([descriptorPoolCpy, descriptorSetsCpy]() {
+      vkFreeDescriptorSets(Vulkan::GetDevice(), descriptorPoolCpy, descriptorSetsCpy.size(), descriptorSetsCpy.data());
+    });
   }
 
   DescriptorPool::operator VkDescriptorPool() const

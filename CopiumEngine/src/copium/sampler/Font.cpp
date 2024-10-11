@@ -75,9 +75,14 @@ namespace Copium
 
   Font::~Font()
   {
-    vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
-    vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
-    vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
+    VkImage imageCpy = image;
+    VkDeviceMemory imageMemoryCpy = imageMemory;
+    VkImageView imageViewCpy = imageView;
+    Vulkan::GetDevice().QueueIdleCommand([imageCpy, imageMemoryCpy, imageViewCpy]() {
+      vkDestroyImage(Vulkan::GetDevice(), imageCpy, nullptr);
+      vkFreeMemory(Vulkan::GetDevice(), imageMemoryCpy, nullptr);
+      vkDestroyImageView(Vulkan::GetDevice(), imageViewCpy, nullptr);
+    });
   }
 
   VkDescriptorImageInfo Font::GetDescriptorImageInfo(int index) const

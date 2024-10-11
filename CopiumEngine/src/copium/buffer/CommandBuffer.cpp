@@ -29,7 +29,10 @@ namespace Copium
 
   CommandBuffer::~CommandBuffer()
   {
-    vkFreeCommandBuffers(Vulkan::GetDevice(), Vulkan::GetDevice().GetCommandPool(), commandBuffers.size(), commandBuffers.data());
+    std::vector<VkCommandBuffer> commandBuffersCpy = commandBuffers;
+    Vulkan::GetDevice().QueueIdleCommand([commandBuffersCpy]() {
+      vkFreeCommandBuffers(Vulkan::GetDevice(), Vulkan::GetDevice().GetCommandPool(), commandBuffersCpy.size(), commandBuffersCpy.data());
+    });
   }
 
   // TODO: Test as constexpr function to see if it avoids the switch case

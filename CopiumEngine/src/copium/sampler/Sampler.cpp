@@ -11,7 +11,10 @@ namespace Copium
 
   Sampler::~Sampler()
   {
-    vkDestroySampler(Vulkan::GetDevice(), sampler, nullptr);
+    VkSampler samplerCpy = sampler;
+    Vulkan::GetDevice().QueueIdleCommand([samplerCpy]() {
+      vkDestroySampler(Vulkan::GetDevice(), samplerCpy, nullptr);
+    });
   }
 
   void Sampler::InitializeSampler(const SamplerCreator& samplerCreator)

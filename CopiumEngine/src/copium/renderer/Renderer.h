@@ -33,7 +33,7 @@ namespace Copium
     int textureCount;
     void* mappedVertexBuffer;
   public:
-    Renderer();
+    Renderer(const AssetRef<Pipeline>& pipeline);
     ~Renderer();
 
     void Quad(const glm::vec2& from, const glm::vec2& to, const glm::vec3& color = glm::vec3{1, 1, 1});

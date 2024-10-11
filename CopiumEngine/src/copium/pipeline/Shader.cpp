@@ -46,8 +46,12 @@ namespace Copium
 
   Shader::~Shader()
   {
-    vkDestroyShaderModule(Vulkan::GetDevice(), vertShaderModule, nullptr);
-    vkDestroyShaderModule(Vulkan::GetDevice(), fragShaderModule, nullptr);
+    VkShaderModule vertShaderModuleCpy = vertShaderModule;
+    VkShaderModule fragShaderModuleCpy = fragShaderModule;
+    Vulkan::GetDevice().QueueIdleCommand([vertShaderModuleCpy, fragShaderModuleCpy]() {
+      vkDestroyShaderModule(Vulkan::GetDevice(), vertShaderModuleCpy, nullptr);
+      vkDestroyShaderModule(Vulkan::GetDevice(), fragShaderModuleCpy, nullptr);
+    });
   }
 
   const std::vector<VkPipelineShaderStageCreateInfo> Shader::GetShaderStages() const

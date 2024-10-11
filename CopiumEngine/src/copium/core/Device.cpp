@@ -65,6 +65,29 @@ namespace Copium
     CP_ABORT("Failed to find suitable memory type");
   }
 
+  void Device::WaitIdle()
+  {
+    vkDeviceWaitIdle(device);
+    while (!idleCommands.empty())
+    {
+      idleCommands.front()();
+      idleCommands.pop();
+    }
+  }
+
+  void Device::WaitIdleIfCommandQueued()
+  {
+    if (!idleCommands.empty())
+    {
+      WaitIdle();
+    }
+  }
+
+  void Device::QueueIdleCommand(std::function<void()> idleCommand)
+  {
+    idleCommands.emplace(idleCommand);
+  }
+
   void Device::SelectPhysicalDevice()
   {
     uint32_t deviceCount;

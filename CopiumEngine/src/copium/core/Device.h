@@ -4,6 +4,8 @@
 #include "copium/util/Common.h"
 
 #include <vulkan/vulkan.hpp>
+#include <queue>
+#include <functional>
 
 namespace Copium
 {
@@ -11,18 +13,6 @@ namespace Copium
   class Device
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Device);
-  private:
-    VkPhysicalDevice physicalDevice;
-    VkDevice device;
-    VkCommandPool commandPool;
-
-    // TODO: Move to SwapChain?
-    uint32_t graphicsQueueIndex;
-    uint32_t presentQueueIndex;
-    VkQueue graphicsQueue;
-    VkQueue presentQueue;
-    // TODO end
-
   public:
     Device();
     ~Device();
@@ -35,6 +25,23 @@ namespace Copium
     VkPhysicalDevice GetPhysicalDevice() const;
     operator VkDevice() const;
     uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+    void WaitIdle();
+    void WaitIdleIfCommandQueued();
+    void QueueIdleCommand(std::function<void()> idleCommand);
+
+  private:
+    VkPhysicalDevice physicalDevice;
+    VkDevice device;
+    VkCommandPool commandPool;
+
+    // TODO: Move to SwapChain?
+    uint32_t graphicsQueueIndex;
+    uint32_t presentQueueIndex;
+    VkQueue graphicsQueue;
+    VkQueue presentQueue;
+    std::queue<std::function<void()>> idleCommands;
+    // TODO end
+
   
   private:
     void SelectPhysicalDevice();

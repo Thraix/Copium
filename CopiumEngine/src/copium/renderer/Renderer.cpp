@@ -12,10 +12,10 @@ namespace Copium
   static constexpr int MAX_NUM_INDICES = 6 * MAX_NUM_QUADS;
   static constexpr int MAX_NUM_TEXTURES = 32;
 
-  Renderer::Renderer()
+  Renderer::Renderer(const AssetRef<Pipeline>& pipeline)
     : descriptorPool{},
       ibo{MAX_NUM_INDICES}, 
-      pipeline{"renderer.meta"}, // TODO: should be a runtime renderer pipeline or passed in constructor
+      pipeline{pipeline},
       samplers{MAX_NUM_TEXTURES, &Vulkan::GetEmptyTexture2D().GetAsset()}
   {
     InitializeIndexBuffer();

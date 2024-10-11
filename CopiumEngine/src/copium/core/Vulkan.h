@@ -24,6 +24,7 @@ namespace Copium
     static std::unique_ptr<ImGuiInstance> imGuiInstance;
 
     static AssetHandle<Texture2D> emptyTexture2D;
+    static AssetHandle<Texture2D> whiteTexture2D;
   public:
     static void Initialize();
     static void Destroy();
@@ -33,6 +34,7 @@ namespace Copium
     static SwapChain& GetSwapChain();
     static ImGuiInstance& GetImGuiInstance();
     static bool Valid();
+    static AssetHandle<Texture2D> GetWhiteTexture2D();
     static AssetHandle<Texture2D> GetEmptyTexture2D();
   };
 }
