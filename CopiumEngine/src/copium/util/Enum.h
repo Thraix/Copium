@@ -15,7 +15,7 @@ namespace NameSpace { \
   }; \
   static const std::string& ToString(EnumName enumName) \
   { \
-    static std::vector<std::string> enumNames = Copium::EnumPrinter::GetEnumNames(CP_TO_STRING(EnumList)); \
+    static std::vector<std::string> enumNames = Copium::EnumPrinter::GetEnumNames(CP_TO_STRING(#EnumList)); \
     return enumNames[(int)enumName]; \
   } \
   \

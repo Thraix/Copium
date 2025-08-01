@@ -9,3 +9,5 @@ bin/
 .cache
 libs
 imgui.ini
+Makefile
+compile_flags.txt

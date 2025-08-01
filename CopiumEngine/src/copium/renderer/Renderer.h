@@ -1,13 +1,10 @@
 #pragma once
 
-#include "copium/asset/AssetMeta.h"
 #include "copium/asset/AssetRef.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/buffer/IndexBuffer.h"
-#include "copium/buffer/RendererVertexBuffer.h"
 #include "copium/pipeline/Pipeline.h"
 #include "copium/renderer/Batch.h"
-#include "copium/sampler/Texture2D.h"
 #include "copium/sampler/Font.h"
 #include "copium/util/Common.h"
 

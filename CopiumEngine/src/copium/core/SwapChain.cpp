@@ -35,6 +35,7 @@ namespace Copium
   }
 
   SwapChain::SwapChain()
+    : flightIndex{0}, resizeFramebuffer{false}
   {
     Initialize();
     InitializeImageViews();
@@ -156,9 +157,11 @@ namespace Copium
     VkResult result = vkQueuePresentKHR(Vulkan::GetDevice().GetPresentQueue(), &presentInfo);
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || resizeFramebuffer)
     {
+      CP_ERR("Present Error");
       Recreate();
       resizeFramebuffer = false;
     }
+    CP_INFO("Present");
 
     flightIndex = (flightIndex + 1) % MAX_FRAMES_IN_FLIGHT;
   }

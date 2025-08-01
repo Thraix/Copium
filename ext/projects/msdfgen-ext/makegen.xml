@@ -1,0 +1,33 @@
+<makegen>
+  <configuration name="Release">
+    <define>MSDF_ATLAS_PUBLIC=</define>
+    <generatehfile>false</generatehfile>
+    <outputdir>bin/</outputdir>
+    <outputname>libmsdf-atlas-gen.so</outputname>
+    <outputtype>sharedlibrary</outputtype>
+    <projectname>MsdfAtlasGen</projectname>
+    <includedir>../../repos/msdf-atlas-gen/msdf-atlas-gen/</includedir>
+    <includedir>../../repos/msdf-atlas-gen/msdfgen/</includedir>
+    <srcdir>../../repos/msdf-atlas-gen/msdf-atlas-gen/</srcdir>
+  </configuration>
+  <configuration name="Debug">
+    <cflag>-g3</cflag>
+    <cflag>-w</cflag>
+    <define>_DEBUG</define>
+    <define>MSDF_ATLAS_PUBLIC=</define>
+    <generatehfile>false</generatehfile>
+    <outputdir>bin/</outputdir>
+    <outputname>libmsdfgen-ext.so</outputname>
+    <outputtype>sharedlibrary</outputtype>
+    <projectname>MsdfGenExt</projectname>
+    <includedir>../../repos/msdf-atlas-gen/msdf-atlas-gen/</includedir>
+    <includedir>../../repos/msdf-atlas-gen/msdfgen/</includedir>
+    <includedir>../../repos/msdf-atlas-gen/artery-font-format/</includedir>
+    <includedir>../../repos/freetype/include/</includedir>
+    <sourcefile>../../repos/msdf-atlas-gen/msdfgen/ext/import-font.cpp</sourcefile>
+    <sourcefile>../../repos/msdf-atlas-gen/msdfgen/ext/save-png.cpp</sourcefile>
+    <srcdir></srcdir>
+  </configuration>
+  <target>Debug</target>
+  <version>v1.3.2</version>
+</makegen>

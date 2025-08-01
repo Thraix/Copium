@@ -60,7 +60,7 @@ namespace Copium
       if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         CP_ABORT("%s", pCallbackData->pMessage);
       else
-        CP_WARN("%s", pCallbackData->pMessage);
+        CP_ABORT("%s", pCallbackData->pMessage);
     }
     return VK_FALSE;
   }

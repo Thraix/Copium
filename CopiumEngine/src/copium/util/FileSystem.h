@@ -2,10 +2,11 @@
 
 #include "copium/util/Common.h"
 
-#include <filesystem>
-#include <fstream>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#include <cstdint>
+#include <vector>
 
 namespace Copium
 {

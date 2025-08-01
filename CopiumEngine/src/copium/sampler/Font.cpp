@@ -143,7 +143,10 @@ namespace Copium
       boundingBox.b = std::min(boundingBox.b, offset.y + glyph.boundingBox.b);
     }
     boundingBox.r = std::max(boundingBox.r, offset.x);
-    boundingBox.lbrt *= size;
+    boundingBox.l *= size;
+    boundingBox.b *= size;
+    boundingBox.r *= size;
+    boundingBox.t *= size;
     return boundingBox;
   }
 

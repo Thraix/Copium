@@ -10,7 +10,7 @@ namespace Copium
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = DESCRIPTOR_SET_COUNT * SwapChain::MAX_FRAMES_IN_FLIGHT; // TODO: how should this actually be determined?
 
-    poolSizes[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[1].descriptorCount = DESCRIPTOR_SET_COUNT * SwapChain::MAX_FRAMES_IN_FLIGHT; // TODO: how should this actually be determined?
 
     VkDescriptorPoolCreateInfo createInfo{};

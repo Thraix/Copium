@@ -1,5 +1,8 @@
 #include "copium/util/FileSystem.h"
 
+#include <filesystem>
+#include <fstream>
+
 namespace Copium
 {
   std::vector<char> FileSystem::ReadFile(const std::string& filename)

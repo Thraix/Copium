@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 
 #define CP_BINDING_TYPE_ENUMS Sampler2D, UniformBuffer

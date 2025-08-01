@@ -67,10 +67,18 @@ namespace Copium
   {
     return glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
   }
+  void glfw_error_callback(int error, const char* description)
+  {
+    CP_ERR("GLFW Error %d: %s\n", error, description);
+  }
 
   void Window::InitializeWindow(const std::string& windowName, int width, int height, WindowMode mode)
   {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+    glfwSetErrorCallback(glfw_error_callback);
+    CP_ASSERT(glfwInit(), "Failed to initialize GLFW");
+    CP_ASSERT(glfwVulkanSupported(), "Vulkan is not supported");
 
     switch (mode)
     {
@@ -96,6 +104,7 @@ namespace Copium
     case WindowMode::Windowed:
     {
       window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+      CP_INFO("Here");
       break;
     }
     default:

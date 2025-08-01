@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <memory>
 
 #define CP_TERM_RED    "\x1B[31m"
 #define CP_TERM_GREEN  "\x1B[32m"
@@ -12,42 +13,42 @@
 #define CP_TERM_GRAY   "\x1B[90m"
 #define CP_TERM_CLEAR  "\033[0m"
 
-#define CP_DEBUG(format, ...)      std::cout << CP_TERM_GRAY   << "[DBG] " << __func__ << " : " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_INFO(format, ...)       std::cout <<                   "[INF] " << __func__ << " : " << Copium::String::Format(format, __VA_ARGS__) <<                  std::endl
-#define CP_WARN(format, ...)       std::cout << CP_TERM_YELLOW << "[WRN] " << __func__ << " : " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_ERR(format, ...)        std::cout << CP_TERM_RED    << "[ERR] " << __func__ << " : " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_DEBUG(...)      std::cout << CP_TERM_GRAY   << "[DBG] " << __func__ << " : " << Copium::String::Format(__VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_INFO(...)       std::cout <<                   "[INF] " << __func__ << " : " << Copium::String::Format(__VA_ARGS__) <<                  std::endl
+#define CP_WARN(...)       std::cout << CP_TERM_YELLOW << "[WRN] " << __func__ << " : " << Copium::String::Format(__VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_ERR(...)        std::cout << CP_TERM_RED    << "[ERR] " << __func__ << " : " << Copium::String::Format(__VA_ARGS__) << CP_TERM_CLEAR << std::endl
 
 // Continue traces, will not print the [XXX] tag before the log
-#define CP_DEBUG_CONT(format, ...) std::cout << CP_TERM_GRAY   << "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_INFO_CONT(format, ...)  std::cout <<                   "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(format, __VA_ARGS__) <<                  std::endl
-#define CP_WARN_CONT(format, ...)  std::cout << CP_TERM_YELLOW << "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
-#define CP_ERR_CONT(format, ...)   std::cout << CP_TERM_RED    << "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(format, __VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_DEBUG_CONT(...) std::cout << CP_TERM_GRAY   << "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(__VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_INFO_CONT(...)  std::cout <<                   "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(__VA_ARGS__) <<                  std::endl
+#define CP_WARN_CONT(...)  std::cout << CP_TERM_YELLOW << "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(__VA_ARGS__) << CP_TERM_CLEAR << std::endl
+#define CP_ERR_CONT(...)   std::cout << CP_TERM_RED    << "      " << std::setfill(' ') << std::setw(sizeof(__func__)) << "   " << Copium::String::Format(__VA_ARGS__) << CP_TERM_CLEAR << std::endl
 
-#define CP_ABORT(format, ...) \
+#define CP_ABORT(...) \
   do \
   { \
     CP_ERR("Aborted at %s:%d", __FILE__, __LINE__); \
-    CP_ERR_CONT(format, __VA_ARGS__); \
-    throw Copium::RuntimeException(Copium::String::Format(format, __VA_ARGS__)); \
+    CP_ERR_CONT(__VA_ARGS__); \
+    throw Copium::RuntimeException(Copium::String::Format(__VA_ARGS__)); \
   } while(false)
-#define CP_ASSERT(Function, format, ...) \
+#define CP_ASSERT(Function, ...) \
   do \
   { \
     if(!(Function)) \
     { \
       CP_ERR("Assertion failed at %s:%d", __FILE__, __LINE__); \
-      CP_ERR_CONT("%s : %s", #Function, Copium::String::Format(format, __VA_ARGS__).c_str()); \
-      throw Copium::RuntimeException(Copium::String::Format(format, __VA_ARGS__)); \
+      CP_ERR_CONT("%s : %s", #Function, Copium::String::Format(__VA_ARGS__).c_str()); \
+      throw Copium::RuntimeException(Copium::String::Format(__VA_ARGS__)); \
     } \
   } while(false)
-#define CP_VK_ASSERT(Function, format, ...) \
+#define CP_VK_ASSERT(Function, ...) \
   do \
   { \
     if(Function != VK_SUCCESS) \
     { \
       CP_ERR("Assertion failed at %s:%d", __FILE__, __LINE__); \
-      CP_ERR_CONT("%s : %s", #Function, Copium::String::Format(format, __VA_ARGS__).c_str()); \
-      throw Copium::VulkanException(Copium::String::Format(format, __VA_ARGS__)); \
+      CP_ERR_CONT("%s : %s", #Function, Copium::String::Format(__VA_ARGS__).c_str()); \
+      throw Copium::VulkanException(Copium::String::Format(__VA_ARGS__)); \
     } \
   } while(false)
 
@@ -68,6 +69,11 @@ namespace Copium
   {
     CP_STATIC_CLASS(String);
   public:
+    static std::string Format(const std::string& format)
+    {
+      return format;
+    }
+
     template<typename ... Args>
     static std::string Format(const std::string& format, Args... args)
     {

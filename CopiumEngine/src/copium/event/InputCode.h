@@ -128,4 +128,4 @@
 #define CP_KEY_RIGHT_ALT        346
 #define CP_KEY_RIGHT_SUPER      347
 #define CP_KEY_MENU             348
-#define CP_KEY_UNBOUND          0xffffffff
+#define CP_KEY_UNBOUND          0x0fffffff
