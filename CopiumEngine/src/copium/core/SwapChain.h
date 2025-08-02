@@ -34,7 +34,7 @@ namespace Copium
     std::vector<VkImageView> imageViews;
     std::vector<VkImage> images;
     std::vector<VkFramebuffer> framebuffers;
-    uint32_t  imageIndex;
+    uint32_t imageIndex;
     bool resizeFramebuffer;
 
     int flightIndex;
