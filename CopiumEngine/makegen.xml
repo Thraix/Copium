@@ -23,6 +23,10 @@
     <cflag>-w</cflag>
     <define>_DEBUG</define>
     <define>MSDF_ATLAS_PUBLIC=</define>
+    <define>GLM_FORCE_LEFT_HANDED</define>
+    <define>GLFW_INCLUDE_VULKAN</define>
+    <define>GLM_FORCE_RADIANS</define>
+    <define>GLM_FORCE_DEPTH_ZERO_TO_ONE</define>
     <dependency>../ext/projects/imgui/</dependency>
     <generatehfile>false</generatehfile>
     <outputdir>bin/</outputdir>
