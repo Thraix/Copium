@@ -2,9 +2,6 @@
 
 #include "copium/util/Common.h"
 
-#include <sys/stat.h>
-#include <sys/types.h>
-
 #include <cstdint>
 #include <vector>
 

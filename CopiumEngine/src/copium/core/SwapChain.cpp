@@ -8,6 +8,8 @@
 
 namespace Copium
 {
+  const int SwapChain::MAX_FRAMES_IN_FLIGHT = 2;
+
   SwapChainSupportDetails::SwapChainSupportDetails(VkSurfaceKHR surface, VkPhysicalDevice physicalDevice)
   {
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &capabilities);

@@ -1,7 +1,7 @@
 <makegen>
   <configuration name="Release">
     <generatehfile>false</generatehfile>
-    <outputdir>bin/</outputdir>
+    <outputdir>bin/Release/</outputdir>
     <outputname>libimgui.so</outputname>
     <outputtype>sharedlibrary</outputtype>
     <projectname>ImGui</projectname>
@@ -21,7 +21,7 @@
     <cflag>-w</cflag>
     <define>_DEBUG</define>
     <generatehfile>false</generatehfile>
-    <outputdir>bin/</outputdir>
+    <outputdir>bin/Debug/</outputdir>
     <outputname>libimgui.so</outputname>
     <outputtype>sharedlibrary</outputtype>
     <projectname>ImGui</projectname>
@@ -37,5 +37,5 @@
     <srcdir></srcdir>
   </configuration>
   <target>Debug</target>
-  <version>v1.3.2</version>
+  <version>v1.3.6</version>
 </makegen>

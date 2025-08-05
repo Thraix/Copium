@@ -22,6 +22,7 @@ namespace Copium
   {
     Timer timer;
     timer.Start();
+    CP_ASSERT(glfwInit() == GLFW_TRUE, "Failed to initialize the glfw context");
     instance = std::make_unique<Instance>("Copium Engine");
     window = std::make_unique<Window>("Copium Engine", 1440, 810, WindowMode::Windowed);
     device = std::make_unique<Device>();

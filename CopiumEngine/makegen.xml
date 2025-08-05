@@ -1,35 +1,15 @@
 <makegen>
   <configuration name="Release">
-    <dependency>ext/projects/imgui/</dependency>
-    <define>MSDF_ATLAS_PUBLIC</define>
-    <generatehfile>false</generatehfile>
-    <outputtype>sharedlibrary</outputtype>
-    <outputdir>bin/</outputdir>
-    <outputname>copium</outputname>
-    <projectname>Copium Engine</projectname>
-    <srcdir>src/</srcdir>
-    <includedir>src/</includedir>
-    <includedir>../ext/repos/imgui/</includedir>
-    <includedir>../ext/repos/imgui/backends/</includedir>
-    <library>glm</library>
-    <library>imgui</library>
-    <library>glfw</library>
-    <library>vulkan</library>
-    <library>freetype</library>
-    <librarydir>../ext/projects/imgui/bin/</librarydir>
-  </configuration>
-  <configuration name="Debug">
-    <cflag>-g3</cflag>
-    <cflag>-w</cflag>
-    <define>_DEBUG</define>
     <define>MSDF_ATLAS_PUBLIC=</define>
     <define>GLM_FORCE_LEFT_HANDED</define>
-    <define>GLFW_INCLUDE_VULKAN</define>
     <define>GLM_FORCE_RADIANS</define>
     <define>GLM_FORCE_DEPTH_ZERO_TO_ONE</define>
     <dependency>../ext/projects/imgui/</dependency>
+    <dependency>../ext/projects/msdf-atlas-gen/</dependency>
+    <dependency>../ext/projects/msdfgen-core/</dependency>
+    <dependency>../ext/projects/msdfgen-ext/</dependency>
     <generatehfile>false</generatehfile>
-    <outputdir>bin/</outputdir>
+    <outputdir>bin/Release/</outputdir>
     <outputname>libcopium.so</outputname>
     <outputtype>sharedlibrary</outputtype>
     <projectname>Copium Engine</projectname>
@@ -41,14 +21,33 @@
     <includedir>../ext/repos/msdf-atlas-gen/msdfgen/</includedir>
     <includedir>../ext/repos/msdf-atlas-gen/</includedir>
     <includedir>../ext/repos/stb/</includedir>
-    <library>glm</library>
-    <library>imgui</library>
-    <library>glfw</library>
-    <library>vulkan</library>
-    <library>freetype</library>
-    <library>shaderc_combined</library>
-    <librarydir>../ext/projects/imgui/bin/</librarydir>
+  </configuration>
+  <configuration name="Debug">
+    <cflag>-g3</cflag>
+    <cflag>-w</cflag>
+    <define>_DEBUG</define>
+    <define>MSDF_ATLAS_PUBLIC=</define>
+    <define>GLM_FORCE_LEFT_HANDED</define>
+    <define>GLM_FORCE_RADIANS</define>
+    <define>GLM_FORCE_DEPTH_ZERO_TO_ONE</define>
+    <dependency>../ext/projects/imgui/</dependency>
+    <dependency>../ext/projects/msdf-atlas-gen/</dependency>
+    <dependency>../ext/projects/msdfgen-core/</dependency>
+    <dependency>../ext/projects/msdfgen-ext/</dependency>
+    <generatehfile>false</generatehfile>
+    <outputdir>bin/Debug/</outputdir>
+    <outputname>libcopium.so</outputname>
+    <outputtype>sharedlibrary</outputtype>
+    <projectname>Copium Engine</projectname>
+    <srcdir>src/</srcdir>
+    <includedir>src/</includedir>
+    <includedir>../ext/repos/imgui/</includedir>
+    <includedir>../ext/repos/imgui/backends/</includedir>
+    <includedir>../ext/repos/freetype/</includedir>
+    <includedir>../ext/repos/msdf-atlas-gen/msdfgen/</includedir>
+    <includedir>../ext/repos/msdf-atlas-gen/</includedir>
+    <includedir>../ext/repos/stb/</includedir>
   </configuration>
   <target>Debug</target>
-  <version>v1.3.2</version>
+  <version>v1.3.4</version>
 </makegen>

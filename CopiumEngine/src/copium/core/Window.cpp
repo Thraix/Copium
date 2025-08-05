@@ -9,13 +9,18 @@
 #include "copium/event/MousePressEvent.h"
 #include "copium/event/MouseReleaseEvent.h"
 #include "copium/event/MouseScrollEvent.h"
-#include "copium/event/WindowResizeEvent.h"
 #include "copium/event/WindowFocusEvent.h"
+#include "copium/event/WindowResizeEvent.h"
 
 #include <GLFW/glfw3.h>
 
 namespace Copium
 {
+  void glfw_error_callback(int error, const char* description)
+  {
+    CP_ABORT("GLFW Error %d: %s\n", error, description);
+  }
+
   Window::Window(const std::string& windowName, int width, int height, WindowMode mode)
     : width{width}, height{height}
   {
@@ -32,7 +37,6 @@ namespace Copium
   bool Window::ShouldClose() const
   {
     return glfwWindowShouldClose(window);
-
   }
 
   int Window::GetWidth() const
@@ -67,17 +71,13 @@ namespace Copium
   {
     return glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
   }
-  void glfw_error_callback(int error, const char* description)
-  {
-    CP_ERR("GLFW Error %d: %s\n", error, description);
-  }
 
   void Window::InitializeWindow(const std::string& windowName, int width, int height, WindowMode mode)
   {
+    glfwSetErrorCallback(glfw_error_callback);
+
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-    glfwSetErrorCallback(glfw_error_callback);
-    CP_ASSERT(glfwInit(), "Failed to initialize GLFW");
     CP_ASSERT(glfwVulkanSupported(), "Vulkan is not supported");
 
     switch (mode)
@@ -104,7 +104,6 @@ namespace Copium
     case WindowMode::Windowed:
     {
       window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
-      CP_INFO("Here");
       break;
     }
     default:

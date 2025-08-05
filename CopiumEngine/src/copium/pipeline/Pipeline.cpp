@@ -121,6 +121,11 @@ namespace Copium
     return DescriptorSet{descriptorPool, descriptorSetLayouts[setIndex], bindings};
   }
 
+  int Pipeline::GetDescriptorSetCount() const
+  {
+    return boundDescriptorSets.size();
+  }
+
   void Pipeline::InitializeDescriptorSetLayout(const PipelineCreator& creator)
   {
     boundDescriptorSets.resize(creator.descriptorSetLayouts.size());

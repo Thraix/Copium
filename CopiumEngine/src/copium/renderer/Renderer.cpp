@@ -12,16 +12,11 @@ namespace Copium
   static constexpr int MAX_NUM_TEXTURES = 32;
 
   Renderer::Renderer(const AssetRef<Pipeline>& pipeline)
-    : descriptorPool{},
-      ibo{MAX_NUM_INDICES},
+    : ibo{MAX_NUM_INDICES},
       pipeline{pipeline},
       samplers{MAX_NUM_TEXTURES, &Vulkan::GetEmptyTexture2D().GetAsset()}
   {
     InitializeIndexBuffer();
-  }
-
-  Renderer::~Renderer()
-  {
   }
 
   void Renderer::Quad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color)
@@ -179,7 +174,7 @@ namespace Copium
     std::fill(samplers.begin(), samplers.end(), &Vulkan::GetEmptyTexture2D().GetAsset());
     if (batchIndex >= batches.size())
     {
-      batches.emplace_back(std::make_unique<Batch>(pipeline, descriptorPool, MAX_NUM_VERTICES, samplers));
+      batches.emplace_back(std::make_unique<Batch>(pipeline, MAX_NUM_VERTICES, samplers));
     }
     batches[batchIndex]->GetDescriptorSet().SetSamplersDynamic(samplers, 0);
     mappedVertexBuffer = (char*)batches[batchIndex]->GetVertexBuffer().Map() + batches[batchIndex]->GetVertexBuffer().GetPosition(Vulkan::GetSwapChain().GetFlightIndex());

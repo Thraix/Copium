@@ -2,6 +2,8 @@
 
 #include <filesystem>
 #include <fstream>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 namespace Copium
 {

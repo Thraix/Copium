@@ -1,13 +1,15 @@
 <makegen>
   <configuration name="Release">
     <define>MSDF_ATLAS_PUBLIC=</define>
+    <define>MSDFGEN_USE_LIBPNG</define>
     <generatehfile>false</generatehfile>
-    <outputdir>bin/</outputdir>
+    <outputdir>bin/Release/</outputdir>
     <outputname>libmsdf-atlas-gen.so</outputname>
     <outputtype>sharedlibrary</outputtype>
     <projectname>MsdfAtlasGen</projectname>
     <includedir>../../repos/msdf-atlas-gen/msdf-atlas-gen/</includedir>
     <includedir>../../repos/msdf-atlas-gen/msdfgen/</includedir>
+    <includedir>../../repos/msdf-atlas-gen/artery-font-format/</includedir>
     <srcdir>../../repos/msdf-atlas-gen/msdf-atlas-gen/</srcdir>
   </configuration>
   <configuration name="Debug">
@@ -17,7 +19,7 @@
     <define>MSDF_ATLAS_PUBLIC=</define>
     <define>MSDFGEN_USE_LIBPNG</define>
     <generatehfile>false</generatehfile>
-    <outputdir>bin/</outputdir>
+    <outputdir>bin/Debug/</outputdir>
     <outputname>libmsdf-atlas-gen.so</outputname>
     <outputtype>sharedlibrary</outputtype>
     <projectname>MsdfAtlasGen</projectname>
@@ -27,5 +29,5 @@
     <srcdir>../../repos/msdf-atlas-gen/msdf-atlas-gen/</srcdir>
   </configuration>
   <target>Debug</target>
-  <version>v1.3.2</version>
+  <version>v1.3.6</version>
 </makegen>

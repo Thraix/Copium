@@ -53,14 +53,14 @@ namespace Copium
   VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessenger::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                                                                VkDebugUtilsMessageTypeFlagsEXT messageType,
                                                                const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                               void* pUserData) 
+                                                               void* pUserData)
   {
     if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
     {
       if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         CP_ABORT("%s", pCallbackData->pMessage);
       else
-        CP_ABORT("%s", pCallbackData->pMessage);
+        CP_WARN("%s", pCallbackData->pMessage);
     }
     return VK_FALSE;
   }
