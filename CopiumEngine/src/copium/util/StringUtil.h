@@ -7,7 +7,6 @@
 
 namespace Copium
 {
-
   class StringUtil
   {
     CP_STATIC_CLASS(StringUtil);

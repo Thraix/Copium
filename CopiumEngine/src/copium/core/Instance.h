@@ -2,9 +2,6 @@
 
 #include "copium/core/DebugMessenger.h"
 
-#include <GLFW/glfw3.h>
-#include <set>
-
 namespace Copium
 {
   class Instance final

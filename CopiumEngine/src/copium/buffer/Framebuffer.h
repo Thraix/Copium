@@ -1,7 +1,6 @@
 #pragma once
 
 #include "copium/asset/Asset.h"
-#include "copium/asset/AssetMeta.h"
 #include "copium/asset/AssetRef.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/sampler/ColorAttachment.h"

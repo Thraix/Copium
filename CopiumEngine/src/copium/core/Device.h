@@ -1,6 +1,5 @@
 #pragma once
 
-#include "copium/core/QueueFamilies.h"
 #include "copium/util/Common.h"
 
 #include <vulkan/vulkan.hpp>
@@ -16,7 +15,7 @@ namespace Copium
   public:
     Device();
     ~Device();
-    
+
     uint32_t GetGraphicsQueueFamily() const;
     uint32_t GetPresentQueueFamily() const;
     VkQueue GetGraphicsQueue() const;

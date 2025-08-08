@@ -1,7 +1,5 @@
 #pragma once
 
-#include "copium/util/Enum.h"
-
 #define CP_MOUSE_LEFT           0
 #define CP_MOUSE_RIGHT          1
 #define CP_MOUSE_MIDDLE         2

@@ -4,8 +4,6 @@
 #include "copium/core/Vulkan.h"
 #include "copium/sampler/Image.h"
 
-#include <GLFW/glfw3.h>
-
 namespace Copium
 {
   const int SwapChain::MAX_FRAMES_IN_FLIGHT = 2;

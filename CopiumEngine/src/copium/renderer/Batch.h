@@ -1,6 +1,5 @@
 #pragma once
 
-#include "copium/asset/AssetMeta.h"
 #include "copium/asset/AssetRef.h"
 #include "copium/buffer/RendererVertexBuffer.h"
 #include "copium/pipeline/DescriptorSet.h"

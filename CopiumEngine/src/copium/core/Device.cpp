@@ -1,5 +1,6 @@
 #include "Device.h"
 
+#include "copium/core/QueueFamilies.h"
 #include "copium/core/Vulkan.h"
 #include "copium/core/Window.h"
 

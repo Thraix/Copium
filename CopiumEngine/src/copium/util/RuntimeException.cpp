@@ -2,11 +2,11 @@
 
 namespace Copium
 {
-  RuntimeException::RuntimeException(const std::string& str) 
+  RuntimeException::RuntimeException(const std::string& str)
     : errorMessage{str}
   {}
 
-  const std::string& RuntimeException::GetErrorMessage() const 
+  const std::string& RuntimeException::GetErrorMessage() const
   {
     return errorMessage;
   }

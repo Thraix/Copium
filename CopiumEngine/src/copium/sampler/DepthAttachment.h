@@ -25,6 +25,5 @@ namespace Copium
 
   private:
     void InitializeDepthAttachment(int width, int height);
-  
   };
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "copium/asset/AssetMeta.h"
 #include "copium/util/MetaFile.h"
 #include "copium/util/Uuid.h"
 

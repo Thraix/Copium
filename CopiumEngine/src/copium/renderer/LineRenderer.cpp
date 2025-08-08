@@ -2,6 +2,7 @@
 
 #include "copium/core/Vulkan.h"
 #include "copium/pipeline/PipelineCreator.h"
+#include "copium/renderer/LineVertex.h"
 
 namespace Copium
 {

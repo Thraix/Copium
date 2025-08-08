@@ -6,8 +6,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include <fstream>
-
 namespace Copium
 {
   Texture2D::Texture2D(const MetaFile& metaFile)

@@ -1,8 +1,5 @@
 #include "copium/asset/AssetManager.h"
 
-#include "copium/buffer/Framebuffer.h"
-#include "copium/sampler/ColorAttachment.h"
-#include "copium/sampler/Texture2D.h"
 #include "copium/util/Common.h"
 #include "copium/util/MetaFile.h"
 

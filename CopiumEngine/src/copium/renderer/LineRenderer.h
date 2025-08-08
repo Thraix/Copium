@@ -3,12 +3,10 @@
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/buffer/IndexBuffer.h"
 #include "copium/buffer/RendererVertexBuffer.h"
-#include "copium/renderer/LineVertex.h"
 #include "copium/pipeline/Pipeline.h"
 #include "copium/util/Common.h"
 
 #include <glm/glm.hpp>
-#include <vector>
 
 namespace Copium
 {
