@@ -16,11 +16,6 @@
 
 namespace Copium
 {
-  void glfw_error_callback(int error, const char* description)
-  {
-    CP_ABORT("GLFW Error %d: %s\n", error, description);
-  }
-
   Window::Window(const std::string& windowName, int width, int height, WindowMode mode)
     : width{width}, height{height}
   {
@@ -74,8 +69,6 @@ namespace Copium
 
   void Window::InitializeWindow(const std::string& windowName, int width, int height, WindowMode mode)
   {
-    glfwSetErrorCallback(glfw_error_callback);
-
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     CP_ASSERT(glfwVulkanSupported(), "Vulkan is not supported");
