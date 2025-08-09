@@ -1,0 +1,41 @@
+<makegen>
+  <configuration name="Release">
+    <generatehfile>false</generatehfile>
+    <outputdir>bin/Release/</outputdir>
+    <outputname>libimgui.so</outputname>
+    <outputtype>sharedlibrary</outputtype>
+    <projectname>ImGui</projectname>
+    <includedir>../../repos/imgui/</includedir>
+    <includedir>/usr/include/freetype2/</includedir>
+    <sourcefile>../../repos/imgui/imgui.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/imgui_demo.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/imgui_draw.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/imgui_tables.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/imgui_widgets.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/backends/imgui_impl_glfw.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/backends/imgui_impl_vulkan.cpp</sourcefile>
+    <srcdir></srcdir>
+  </configuration>
+  <configuration name="Debug">
+    <cflag>-g3</cflag>
+    <cflag>-w</cflag>
+    <define>_DEBUG</define>
+    <generatehfile>false</generatehfile>
+    <outputdir>bin/Debug/</outputdir>
+    <outputname>libimgui.so</outputname>
+    <outputtype>sharedlibrary</outputtype>
+    <projectname>ImGui</projectname>
+    <includedir>../../repos/imgui/</includedir>
+    <includedir>/usr/include/freetype2/</includedir>
+    <sourcefile>../../repos/imgui/imgui.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/imgui_demo.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/imgui_draw.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/imgui_tables.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/imgui_widgets.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/backends/imgui_impl_glfw.cpp</sourcefile>
+    <sourcefile>../../repos/imgui/backends/imgui_impl_vulkan.cpp</sourcefile>
+    <srcdir></srcdir>
+  </configuration>
+  <target>Debug</target>
+  <version>v1.3.6</version>
+</makegen>

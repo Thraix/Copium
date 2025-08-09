@@ -11,6 +11,8 @@ namespace Copium
   public:
     Event(EventType type);
 
+    virtual ~Event() = default;
+
     EventType GetType() const;
   };
 }

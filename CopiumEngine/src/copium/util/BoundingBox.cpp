@@ -15,12 +15,12 @@ namespace Copium
   {}
 
   BoundingBox::BoundingBox(glm::vec2 lb, glm::vec2 rt)
-    : lb{lb}, rt{rt}
+    : l{lb.x}, b{lb.y}, r{rt.x}, t{rt.y}
   {}
 
-  glm::vec2 BoundingBox::GetSize() const 
+  glm::vec2 BoundingBox::GetSize() const
   {
-    return glm::abs(rt - lb);
+    return glm::abs(AsRt() - AsLb());
   }
 
   bool BoundingBox::operator==(const BoundingBox& boundingBox) const
@@ -31,5 +31,15 @@ namespace Copium
   bool BoundingBox::operator!=(const BoundingBox& boundingBox) const
   {
     return !(*this == boundingBox);
+  }
+
+  glm::vec2 BoundingBox::AsLb() const
+  {
+    return glm::vec2{l, b};
+  }
+
+  glm::vec2 BoundingBox::AsRt() const
+  {
+    return glm::vec2{r, t};
   }
 }

@@ -4,6 +4,8 @@
 #include "copium/ecs/SystemBase.h"
 #include "copium/ecs/Entity.h"
 
+#include <set>
+
 namespace Copium
 {
   template <typename... Components>
@@ -26,7 +28,6 @@ namespace Copium
 
     // TODO: Not sure if this is the way entities should be validated
     std::set<EntityId> loggedEntities;
-    template <typename... Components>
     bool ValidateEntity(Entity entity)
     {
       if (entity && entity.HasComponents<Components...>())

@@ -36,5 +36,8 @@ namespace Copium
     static bool Valid();
     static AssetHandle<Texture2D> GetWhiteTexture2D();
     static AssetHandle<Texture2D> GetEmptyTexture2D();
+
+  private:
+    static void glfw_error_callback(int error, const char* description);
   };
 }

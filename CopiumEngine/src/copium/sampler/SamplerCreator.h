@@ -1,6 +1,7 @@
 #pragma once
 
 #include "copium/util/MetaFile.h"
+
 #include <vulkan/vulkan.hpp>
 
 namespace Copium

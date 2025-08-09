@@ -1,11 +1,9 @@
 #pragma once
 
-#include <vector>
-
-#include "copium/event/InputCode.h"
 #include "copium/util/BoundingBox.h"
 
 #include <glm/glm.hpp>
+#include <string>
 
 namespace Copium
 {

@@ -3,7 +3,6 @@
 #include "copium/buffer/UniformBuffer.h"
 #include "copium/pipeline/DescriptorPool.h"
 #include "copium/pipeline/ShaderBinding.h"
-#include "copium/pipeline/ShaderReflector.h"
 #include "copium/sampler/Sampler.h"
 #include "copium/util/Common.h"
 

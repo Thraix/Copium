@@ -1,6 +1,5 @@
 #include "copium/pipeline/Pipeline.h"
 
-#include "copium/asset/AssetManager.h"
 #include "copium/buffer/Framebuffer.h"
 #include "copium/core/Vulkan.h"
 #include "copium/pipeline/Shader.h"
@@ -8,7 +7,6 @@
 #include "copium/mesh/VertexPassthrough.h"
 #include "copium/mesh/Vertex.h"
 #include "copium/renderer/LineVertex.h"
-#include "copium/util/FileSystem.h"
 
 namespace Copium
 {
@@ -119,6 +117,11 @@ namespace Copium
     }
 
     return DescriptorSet{descriptorPool, descriptorSetLayouts[setIndex], bindings};
+  }
+
+  int Pipeline::GetDescriptorSetCount() const
+  {
+    return boundDescriptorSets.size();
   }
 
   void Pipeline::InitializeDescriptorSetLayout(const PipelineCreator& creator)

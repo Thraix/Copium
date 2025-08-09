@@ -1,8 +1,8 @@
 #include "copium/renderer/LineRenderer.h"
 
-#include "copium/asset/AssetManager.h"
 #include "copium/core/Vulkan.h"
 #include "copium/pipeline/PipelineCreator.h"
+#include "copium/renderer/LineVertex.h"
 
 namespace Copium
 {
@@ -10,8 +10,8 @@ namespace Copium
   static constexpr int MAX_NUM_VERTICES = 2 * MAX_NUM_LINES;
 
   LineRenderer::LineRenderer(const AssetRef<Pipeline>& pipeline)
-    : descriptorPool{},
-      ibo{MAX_NUM_VERTICES}, 
+    : descriptorPool{pipeline.GetAsset().GetDescriptorSetCount() * SwapChain::MAX_FRAMES_IN_FLIGHT, 0},
+      ibo{MAX_NUM_VERTICES},
       pipeline{pipeline},
       vertexBuffer{LineVertex::GetDescriptor(), MAX_NUM_VERTICES}
   {
@@ -60,7 +60,7 @@ namespace Copium
     pipeline.GetAsset().SetDescriptorSet(descriptorSet);
   }
 
-  void LineRenderer::InitializeIndexBuffer() 
+  void LineRenderer::InitializeIndexBuffer()
   {
     CP_ASSERT(MAX_NUM_VERTICES < std::numeric_limits<uint16_t>::max(), "Maximum number of indices too big");
 

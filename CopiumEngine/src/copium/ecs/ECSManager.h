@@ -11,7 +11,6 @@
 #include <map>
 #include <typeindex>
 #include <unordered_set>
-#include <vector>
 
 namespace Copium
 {
@@ -36,7 +35,7 @@ namespace Copium
     template <typename SystemClass>
     void RemoveSystem()
     {
-      systemPool->MoveSystemBefore(typeid(SystemClass));
+      systemPool->RemoveSystem(typeid(SystemClass));
     }
 
     void UpdateSystems();

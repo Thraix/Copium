@@ -10,7 +10,7 @@
 namespace Copium
 {
   ImGuiInstance::ImGuiInstance()
-    : descriptorPool{std::make_unique<DescriptorPool>()}
+    : descriptorPool{std::make_unique<DescriptorPool>(SwapChain::MAX_FRAMES_IN_FLIGHT, 1)}
   {
     InitializeImGui();
     InitializeDescriptorSetLayout();

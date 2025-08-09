@@ -13,6 +13,8 @@ namespace Copium
     ECSManager* manager;
 
   public:
+    virtual ~SystemBase() = default;
+
     virtual void Run() = 0;
     virtual void Run(const Signal& signal) = 0;
   };

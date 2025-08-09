@@ -1,5 +1,7 @@
 #include "copium/ecs/SystemPool.h"
 
+#include <algorithm>
+
 namespace Copium
 {
   SystemPool::SystemPool(ECSManager* manager)

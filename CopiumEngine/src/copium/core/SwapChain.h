@@ -24,7 +24,7 @@ namespace Copium
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(SwapChain);
   public:
-    static const int MAX_FRAMES_IN_FLIGHT = 2;
+    static const int MAX_FRAMES_IN_FLIGHT;
   private:
     VkSwapchainKHR handle;
     VkRenderPass renderPass;
@@ -34,7 +34,7 @@ namespace Copium
     std::vector<VkImageView> imageViews;
     std::vector<VkImage> images;
     std::vector<VkFramebuffer> framebuffers;
-    uint32_t  imageIndex;
+    uint32_t imageIndex;
     bool resizeFramebuffer;
 
     int flightIndex;

@@ -1,9 +1,11 @@
 #pragma once
 
-#include "copium/ecs/ECSManager.h"
+#include "copium/ecs/Config.h"
 
 namespace Copium
 {
+  class ECSManager;
+
   template <typename Component>
   class ComponentListener
   {

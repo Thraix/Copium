@@ -9,8 +9,8 @@
 #include "copium/event/MousePressEvent.h"
 #include "copium/event/MouseReleaseEvent.h"
 #include "copium/event/MouseScrollEvent.h"
-#include "copium/event/WindowResizeEvent.h"
 #include "copium/event/WindowFocusEvent.h"
+#include "copium/event/WindowResizeEvent.h"
 
 #include <GLFW/glfw3.h>
 
@@ -32,7 +32,6 @@ namespace Copium
   bool Window::ShouldClose() const
   {
     return glfwWindowShouldClose(window);
-
   }
 
   int Window::GetWidth() const
@@ -71,6 +70,8 @@ namespace Copium
   void Window::InitializeWindow(const std::string& windowName, int width, int height, WindowMode mode)
   {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+    CP_ASSERT(glfwVulkanSupported(), "Vulkan is not supported");
 
     switch (mode)
     {

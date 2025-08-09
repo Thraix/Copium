@@ -4,20 +4,31 @@
 
 namespace Copium
 {
-  DescriptorPool::DescriptorPool()
+  DescriptorPool::DescriptorPool(int uniformDescriptorSets, int imageDescriptorSets)
   {
-    std::vector<VkDescriptorPoolSize> poolSizes{2};
-    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizes[0].descriptorCount = DESCRIPTOR_SET_COUNT * SwapChain::MAX_FRAMES_IN_FLIGHT; // TODO: how should this actually be determined?
+    std::vector<VkDescriptorPoolSize> poolSizes;
+    if (uniformDescriptorSets != 0)
+    {
+      VkDescriptorPoolSize descriptorSetPoolSize;
+      descriptorSetPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+      descriptorSetPoolSize.descriptorCount = uniformDescriptorSets;
+      poolSizes.emplace_back(descriptorSetPoolSize);
+    }
 
-    poolSizes[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
-    poolSizes[1].descriptorCount = DESCRIPTOR_SET_COUNT * SwapChain::MAX_FRAMES_IN_FLIGHT; // TODO: how should this actually be determined?
+    if (imageDescriptorSets != 0)
+    {
+      VkDescriptorPoolSize descriptorSetPoolSize;
+      descriptorSetPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      descriptorSetPoolSize.descriptorCount = imageDescriptorSets;
+      poolSizes.emplace_back(descriptorSetPoolSize);
+    }
+
 
     VkDescriptorPoolCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     createInfo.poolSizeCount = poolSizes.size();
     createInfo.pPoolSizes = poolSizes.data();
-    createInfo.maxSets = DESCRIPTOR_SET_COUNT * SwapChain::MAX_FRAMES_IN_FLIGHT;
+    createInfo.maxSets = uniformDescriptorSets + imageDescriptorSets; // I have no actual idea if this is fine
     createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
     CP_VK_ASSERT(vkCreateDescriptorPool(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorPool), "Failed to initialize descriptor pool");

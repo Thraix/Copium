@@ -1,13 +1,10 @@
 #pragma once
 
-#include "copium/asset/AssetMeta.h"
 #include "copium/asset/AssetRef.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/buffer/IndexBuffer.h"
-#include "copium/buffer/RendererVertexBuffer.h"
 #include "copium/pipeline/Pipeline.h"
 #include "copium/renderer/Batch.h"
-#include "copium/sampler/Texture2D.h"
 #include "copium/sampler/Font.h"
 #include "copium/util/Common.h"
 
@@ -16,11 +13,10 @@
 
 namespace Copium
 {
-  class Renderer
+  class Renderer final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Renderer);
   private:
-    DescriptorPool descriptorPool;
     IndexBuffer ibo;
     AssetRef<Pipeline> pipeline;
     std::vector<std::unique_ptr<Batch>> batches;
@@ -34,7 +30,6 @@ namespace Copium
     void* mappedVertexBuffer;
   public:
     Renderer(const AssetRef<Pipeline>& pipeline);
-    ~Renderer();
 
     void Quad(const glm::vec2& from, const glm::vec2& to, const glm::vec3& color = glm::vec3{1, 1, 1});
     void Quad(const glm::vec2& from, const glm::vec2& to, const Sampler& sampler, const glm::vec2& texCoord1 = glm::vec2{0, 0}, const glm::vec2& texCoord2 = glm::vec2{1, 1});

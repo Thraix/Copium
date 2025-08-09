@@ -1,6 +1,5 @@
 #include "copium/renderer/Renderer.h"
 
-#include "copium/asset/AssetManager.h"
 #include "copium/core/Vulkan.h"
 #include "copium/pipeline/PipelineCreator.h"
 #include "copium/renderer/RendererVertex.h"
@@ -13,16 +12,11 @@ namespace Copium
   static constexpr int MAX_NUM_TEXTURES = 32;
 
   Renderer::Renderer(const AssetRef<Pipeline>& pipeline)
-    : descriptorPool{},
-      ibo{MAX_NUM_INDICES}, 
+    : ibo{MAX_NUM_INDICES},
       pipeline{pipeline},
       samplers{MAX_NUM_TEXTURES, &Vulkan::GetEmptyTexture2D().GetAsset()}
   {
     InitializeIndexBuffer();
-  }
-
-  Renderer::~Renderer()
-  {
   }
 
   void Renderer::Quad(const glm::vec2& pos, const glm::vec2& size, const glm::vec3& color)
@@ -71,9 +65,9 @@ namespace Copium
       const Glyph& glyph = font.GetGlyph(c);
       AllocateQuad();
       int texIndex = AllocateSampler(font);
-      AddVertex(offset + glm::vec2{glyph.boundingBox.l * size, glyph.boundingBox.b * size}, color, texIndex, glyph.texCoordBoundingBox.lb, RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.l * size, glyph.boundingBox.b * size}, color, texIndex, glyph.texCoordBoundingBox.AsLb(), RendererVertex::TYPE_TEXT);
       AddVertex(offset + glm::vec2{glyph.boundingBox.l * size, glyph.boundingBox.t * size}, color, texIndex, glm::vec2{glyph.texCoordBoundingBox.l, glyph.texCoordBoundingBox.t}, RendererVertex::TYPE_TEXT);
-      AddVertex(offset + glm::vec2{glyph.boundingBox.r * size, glyph.boundingBox.t * size}, color, texIndex, glyph.texCoordBoundingBox.rt, RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.r * size, glyph.boundingBox.t * size}, color, texIndex, glyph.texCoordBoundingBox.AsRt(), RendererVertex::TYPE_TEXT);
       AddVertex(offset + glm::vec2{glyph.boundingBox.r * size, glyph.boundingBox.b * size}, color, texIndex, glm::vec2{glyph.texCoordBoundingBox.r, glyph.texCoordBoundingBox.b}, RendererVertex::TYPE_TEXT);
       offset.x += glyph.advance * size;
     }
@@ -115,7 +109,7 @@ namespace Copium
     pipeline.GetAsset().SetDescriptorSet(descriptorSet);
   }
 
-  void Renderer::InitializeIndexBuffer() 
+  void Renderer::InitializeIndexBuffer()
   {
     CP_ASSERT(MAX_NUM_INDICES < std::numeric_limits<uint16_t>::max(), "Maximum number of indices too big");
 
@@ -180,7 +174,7 @@ namespace Copium
     std::fill(samplers.begin(), samplers.end(), &Vulkan::GetEmptyTexture2D().GetAsset());
     if (batchIndex >= batches.size())
     {
-      batches.emplace_back(std::make_unique<Batch>(pipeline, descriptorPool, MAX_NUM_VERTICES, samplers));
+      batches.emplace_back(std::make_unique<Batch>(pipeline, MAX_NUM_VERTICES, samplers));
     }
     batches[batchIndex]->GetDescriptorSet().SetSamplersDynamic(samplers, 0);
     mappedVertexBuffer = (char*)batches[batchIndex]->GetVertexBuffer().Map() + batches[batchIndex]->GetVertexBuffer().GetPosition(Vulkan::GetSwapChain().GetFlightIndex());

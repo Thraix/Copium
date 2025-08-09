@@ -1,7 +1,8 @@
 #include "copium/event/Input.h"
 
-#include "copium/util/Common.h"
 #include "copium/core/Vulkan.h"
+#include "copium/event/InputCode.h"
+#include "copium/util/Common.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

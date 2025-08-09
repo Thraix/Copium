@@ -1,7 +1,6 @@
 #pragma once
 
 #include "copium/event/Event.h"
-#include "copium/event/EventType.h"
 #include "copium/util/BoundingBox.h"
 
 namespace Copium

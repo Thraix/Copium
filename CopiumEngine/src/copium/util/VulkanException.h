@@ -2,7 +2,7 @@
 
 #include "copium/util/RuntimeException.h"
 
-#include <stdexcept>
+#include <string>
 
 namespace Copium
 {

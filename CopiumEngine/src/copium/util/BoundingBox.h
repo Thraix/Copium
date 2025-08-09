@@ -6,12 +6,10 @@ namespace Copium
 {
   struct BoundingBox
   {
-    union
-    {
-      struct { float l; float b; float r; float t; };
-      struct { glm::vec2 lb; glm::vec2 rt; };
-      struct { glm::vec4 lbrt; };
-    };
+    float l;
+    float b;
+    float r;
+    float t;
     BoundingBox();
     BoundingBox(float all);
     BoundingBox(float l, float b, float r, float t);
@@ -21,5 +19,8 @@ namespace Copium
 
     bool operator==(const BoundingBox& boundingBox) const;
     bool operator!=(const BoundingBox& boundingBox) const;
+
+    glm::vec2 AsLb() const;
+    glm::vec2 AsRt() const;
   };
 }

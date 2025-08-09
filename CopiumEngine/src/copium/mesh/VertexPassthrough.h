@@ -6,7 +6,7 @@
 
 namespace Copium
 {
-  struct VertexPassthrough 
+  struct VertexPassthrough
   {
     glm::vec2 texCoord;
 

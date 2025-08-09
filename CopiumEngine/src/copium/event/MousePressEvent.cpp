@@ -6,7 +6,7 @@ namespace Copium
     : Event{EventType::MousePress}, button{button}
   {}
 
-  int MousePressEvent::GetButton() const 
+  int MousePressEvent::GetButton() const
   {
     return button;
   }

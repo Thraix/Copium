@@ -17,7 +17,7 @@ namespace Copium
     return dateModified < FileSystem::DateModified(path);
   }
 
-  void AssetFile::Load() 
+  void AssetFile::Load()
   {
     MetaFile metaFile{path};
     for (auto&& assetType : assetTypes)

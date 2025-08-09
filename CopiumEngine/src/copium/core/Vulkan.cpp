@@ -22,6 +22,10 @@ namespace Copium
   {
     Timer timer;
     timer.Start();
+
+    glfwSetErrorCallback(glfw_error_callback);
+    CP_ASSERT(glfwInit() == GLFW_TRUE, "Failed to initialize the glfw context");
+
     instance = std::make_unique<Instance>("Copium Engine");
     window = std::make_unique<Window>("Copium Engine", 1440, 810, WindowMode::Windowed);
     device = std::make_unique<Device>();
@@ -96,5 +100,10 @@ namespace Copium
   bool Vulkan::Valid()
   {
     return instance && window && device && swapChain;
+  }
+
+  void Vulkan::glfw_error_callback(int error, const char* description)
+  {
+    CP_ABORT("GLFW Error %d: %s\n", error, description);
   }
 }

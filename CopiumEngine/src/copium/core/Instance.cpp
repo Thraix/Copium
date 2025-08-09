@@ -1,7 +1,8 @@
 #include "Instance.h"
 
-#include "copium/core/QueueFamilies.h"
 #include "copium/util/Common.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Copium
 {
