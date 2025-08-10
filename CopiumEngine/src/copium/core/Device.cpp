@@ -12,6 +12,7 @@ namespace Copium
     InitializeLogicalDevice();
     InitializeCommandPool();
   }
+
   Device::~Device()
   {
     vkDestroyCommandPool(device, commandPool, nullptr);
@@ -34,7 +35,7 @@ namespace Copium
     return graphicsQueue;
   }
 
-  VkQueue Device::GetPresentQueue() const 
+  VkQueue Device::GetPresentQueue() const
   {
     return presentQueue;
   }
@@ -69,11 +70,7 @@ namespace Copium
   void Device::WaitIdle()
   {
     vkDeviceWaitIdle(device);
-    while (!idleCommands.empty())
-    {
-      idleCommands.front()();
-      idleCommands.pop();
-    }
+    CleanupIdleQueue();
   }
 
   void Device::WaitIdleIfCommandQueued()
@@ -81,6 +78,15 @@ namespace Copium
     if (!idleCommands.empty())
     {
       WaitIdle();
+    }
+  }
+
+  void Device::CleanupIdleQueue()
+  {
+    while (!idleCommands.empty())
+    {
+      idleCommands.front()();
+      idleCommands.pop();
     }
   }
 

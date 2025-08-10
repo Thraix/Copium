@@ -10,7 +10,7 @@ namespace Copium
   std::vector<char> FileSystem::ReadFile(const std::string& filename)
   {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file");
+    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
 
     size_t fileSize = (size_t)file.tellg();
     std::vector<char> buffer(fileSize);
@@ -24,7 +24,7 @@ namespace Copium
   std::vector<uint32_t> FileSystem::ReadFile32(const std::string& filename)
   {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file");
+    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
 
     size_t fileSize = (size_t)file.tellg();
     CP_ASSERT(fileSize % 4 == 0, "byte size is not divisible by 4");
@@ -39,7 +39,7 @@ namespace Copium
   std::string FileSystem::ReadFileStr(const std::string& filename)
   {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file");
+    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
 
     size_t fileSize = (size_t)file.tellg();
     std::string buffer;
@@ -56,7 +56,7 @@ namespace Copium
     std::filesystem::path path{filename};
     std::filesystem::create_directories(path.parent_path());
     std::ofstream file(filename, std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file");
+    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
 
     file.write(data.c_str(), data.size());
   }
@@ -66,7 +66,7 @@ namespace Copium
     std::filesystem::path path{filename};
     std::filesystem::create_directories(path.parent_path());
     std::ofstream file(filename, std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file");
+    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
 
     file.write(data, size);
   }

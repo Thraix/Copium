@@ -23,7 +23,7 @@ namespace Copium
     const std::string& GetPath() const;
     Uuid GetUuid() const;
   private:
-    void Load(const MetaFile& metaFile, const std::string& className);
+    void Load(MetaFile& metaFile, const std::string& className);
     static void RegisterAssetType(const std::string& assetType);
   };
 }

@@ -26,6 +26,7 @@ namespace Copium
     uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
     void WaitIdle();
     void WaitIdleIfCommandQueued();
+    void CleanupIdleQueue();
     void QueueIdleCommand(std::function<void()> idleCommand);
 
   private:
@@ -41,7 +42,6 @@ namespace Copium
     std::queue<std::function<void()>> idleCommands;
     // TODO end
 
-  
   private:
     void SelectPhysicalDevice();
     void InitializeLogicalDevice();

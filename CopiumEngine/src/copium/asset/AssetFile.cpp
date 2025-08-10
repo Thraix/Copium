@@ -2,6 +2,8 @@
 
 #include "copium/util/FileSystem.h"
 
+#include <fstream>
+
 namespace Copium
 {
   std::vector<std::string> AssetFile::assetTypes;
@@ -41,9 +43,16 @@ namespace Copium
     return uuid;
   }
 
-  void AssetFile::Load(const MetaFile& metaFile, const std::string& className)
+  void AssetFile::Load(MetaFile& metaFile, const std::string& className)
   {
-    const MetaFileClass& metaClass = metaFile.GetMetaClass(className);
+    MetaFileClass& metaClass = metaFile.GetMetaClass(className);
+    if (!metaClass.HasValue("uuid"))
+    {
+      CP_WARN("Asset (%s) has no UUID assigned, generating new one", path.c_str());
+      metaClass.AddValue("uuid", Uuid{}.ToString());
+      std::fstream file{path};
+      file << metaFile;
+    }
     uuid = Uuid{metaClass.GetValue("uuid")};
     dateModified = FileSystem::DateModified(path);
   }

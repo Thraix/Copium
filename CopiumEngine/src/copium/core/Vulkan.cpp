@@ -55,8 +55,9 @@ namespace Copium
     AssetManager::UnregisterAssetDir("assets/");
     AssetManager::Cleanup();
     imGuiInstance.reset();
-    swapChain.reset();
     device->WaitIdle();
+    swapChain.reset();
+    device->CleanupIdleQueue();
     device.reset();
     window.reset();
     instance.reset();
