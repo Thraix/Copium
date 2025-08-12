@@ -36,6 +36,7 @@ namespace Copium
     void SetSamplersDynamic(const std::vector<const Sampler*>& samplers, uint32_t binding);
     UniformBuffer& GetUniformBuffer(const std::string& uniformBuffer);
     uint32_t GetSetIndex() const;
+    VkDescriptorSet GetVkDescriptorSet(int flightIndex) const;
 
     operator VkDescriptorSet() const;
   private:

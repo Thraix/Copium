@@ -19,7 +19,7 @@ namespace Copium
   private:
     ShaderReflector shaderReflector;
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts{};
-    std::vector<VkDescriptorSet> boundDescriptorSets;
+    std::vector<std::vector<VkDescriptorSet>> boundDescriptorSetsPerFlightIndex;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
     AssetRef<Framebuffer> framebuffer;
@@ -31,6 +31,7 @@ namespace Copium
     ~Pipeline();
     void Bind(const CommandBuffer& commandBuffer);
     void SetDescriptorSet(const DescriptorSet& descriptorSet);
+    void SetDescriptorSetDynamic(const DescriptorSet& descriptorSet);
     void BindDescriptorSets(const CommandBuffer& commandBuffer);
 
     std::unique_ptr<DescriptorSet> CreateDescriptorSet(DescriptorPool& descriptorPool, int setIndex) const;

@@ -83,13 +83,16 @@ namespace Copium
 
   void Pipeline::SetDescriptorSet(const DescriptorSet& descriptorSet)
   {
-    CP_ASSERT(descriptorSet.GetSetIndex() < boundDescriptorSets.size(), "DescriptorSet index is out of bounds");
-    boundDescriptorSets[descriptorSet.GetSetIndex()] = descriptorSet;
+    CP_ASSERT(descriptorSet.GetSetIndex() < GetDescriptorSetCount(), "DescriptorSet index is out of bounds");
+    for (int i = 0; i < SwapChain::MAX_FRAMES_IN_FLIGHT; i++)
+    {
+      boundDescriptorSetsPerFlightIndex[i][descriptorSet.GetSetIndex()] = descriptorSet.GetVkDescriptorSet(i);
+    }
   }
 
   void Pipeline::BindDescriptorSets(const CommandBuffer& commandBuffer)
   {
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, boundDescriptorSets.size(), boundDescriptorSets.data(), 0, nullptr);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, GetDescriptorSetCount(), boundDescriptorSetsPerFlightIndex[Vulkan::GetSwapChain().GetFlightIndex()].data(), 0, nullptr);
   }
 
   std::unique_ptr<DescriptorSet> Pipeline::CreateDescriptorSet(DescriptorPool& descriptorPool, int setIndex) const
@@ -121,12 +124,16 @@ namespace Copium
 
   int Pipeline::GetDescriptorSetCount() const
   {
-    return boundDescriptorSets.size();
+    return boundDescriptorSetsPerFlightIndex.front().size();
   }
 
   void Pipeline::InitializeDescriptorSetLayout(const PipelineCreator& creator)
   {
-    boundDescriptorSets.resize(creator.descriptorSetLayouts.size());
+    boundDescriptorSetsPerFlightIndex.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
+    for (auto&& boundDescriptorSets : boundDescriptorSetsPerFlightIndex)
+    {
+      boundDescriptorSets.resize(creator.descriptorSetLayouts.size());
+    }
     descriptorSetLayouts.resize(creator.descriptorSetLayouts.size());
     int i = 0;
     for (auto&& bindings : creator.descriptorSetLayouts)

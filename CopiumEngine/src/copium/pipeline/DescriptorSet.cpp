@@ -114,6 +114,11 @@ namespace Copium
     return bindings.begin()->set;
   }
 
+  VkDescriptorSet DescriptorSet::GetVkDescriptorSet(int flightIndex) const
+  {
+    return descriptorSets[flightIndex];
+  }
+
   DescriptorSet::operator VkDescriptorSet() const
   {
     return descriptorSets[Vulkan::GetSwapChain().GetFlightIndex()];
