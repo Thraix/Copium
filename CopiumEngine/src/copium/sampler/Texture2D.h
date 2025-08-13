@@ -12,12 +12,18 @@ namespace Copium
     VkImage image;
     VkDeviceMemory imageMemory;
     VkImageView imageView;
+
+    int width;
+    int height;
   public:
     Texture2D(const MetaFile& metaFile);
     Texture2D(const std::vector<uint8_t>& rgbaData, int width, int height, const SamplerCreator& samplerCreator);
     ~Texture2D() override;
 
     VkDescriptorImageInfo GetDescriptorImageInfo(int index) const override;
+
+    int GetWidth() const;
+    int GetHeight() const;
 
   private:
     void InitializeTextureImageFromFile(const std::string& filename);

@@ -17,7 +17,7 @@ namespace Copium
   }
 
   Texture2D::Texture2D(const std::vector<uint8_t>& rgbaData, int width, int height, const SamplerCreator& samplerCreator)
-    : Sampler{samplerCreator}
+    : Sampler{samplerCreator}, width{width}, height{height}
   {
     CP_ASSERT(rgbaData.size() == width * height * 4, "rgbaData has invalid size, should be equal to width * height * 4 (%d) actually is %d", width * height * 4, rgbaData.size());
     InitializeTextureImageFromData(rgbaData.data(), width, height);
@@ -45,6 +45,16 @@ namespace Copium
     return imageInfo;
   }
 
+    int Texture2D::GetWidth() const
+    {
+      return width;
+    }
+
+    int Texture2D::GetHeight() const
+    {
+      return height;
+    }
+
   void Texture2D::InitializeTextureImageFromFile(const std::string& filename)
   {
     stbi_set_flip_vertically_on_load(true);
@@ -56,6 +66,8 @@ namespace Copium
     CP_ASSERT(pixels, "Failed to load texture image");
 
     InitializeTextureImageFromData(pixels, texWidth, texHeight);
+    width = texWidth;
+    height = texHeight;
 
     stbi_image_free(pixels);
   }
