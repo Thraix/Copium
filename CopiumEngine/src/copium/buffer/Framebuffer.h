@@ -20,25 +20,25 @@ namespace Copium
     std::vector<VkFramebuffer> framebuffers;
     VkRenderPass renderPass;
 
-    uint32_t width;
-    uint32_t height;
+    int width;
+    int height;
   public:
     Framebuffer(const MetaFile& metaFile);
-    Framebuffer(uint32_t width, uint32_t height);
+    Framebuffer(int width, int height, const SamplerCreator& samplerCreator);
     ~Framebuffer();
 
-    void Resize(uint32_t width, uint32_t height);
+    void Resize(int width, int height);
     void Bind(const CommandBuffer& commandBuffer);
     void Unbind(const CommandBuffer& commandBuffer);
 
     VkRenderPass GetRenderPass() const;
     VkFramebuffer GetFramebuffer() const;
     const ColorAttachment& GetColorAttachment() const;
-    uint32_t GetWidth() const;
-    uint32_t GetHeight() const;
+    int GetWidth() const;
+    int GetHeight() const;
 
   private:
-    void InitializeImage();
+    void InitializeImage(const SamplerCreator& samplerCreator);
     void InitializeDepthBuffer();
     void InitializeRenderPass();
     void InitializeFramebuffers();

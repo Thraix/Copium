@@ -33,7 +33,7 @@ namespace Copium
     static Asset& LoadAsset(const Uuid& uuid);
     static AssetId DuplicateAsset(AssetId id);
     static void UnloadAsset(AssetId id);
-    static Asset& RegisterRuntimeAsset(const std::string& name, std::unique_ptr<Asset>&& asset);
+    static Asset& RegisterRuntimeAsset(const std::string& name, const Uuid& uuid, std::unique_ptr<Asset>&& asset);
     static const std::vector<AssetFile>& GetAssetFiles();
     static void Cleanup();
 
@@ -70,11 +70,23 @@ namespace Copium
     }
 
     template <typename AssetT>
-    static AssetT& RegisterRuntimeAsset(const std::string& name, std::unique_ptr<AssetT>&& assetT) 
+    static AssetT& RegisterRuntimeAsset(const std::string& name, const Uuid& uuid, std::unique_ptr<AssetT>&& assetT)
     {
       AssetT* ptr = assetT.release();
-      Asset& asset = RegisterRuntimeAsset(name, std::unique_ptr<Asset>((Asset*)ptr));
+      Asset& asset = RegisterRuntimeAsset(name, uuid, std::unique_ptr<Asset>((Asset*)ptr));
       return *(AssetT*)&asset;
+    }
+
+    template <typename AssetT>
+    static AssetT& RegisterRuntimeAsset(const std::string& name, std::unique_ptr<AssetT>&& assetT)
+    {
+      return RegisterRuntimeAsset(name, Uuid{}, std::move(assetT));
+    }
+
+    template <typename AssetT>
+    static AssetT& RegisterRuntimeAsset(const Uuid& uuid, std::unique_ptr<AssetT>&& assetT)
+    {
+      return RegisterRuntimeAsset(uuid.ToString(), uuid, std::move(assetT));
     }
 
   private:

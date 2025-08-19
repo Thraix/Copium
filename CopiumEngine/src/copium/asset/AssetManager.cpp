@@ -146,18 +146,18 @@ namespace Copium
     CP_ASSERT(pathToAssetCache.empty(), "Path To Asset Cache not empty after full unload");
   }
 
-  Asset& AssetManager::RegisterRuntimeAsset(const std::string& name, std::unique_ptr<Asset>&& asset)
+  Asset& AssetManager::RegisterRuntimeAsset(const std::string& name, const Uuid& uuid, std::unique_ptr<Asset>&& asset)
   {
     CP_DEBUG("Registering Runtime Asset: %s", name.c_str());
 
     auto it = nameToAssetCache.find(name);
-    CP_ASSERT(it == nameToAssetCache.end(), "Asset already exists: %s", name);
+    CP_ASSERT(it == nameToAssetCache.end(), "Asset already exists: %s", name.c_str());
 
     AssetId id = runtimeAssetId++;
     Asset* asset2 = assets.emplace(id, std::move(asset)).first->second.get();
     asset2->metaData.id = id;
     asset2->metaData.name = name;
-    asset2->metaData.uuid = Uuid();
+    asset2->metaData.uuid = uuid;
     asset2->metaData.isRuntime = true;
     nameToAssetCache.emplace(name, id);
     return *asset2;

@@ -12,20 +12,32 @@ namespace Copium
       : id{std::shared_ptr<AssetId>(new AssetId(NULL_ASSET_ID), AssetIdUnloader{})}
     {}
 
-    AssetRef(const std::string& assetName)
+    explicit AssetRef(const std::string& assetName)
       : id{std::shared_ptr<AssetId>(new AssetId(AssetManager::LoadAsset(assetName).GetId()), AssetIdUnloader{})}
     {}
 
-    AssetRef(const Uuid& uuid)
+    explicit AssetRef(const Uuid& uuid)
       : id{std::shared_ptr<AssetId>(new AssetId(AssetManager::LoadAsset(uuid).GetId()), AssetIdUnloader{})}
     {}
 
-    AssetRef(AssetType& asset)
+    explicit AssetRef(AssetType& asset)
       : id{std::shared_ptr<AssetId>(new AssetId(AssetManager::DuplicateAsset(asset.GetId())), AssetIdUnloader{})}
+    {}
+
+    explicit AssetRef(std::unique_ptr<AssetType>&& runtimeAsset)
+      : id{std::shared_ptr<AssetId>(new AssetId(AssetManager::RegisterRuntimeAsset(Uuid{}, std::move(runtimeAsset)).GetId()), AssetIdUnloader{})}
+    {}
+
+    AssetRef(const Uuid& uuid, std::unique_ptr<AssetType>&& runtimeAsset)
+      : id{std::shared_ptr<AssetId>(new AssetId(AssetManager::RegisterRuntimeAsset(uuid, std::move(runtimeAsset)).GetId()), AssetIdUnloader{})}
     {}
 
     AssetRef(const std::string& name, std::unique_ptr<AssetType>&& runtimeAsset)
       : id{std::shared_ptr<AssetId>(new AssetId(AssetManager::RegisterRuntimeAsset(name, std::move(runtimeAsset)).GetId()), AssetIdUnloader{})}
+    {}
+
+    AssetRef(const std::string& name, const Uuid& uuid, std::unique_ptr<AssetType>&& runtimeAsset)
+      : id{std::shared_ptr<AssetId>(new AssetId(AssetManager::RegisterRuntimeAsset(name, uuid, std::move(runtimeAsset)).GetId()), AssetIdUnloader{})}
     {}
 
     AssetRef(AssetId id)

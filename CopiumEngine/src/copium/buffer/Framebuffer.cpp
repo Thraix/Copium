@@ -12,17 +12,24 @@ namespace Copium
     const MetaFileClass& metaClass = metaFile.GetMetaClass("Framebuffer");
     colorAttachment = AssetRef<ColorAttachment>(Uuid{metaClass.GetValue("rendertexture-uuid")});
     ColorAttachment& attachment = colorAttachment.GetAsset();
+
     width = attachment.GetWidth();
     height = attachment.GetHeight();
+    CP_ASSERT(width > 0, "Width of framebuffer is less than 1: %d", width);
+    CP_ASSERT(height > 0, "Height of framebuffer is less than 1: %d", height);
+
     InitializeDepthBuffer();
     InitializeRenderPass();
     InitializeFramebuffers();
   }
 
-  Framebuffer::Framebuffer(uint32_t width, uint32_t height)
+  Framebuffer::Framebuffer(int width, int height, const SamplerCreator& samplerCreator)
     : width{width}, height{height}
   {
-    InitializeImage();
+    CP_ASSERT(width > 0, "Width of framebuffer is less than 1: %d", width);
+    CP_ASSERT(height > 0, "Height of framebuffer is less than 1: %d", height);
+
+    InitializeImage(samplerCreator);
     InitializeDepthBuffer();
     InitializeRenderPass();
     InitializeFramebuffers();
@@ -39,8 +46,11 @@ namespace Copium
     });
   }
 
-  void Framebuffer::Resize(uint32_t width, uint32_t height)
+  void Framebuffer::Resize(int width, int height)
   {
+    CP_ASSERT(width > 0, "Width of framebuffer is less than 1: %d", width);
+    CP_ASSERT(height > 0, "Height of framebuffer is less than 1: %d", height);
+
     Vulkan::GetDevice().WaitIdle();
     this->width = width;
     this->height = height;
@@ -61,9 +71,9 @@ namespace Copium
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.renderPass = renderPass;
     renderPassBeginInfo.framebuffer = framebuffers[Vulkan::GetSwapChain().GetFlightIndex()];
-;
+
     renderPassBeginInfo.renderArea.offset = {0, 0};
-    renderPassBeginInfo.renderArea.extent = {width, height};
+    renderPassBeginInfo.renderArea.extent = {static_cast<uint32_t>(width), static_cast<uint32_t>(height)};
     renderPassBeginInfo.clearValueCount = clearValues.size();
     renderPassBeginInfo.pClearValues = clearValues.data();
     vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -78,7 +88,7 @@ namespace Copium
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
     VkRect2D scissor{};
     scissor.offset = {0, 0};
-    scissor.extent = {width, height};
+    scissor.extent = {static_cast<uint32_t>(width), static_cast<uint32_t>(height)};
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
   }
 
@@ -102,19 +112,19 @@ namespace Copium
     return colorAttachment.GetAsset();
   }
 
-  uint32_t Framebuffer::GetWidth() const
+  int Framebuffer::GetWidth() const
   {
     return width;
   }
 
-  uint32_t Framebuffer::GetHeight() const
+  int Framebuffer::GetHeight() const
   {
     return height;
   }
 
-  void Framebuffer::InitializeImage()
+  void Framebuffer::InitializeImage(const SamplerCreator& samplerCreator)
   {
-    colorAttachment = AssetManager::RegisterRuntimeAsset("Framebuffer::ColorAttachment", std::make_unique<ColorAttachment>(width, height, SamplerCreator{}));
+    colorAttachment = AssetRef(std::make_unique<ColorAttachment>(width, height, samplerCreator));
   }
 
   void Framebuffer::InitializeDepthBuffer()
