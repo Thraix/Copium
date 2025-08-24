@@ -209,6 +209,12 @@ namespace Copium
       return 0;
     }
 
+    template <typename Component, typename... Components>
+    EntityId Find()
+    {
+      return Find<Component, Components...>([] (EntityId, const Component& component, const Components&... components) { return true; });
+    }
+
     template <typename T>
     std::type_index GetComponentId()
     {
