@@ -18,7 +18,8 @@ namespace Copium
                              VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
     createInfo.pfnUserCallback = DebugCallback;
     createInfo.pUserData = nullptr;
-    CP_VK_ASSERT(vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger), "Failed to initialze debug messenger");
+    CP_VK_ASSERT(vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger),
+                 "Failed to initialze debug messenger");
   }
 
   DebugMessenger::~DebugMessenger()
@@ -38,22 +39,27 @@ namespace Copium
 #else
   DebugMessenger::DebugMessenger(Instance& instance)
     : instance{instance}
-  {}
+  {
+  }
 
   DebugMessenger::~DebugMessenger()
-  {}
+  {
+  }
 
   void DebugMessenger::AddRequiredExtensions(std::vector<const char*>* extensions)
-  {}
+  {
+  }
 
   void DebugMessenger::AddRequiredLayers(std::vector<const char*>* layers)
-  {}
+  {
+  }
 #endif
 
-  VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessenger::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                               VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                               const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                                                               void* pUserData)
+  VKAPI_ATTR VkBool32 VKAPI_CALL
+  DebugMessenger::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                void* pUserData)
   {
     if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
     {
@@ -78,10 +84,12 @@ namespace Copium
 
   void DebugMessenger::vkDestroyDebugUtilsMessengerEXT(VkInstance instance,
                                                        VkDebugUtilsMessengerEXT debugMessenger,
-                                                       const VkAllocationCallbacks* pAllocator) {
-    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-    if (func != nullptr) {
-        func(instance, debugMessenger, pAllocator);
+                                                       const VkAllocationCallbacks* pAllocator)
+  {
+    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    if (func != nullptr)
+    {
+      func(instance, debugMessenger, pAllocator);
     }
   }
 

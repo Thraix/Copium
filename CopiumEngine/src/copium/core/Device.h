@@ -1,17 +1,19 @@
 #pragma once
 
-#include "copium/util/Common.h"
-
-#include <vulkan/vulkan.hpp>
-#include <queue>
 #include <functional>
+#include <queue>
+#include <vulkan/vulkan.hpp>
+
+#include "copium/util/Common.h"
 
 namespace Copium
 {
   class Vulkan;
+
   class Device
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Device);
+
   public:
     Device();
     ~Device();

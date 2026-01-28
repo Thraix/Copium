@@ -9,6 +9,7 @@ namespace Copium
   private:
     int scrollX;
     int scrollY;
+
   public:
     MouseScrollEvent(int scrollX, int scrollY);
 

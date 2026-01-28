@@ -3,16 +3,22 @@
 namespace Copium
 {
   Entity::Entity()
-    : manager{nullptr}, id{INVALID_ENTITY}
-  {}
+    : manager{nullptr},
+      id{INVALID_ENTITY}
+  {
+  }
 
   Entity::Entity(ECSManager* manager)
-    : manager{manager}, id{INVALID_ENTITY}
-  {}
+    : manager{manager},
+      id{INVALID_ENTITY}
+  {
+  }
 
   Entity::Entity(ECSManager* manager, EntityId id)
-    : manager{manager}, id{id}
-  {}
+    : manager{manager},
+      id{id}
+  {
+  }
 
   Entity::operator EntityId() const
   {

@@ -1,9 +1,9 @@
 #pragma once
 
+#include <stdint.h>
+
 #include "copium/asset/AssetMeta.h"
 #include "copium/util/Uuid.h"
-
-#include <stdint.h>
 
 namespace Copium
 {
@@ -11,6 +11,7 @@ namespace Copium
   class Asset
   {
     friend class AssetManager;
+
   public:
     Asset();
     virtual ~Asset();

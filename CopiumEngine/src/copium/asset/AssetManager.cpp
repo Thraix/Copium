@@ -1,10 +1,10 @@
 #include "copium/asset/AssetManager.h"
 
+#include <filesystem>
+#include <fstream>
+
 #include "copium/util/Common.h"
 #include "copium/util/MetaFile.h"
-
-#include <fstream>
-#include <filesystem>
 
 namespace Copium
 {
@@ -27,7 +27,11 @@ namespace Copium
       if (std::filesystem::is_directory(it->path()))
         continue;
       std::filesystem::path assetDirPath{assetDir};
-      std::string assetPath = assetDir + "/" + std::filesystem::absolute(it->path()).string().substr(std::filesystem::absolute(assetDirPath).string().size() + 1).c_str();
+      std::string assetPath = assetDir + "/" +
+                              std::filesystem::absolute(it->path())
+                                .string()
+                                .substr(std::filesystem::absolute(assetDirPath).string().size() + 1)
+                                .c_str();
       try
       {
         CP_DEBUG("Registering Asset: %s", assetPath.c_str());
@@ -45,7 +49,7 @@ namespace Copium
     if (assetDir.back() == '/')
       assetDir.pop_back();
 
-    for (auto it = assetDirs.begin(); it != assetDirs.end(); ++it) 
+    for (auto it = assetDirs.begin(); it != assetDirs.end(); ++it)
     {
       if (*it == assetDir)
       {
@@ -79,8 +83,7 @@ namespace Copium
     CP_ABORT("Unknown Asset: %s", assetPath.c_str());
   }
 
-
-  Asset& AssetManager::LoadAsset(const Uuid& uuid) 
+  Asset& AssetManager::LoadAsset(const Uuid& uuid)
   {
     CP_DEBUG("Loading uuid Asset: %s", uuid.ToString().c_str());
     for (auto&& assetFile : cachedAssetFiles)
@@ -115,7 +118,8 @@ namespace Copium
       CP_WARN("Asset not loaded");
       return;
     }
-    CP_DEBUG("Unloading Asset: %s (%d instances left)", it->second->GetName().c_str(), it->second->metaData.loadCount - 1);
+    CP_DEBUG(
+      "Unloading Asset: %s (%d instances left)", it->second->GetName().c_str(), it->second->metaData.loadCount - 1);
 
     it->second->metaData.loadCount--;
     if (it->second->metaData.loadCount > 0)
@@ -133,7 +137,7 @@ namespace Copium
     return cachedAssetFiles;
   }
 
-  void AssetManager::Cleanup() 
+  void AssetManager::Cleanup()
   {
     if (assets.empty())
       return;
@@ -177,7 +181,7 @@ namespace Copium
     MetaFile metaFile{filepath};
     for (auto& assetType : assetTypes)
     {
-      if(metaFile.HasMetaClass(assetType.first))
+      if (metaFile.HasMetaClass(assetType.first))
         return assetType.second(metaFile, assetType.first);
     }
     CP_ABORT("Unknown Asset type: %s", filepath.c_str());

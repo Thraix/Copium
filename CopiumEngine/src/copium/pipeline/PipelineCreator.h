@@ -1,13 +1,12 @@
 #pragma once
 
-#include "copium/pipeline/ShaderReflector.h"
-#include "copium/pipeline/VertexDescriptor.h"
-
-#include <vulkan/vulkan.hpp>
-
+#include <cstdint>
 #include <map>
 #include <string>
-#include <cstdint>
+#include <vulkan/vulkan.hpp>
+
+#include "copium/pipeline/ShaderReflector.h"
+#include "copium/pipeline/VertexDescriptor.h"
 
 namespace Copium
 {
@@ -21,6 +20,7 @@ namespace Copium
       VkShaderStageFlags flags;
     };
     friend class Pipeline;
+
   private:
     std::map<uint32_t, std::vector<DescriptorSetBinding>> descriptorSetLayouts{};
 
@@ -45,6 +45,7 @@ namespace Copium
     void SetCullFrontFace(VkFrontFace cullFrontFace);
     void SetDepthTest(bool depthTest);
     void SetBlending(bool blending);
+
   private:
     void AddShaderDescription();
     static VkDescriptorType GetDescriptorType(BindingType type);

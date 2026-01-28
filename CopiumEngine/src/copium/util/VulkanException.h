@@ -1,8 +1,8 @@
 #pragma once
 
-#include "copium/util/RuntimeException.h"
-
 #include <string>
+
+#include "copium/util/RuntimeException.h"
 
 namespace Copium
 {
@@ -11,6 +11,7 @@ namespace Copium
   public:
     VulkanException(const std::string& str)
       : RuntimeException{str}
-    {}
+    {
+    }
   };
 }

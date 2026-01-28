@@ -42,14 +42,16 @@ namespace Copium
     std::vector<VkImage> imagesCpy = images;
     std::vector<VkDeviceMemory> imageMemoriesCpy = imageMemories;
     std::vector<VkImageView> imageViewsCpy = imageViews;
-    Vulkan::GetDevice().QueueIdleCommand([imagesCpy, imageMemoriesCpy, imageViewsCpy]() {
-      for (auto&& image : imagesCpy)
-        vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
-      for (auto&& imageMemory : imageMemoriesCpy)
-        vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
-      for (auto&& imageView : imageViewsCpy)
-        vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
-    });
+    Vulkan::GetDevice().QueueIdleCommand(
+      [imagesCpy, imageMemoriesCpy, imageViewsCpy]()
+      {
+        for (auto&& image : imagesCpy)
+          vkDestroyImage(Vulkan::GetDevice(), image, nullptr);
+        for (auto&& imageMemory : imageMemoriesCpy)
+          vkFreeMemory(Vulkan::GetDevice(), imageMemory, nullptr);
+        for (auto&& imageView : imageViewsCpy)
+          vkDestroyImageView(Vulkan::GetDevice(), imageView, nullptr);
+      });
   }
 
   void ColorAttachment::Resize(int width, int height)
@@ -99,7 +101,14 @@ namespace Copium
     imageMemories.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
     for (size_t i = 0; i < images.size(); i++)
     {
-      Image::InitializeImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &images[i], &imageMemories[i]);
+      Image::InitializeImage(width,
+                             height,
+                             VK_FORMAT_R8G8B8A8_UNORM,
+                             VK_IMAGE_TILING_OPTIMAL,
+                             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                             &images[i],
+                             &imageMemories[i]);
       imageViews[i] = Image::InitializeImageView(images[i], VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
     }
   }

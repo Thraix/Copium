@@ -41,10 +41,13 @@ namespace Copium
     AssetManager::RegisterAssetType<Font>("Font");
 
     // TODO: Make the working directory always be relative to the assets folder
-    //       By looking at where the executable is, since that should always be in the bin folder (it currently isn't though)
+    //       By looking at where the executable is, since that should always be in the bin folder (it currently isn't
+    //       though)
     AssetManager::RegisterAssetDir("assets/");
-    emptyTexture2D = AssetHandle<Texture2D>{"empty_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 0, 255, 255}, 1, 1, SamplerCreator{})};
-    whiteTexture2D = AssetHandle<Texture2D>{"white_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 255, 255, 255}, 1, 1, SamplerCreator{})};
+    emptyTexture2D = AssetHandle<Texture2D>{
+      "empty_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 0, 255, 255}, 1, 1, SamplerCreator{})};
+    whiteTexture2D = AssetHandle<Texture2D>{
+      "white_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 255, 255, 255}, 1, 1, SamplerCreator{})};
     CP_INFO("Initialized AssetManager in %f seconds", timer.Elapsed());
   }
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "copium/pipeline/VertexDescriptor.h"
-
 #include <glm/glm.hpp>
+
+#include "copium/pipeline/VertexDescriptor.h"
 
 namespace Copium
 {
@@ -14,7 +14,7 @@ namespace Copium
     glm::vec3 color;
     glm::vec2 texCoord;
     int8_t texIndex;
-    int8_t type = TYPE_QUAD; // TODO: Should maybe have different Renderers for quad vs text instead of a flag
+    int8_t type = TYPE_QUAD;  // TODO: Should maybe have different Renderers for quad vs text instead of a flag
 
     static VertexDescriptor GetDescriptor();
   };

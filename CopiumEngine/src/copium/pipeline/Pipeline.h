@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <vulkan/vulkan.hpp>
+
 #include "copium/asset/Asset.h"
 #include "copium/asset/AssetRef.h"
 #include "copium/buffer/CommandBuffer.h"
@@ -8,14 +11,12 @@
 #include "copium/pipeline/PipelineCreator.h"
 #include "copium/util/Common.h"
 
-#include <vector>
-#include <vulkan/vulkan.hpp>
-
 namespace Copium
 {
   class Pipeline final : public Asset
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Pipeline);
+
   private:
     ShaderReflector shaderReflector;
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts{};
@@ -25,7 +26,6 @@ namespace Copium
     AssetRef<Framebuffer> framebuffer;
 
   public:
-
     Pipeline(const MetaFile& metaFile);
     Pipeline(PipelineCreator creator);
     ~Pipeline();

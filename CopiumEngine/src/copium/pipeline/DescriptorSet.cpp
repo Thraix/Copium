@@ -4,8 +4,12 @@
 
 namespace Copium
 {
-  DescriptorSet::DescriptorSet(DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout, const std::set<ShaderBinding>& bindings)
-    : descriptorPool{descriptorPool}, descriptorSetLayout{descriptorSetLayout}, bindings{bindings}
+  DescriptorSet::DescriptorSet(DescriptorPool& descriptorPool,
+                               VkDescriptorSetLayout descriptorSetLayout,
+                               const std::set<ShaderBinding>& bindings)
+    : descriptorPool{descriptorPool},
+      descriptorSetLayout{descriptorSetLayout},
+      bindings{bindings}
   {
     CP_ASSERT(!bindings.empty(), "Cannot initialize DescriptorSet with empty ShaderBindings");
 
@@ -64,7 +68,8 @@ namespace Copium
 
   void DescriptorSet::SetSamplers(const std::vector<const Sampler*>& samplers, uint32_t binding)
   {
-    for (size_t i = 0; i < descriptorSets.size(); ++i) {
+    for (size_t i = 0; i < descriptorSets.size(); ++i)
+    {
       std::vector<VkWriteDescriptorSet> descriptorWrites{samplers.size()};
       for (size_t j = 0; j < samplers.size(); j++)
       {
@@ -126,7 +131,8 @@ namespace Copium
 
   void DescriptorSet::SetUniformBuffer(const UniformBuffer& uniformBuffer, uint32_t binding)
   {
-    for (size_t i = 0; i < descriptorSets.size(); ++i) {
+    for (size_t i = 0; i < descriptorSets.size(); ++i)
+    {
       VkDescriptorBufferInfo bufferInfo = uniformBuffer.GetDescriptorBufferInfo(i);
 
       VkWriteDescriptorSet descriptorWrite{};

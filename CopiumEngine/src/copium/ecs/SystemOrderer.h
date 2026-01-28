@@ -11,6 +11,7 @@ namespace Copium
   private:
     std::type_index systemId;
     SystemPool* systemPool = nullptr;
+
   public:
     SystemOrderer(std::type_index systemId, SystemPool* systemPool);
 

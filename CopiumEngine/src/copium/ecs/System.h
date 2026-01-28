@@ -1,10 +1,10 @@
 #pragma once
 
-#include "copium/ecs/ECSManager.h"
-#include "copium/ecs/SystemBase.h"
-#include "copium/ecs/Entity.h"
-
 #include <set>
+
+#include "copium/ecs/ECSManager.h"
+#include "copium/ecs/Entity.h"
+#include "copium/ecs/SystemBase.h"
 
 namespace Copium
 {
@@ -14,20 +14,22 @@ namespace Copium
   public:
     void Run() override
     {
-      manager->Each<Components...>([&](EntityId entityId, Components&... components) { RunEntity(Entity{manager, entityId}, components...); });
+      manager->Each<Components...>([&](EntityId entityId, Components&... components)
+                                   { RunEntity(Entity{manager, entityId}, components...); });
     }
 
     void Run(const Signal& signal) override
     {
-      manager->Each<Components...>([&](EntityId entityId, Components&... components) { RunEntity(signal, Entity{manager, entityId}, components...); });
+      manager->Each<Components...>([&](EntityId entityId, Components&... components)
+                                   { RunEntity(signal, Entity{manager, entityId}, components...); });
     }
 
     virtual void RunEntity(Entity entity, Components&... components) {};
     virtual void RunEntity(const Signal& signal, Entity entity, Components&... components) {};
 
-
     // TODO: Not sure if this is the way entities should be validated
     std::set<EntityId> loggedEntities;
+
     bool ValidateEntity(Entity entity)
     {
       if (entity && entity.HasComponents<Components...>())

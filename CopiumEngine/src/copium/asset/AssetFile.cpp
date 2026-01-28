@@ -1,8 +1,8 @@
 #include "copium/asset/AssetFile.h"
 
-#include "copium/util/FileSystem.h"
-
 #include <fstream>
+
+#include "copium/util/FileSystem.h"
 
 namespace Copium
 {

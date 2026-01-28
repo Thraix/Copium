@@ -7,7 +7,8 @@ namespace Copium
   SystemOrderer::SystemOrderer(std::type_index systemId, SystemPool* systemPool)
     : systemId{systemId},
       systemPool{systemPool}
-  {}
+  {
+  }
 
   void SystemOrderer::Before(const std::type_index& otherSystemId)
   {

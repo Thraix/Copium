@@ -1,11 +1,11 @@
 #include "ImGuiInstance.h"
 
-#include "copium/core/Vulkan.h"
-#include "copium/buffer/CommandBufferScoped.h"
-
-#include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_vulkan.h>
+#include <imgui.h>
+
+#include "copium/buffer/CommandBufferScoped.h"
+#include "copium/core/Vulkan.h"
 
 namespace Copium
 {
@@ -92,7 +92,8 @@ namespace Copium
     createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     createInfo.bindingCount = 1;
     createInfo.pBindings = layoutBindings.data();
-    CP_VK_ASSERT(vkCreateDescriptorSetLayout(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorSetLayout), "Failed to create ImGui DescriptorSetLayout");
+    CP_VK_ASSERT(vkCreateDescriptorSetLayout(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorSetLayout),
+                 "Failed to create ImGui DescriptorSetLayout");
 
     ShaderBinding binding;
     binding.name = "texture";

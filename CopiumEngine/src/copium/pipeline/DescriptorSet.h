@@ -1,23 +1,23 @@
 #pragma once
 
+#include <glm/glm.hpp>
+#include <map>
+#include <set>
+#include <vector>
+#include <vulkan/vulkan.hpp>
+
 #include "copium/buffer/UniformBuffer.h"
 #include "copium/pipeline/DescriptorPool.h"
 #include "copium/pipeline/ShaderBinding.h"
 #include "copium/sampler/Sampler.h"
 #include "copium/util/Common.h"
 
-#include <glm/glm.hpp>
-#include <vulkan/vulkan.hpp>
-
-#include <map>
-#include <set>
-#include <vector>
-
 namespace Copium
 {
   class DescriptorSet final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(DescriptorSet);
+
   private:
     DescriptorPool& descriptorPool;
     VkDescriptorSetLayout descriptorSetLayout;
@@ -27,7 +27,9 @@ namespace Copium
     std::map<std::string, std::unique_ptr<UniformBuffer>> uniformBuffers;
 
   public:
-    DescriptorSet(DescriptorPool& descriptorPool, VkDescriptorSetLayout descriptorSetLayout, const std::set<ShaderBinding>& bindings);
+    DescriptorSet(DescriptorPool& descriptorPool,
+                  VkDescriptorSetLayout descriptorSetLayout,
+                  const std::set<ShaderBinding>& bindings);
     ~DescriptorSet();
 
     void SetSampler(const Sampler& sampler, uint32_t binding, int arrayIndex = 0);
@@ -39,6 +41,7 @@ namespace Copium
     VkDescriptorSet GetVkDescriptorSet(int flightIndex) const;
 
     operator VkDescriptorSet() const;
+
   private:
     void SetUniformBuffer(const UniformBuffer& uniformBuffer, uint32_t binding);
   };

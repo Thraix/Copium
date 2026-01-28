@@ -9,6 +9,7 @@ namespace Copium
   class RendererVertexBuffer : public Buffer
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(RendererVertexBuffer);
+
   public:
     RendererVertexBuffer(const VertexDescriptor& descriptor, int vertexCount);
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+
 #include <iostream>
 #include <random>
 
@@ -14,6 +15,7 @@ namespace Copium
     static std::random_device randomDevice;
     static std::mt19937 randomGenerator;
     static std::uniform_int_distribution<uint64_t> randomDistribution;
+
   public:
     Uuid();
     Uuid(uint64_t msb, uint64_t lsb);

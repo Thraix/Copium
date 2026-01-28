@@ -9,6 +9,7 @@ namespace Copium
   class SystemBase
   {
     friend class SystemPool;
+
   protected:
     ECSManager* manager;
 

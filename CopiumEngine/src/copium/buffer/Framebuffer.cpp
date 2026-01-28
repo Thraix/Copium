@@ -24,7 +24,8 @@ namespace Copium
   }
 
   Framebuffer::Framebuffer(int width, int height, const SamplerCreator& samplerCreator)
-    : width{width}, height{height}
+    : width{width},
+      height{height}
   {
     CP_ASSERT(width > 0, "Width of framebuffer is less than 1: %d", width);
     CP_ASSERT(height > 0, "Height of framebuffer is less than 1: %d", height);
@@ -39,11 +40,13 @@ namespace Copium
   {
     std::vector<VkFramebuffer> framebuffersCpy = framebuffers;
     VkRenderPass renderPassCpy = renderPass;
-    Vulkan::GetDevice().QueueIdleCommand([framebuffersCpy, renderPassCpy]() {
-      for (auto& framebuffer : framebuffersCpy)
-        vkDestroyFramebuffer(Vulkan::GetDevice(), framebuffer, nullptr);
-      vkDestroyRenderPass(Vulkan::GetDevice(), renderPassCpy, nullptr);
-    });
+    Vulkan::GetDevice().QueueIdleCommand(
+      [framebuffersCpy, renderPassCpy]()
+      {
+        for (auto& framebuffer : framebuffersCpy)
+          vkDestroyFramebuffer(Vulkan::GetDevice(), framebuffer, nullptr);
+        vkDestroyRenderPass(Vulkan::GetDevice(), renderPassCpy, nullptr);
+      });
   }
 
   void Framebuffer::Resize(int width, int height)
@@ -193,7 +196,8 @@ namespace Copium
     renderPassCreateInfo.dependencyCount = dependencies.size();
     renderPassCreateInfo.pDependencies = dependencies.data();
 
-    CP_VK_ASSERT(vkCreateRenderPass(Vulkan::GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "Failed to initialze render pass");
+    CP_VK_ASSERT(vkCreateRenderPass(Vulkan::GetDevice(), &renderPassCreateInfo, nullptr, &renderPass),
+                 "Failed to initialze render pass");
   }
 
   void Framebuffer::InitializeFramebuffers()
@@ -213,7 +217,8 @@ namespace Copium
       createInfo.height = height;
       createInfo.layers = 1;
 
-      CP_VK_ASSERT(vkCreateFramebuffer(Vulkan::GetDevice(), &createInfo, nullptr, &framebuffers[i]), "Failed to initialize framebuffer");
+      CP_VK_ASSERT(vkCreateFramebuffer(Vulkan::GetDevice(), &createInfo, nullptr, &framebuffers[i]),
+                   "Failed to initialize framebuffer");
     }
   }
 }

@@ -1,8 +1,8 @@
 #include "Instance.h"
 
-#include "copium/util/Common.h"
-
 #include <GLFW/glfw3.h>
+
+#include "copium/util/Common.h"
 
 namespace Copium
 {

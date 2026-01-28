@@ -115,7 +115,10 @@ namespace Copium
       devicePriorities.emplace_back(device, GetPhysicalDevicePriority(device));
     }
 
-    std::sort(devicePriorities.begin(), devicePriorities.end(), [](const std::pair<VkPhysicalDevice, uint32_t>& lhs, const std::pair<VkPhysicalDevice, uint32_t>& rhs) { return lhs.second > rhs.second; });
+    std::sort(devicePriorities.begin(),
+              devicePriorities.end(),
+              [](const std::pair<VkPhysicalDevice, uint32_t>& lhs, const std::pair<VkPhysicalDevice, uint32_t>& rhs)
+              { return lhs.second > rhs.second; });
     auto&& it = devicePriorities.begin();
     CP_ASSERT(it->second != 0, "Failed to find suitable gpu");
 

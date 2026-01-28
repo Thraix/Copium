@@ -8,6 +8,7 @@ namespace Copium
   class ViewportResize : public Event
   {
     BoundingBox viewport;
+
   public:
     ViewportResize(const BoundingBox& viewport);
 

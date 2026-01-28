@@ -1,8 +1,8 @@
 #pragma once
 
-#include "copium/util/Common.h"
-
 #include <vulkan/vulkan.hpp>
+
+#include "copium/util/Common.h"
 
 namespace Copium
 {
@@ -11,10 +11,12 @@ namespace Copium
   class DebugMessenger final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(DebugMessenger);
+
   private:
     Instance& instance;
 
     VkDebugUtilsMessengerEXT debugMessenger;
+
   public:
     DebugMessenger(Instance& instance);
     ~DebugMessenger();

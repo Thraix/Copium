@@ -1,9 +1,9 @@
 #pragma once
 
-#include "copium/ecs/Config.h"
-
 #include <unordered_map>
 #include <vector>
+
+#include "copium/ecs/Config.h"
 
 namespace Copium
 {
@@ -11,7 +11,7 @@ namespace Copium
   {
   private:
     std::vector<EntityId> entitiesList;
-    std::unordered_map<EntityId, size_t> entitiesMap; // Maps the entity id to a component index
+    std::unordered_map<EntityId, size_t> entitiesMap;  // Maps the entity id to a component index
   public:
     bool Emplace(EntityId entity);
     bool Erase(EntityId entity);

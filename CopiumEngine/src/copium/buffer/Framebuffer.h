@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vulkan/vulkan.hpp>
+
 #include "copium/asset/Asset.h"
 #include "copium/asset/AssetRef.h"
 #include "copium/buffer/CommandBuffer.h"
@@ -7,13 +9,12 @@
 #include "copium/sampler/DepthAttachment.h"
 #include "copium/util/Common.h"
 
-#include  <vulkan/vulkan.hpp>
-
 namespace Copium
 {
   class Framebuffer final : public Asset
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Framebuffer);
+
   private:
     AssetRef<ColorAttachment> colorAttachment;
     std::unique_ptr<DepthAttachment> depthAttachment;
@@ -22,6 +23,7 @@ namespace Copium
 
     int width;
     int height;
+
   public:
     Framebuffer(const MetaFile& metaFile);
     Framebuffer(int width, int height, const SamplerCreator& samplerCreator);

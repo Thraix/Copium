@@ -1,5 +1,7 @@
 #include "copium/core/Window.h"
 
+#include <GLFW/glfw3.h>
+
 #include "copium/core/Vulkan.h"
 #include "copium/event/EventDispatcher.h"
 #include "copium/event/Input.h"
@@ -12,12 +14,11 @@
 #include "copium/event/WindowFocusEvent.h"
 #include "copium/event/WindowResizeEvent.h"
 
-#include <GLFW/glfw3.h>
-
 namespace Copium
 {
   Window::Window(const std::string& windowName, int width, int height, WindowMode mode)
-    : width{width}, height{height}
+    : width{width},
+      height{height}
   {
     InitializeWindow(windowName, width, height, mode);
     InitializeSurface();
@@ -75,32 +76,32 @@ namespace Copium
 
     switch (mode)
     {
-    case WindowMode::Fullscreen:
-    {
-      GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-      const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-      window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), monitor, nullptr);
-      width = mode->width;
-      height = mode->height;
-      break;
-    }
-    case WindowMode::BorderlessWindowed:
-    {
-      const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+      case WindowMode::Fullscreen:
+      {
+        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), monitor, nullptr);
+        width = mode->width;
+        height = mode->height;
+        break;
+      }
+      case WindowMode::BorderlessWindowed:
+      {
+        const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-      glfwWindowHint(GLFW_DECORATED, false);
-      window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), nullptr, nullptr);
-      width = mode->width;
-      height = mode->height;
-      break;
-    }
-    case WindowMode::Windowed:
-    {
-      window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
-      break;
-    }
-    default:
-      CP_ABORT("Unreachable switch case: %s", ToString(mode).c_str());
+        glfwWindowHint(GLFW_DECORATED, false);
+        window = glfwCreateWindow(mode->width, mode->height, windowName.c_str(), nullptr, nullptr);
+        width = mode->width;
+        height = mode->height;
+        break;
+      }
+      case WindowMode::Windowed:
+      {
+        window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+        break;
+      }
+      default:
+        CP_ABORT("Unreachable switch case: %s", ToString(mode).c_str());
     }
 
     CP_ASSERT(window, "Failed to initialize glfw window");
@@ -116,7 +117,8 @@ namespace Copium
 
   void Window::InitializeSurface()
   {
-    CP_VK_ASSERT(glfwCreateWindowSurface(Vulkan::GetInstance(), window, nullptr, &surface), "Failed to create Vulkan surface");
+    CP_VK_ASSERT(glfwCreateWindowSurface(Vulkan::GetInstance(), window, nullptr, &surface),
+                 "Failed to create Vulkan surface");
   }
 
   void Window::FramebufferResizeCallback(GLFWwindow* glfwWindow, int width, int height)
@@ -132,7 +134,7 @@ namespace Copium
 
   void Window::KeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods)
   {
-    if (key == -1) // For some reason media keys count as keys with value -1
+    if (key == -1)  // For some reason media keys count as keys with value -1
       return;
     try
     {
@@ -148,7 +150,8 @@ namespace Copium
       }
     }
     catch (RuntimeException& exception)
-    {}
+    {
+    }
   }
 
   void Window::MouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods)
@@ -167,7 +170,8 @@ namespace Copium
       }
     }
     catch (RuntimeException& exception)
-    {}
+    {
+    }
   }
 
   void Window::MouseMoveCallback(GLFWwindow* glfwWindow, double xpos, double ypos)

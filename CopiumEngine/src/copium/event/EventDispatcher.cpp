@@ -27,15 +27,15 @@ namespace Copium
         EventResult result = eventHandler->OnEvent(*event);
         switch (result)
         {
-        case EventResult::Continue:
-          continue;
-        case EventResult::Handled:
-          return;
-        case EventResult::Focus:
-          focusedEventHandler = eventHandler;
-          return;
-        default:
-          CP_ABORT("Unreachable switch case: %s", ToString(result).c_str());
+          case EventResult::Continue:
+            continue;
+          case EventResult::Handled:
+            return;
+          case EventResult::Focus:
+            focusedEventHandler = eventHandler;
+            return;
+          default:
+            CP_ABORT("Unreachable switch case: %s", ToString(result).c_str());
         }
       }
     }

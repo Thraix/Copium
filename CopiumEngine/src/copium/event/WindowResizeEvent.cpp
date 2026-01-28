@@ -3,8 +3,11 @@
 namespace Copium
 {
   WindowResizeEvent::WindowResizeEvent(int width, int height)
-    : Event{EventType::WindowResize}, width{width}, height{height}
-  {}
+    : Event{EventType::WindowResize},
+      width{width},
+      height{height}
+  {
+  }
 
   int WindowResizeEvent::GetWidth() const
   {

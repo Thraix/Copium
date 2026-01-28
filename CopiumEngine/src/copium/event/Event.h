@@ -8,6 +8,7 @@ namespace Copium
   {
   private:
     EventType type;
+
   public:
     Event(EventType type);
 

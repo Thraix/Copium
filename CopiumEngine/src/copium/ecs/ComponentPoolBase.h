@@ -1,9 +1,9 @@
 #pragma once
 
+#include <vector>
+
 #include "copium/ecs/Config.h"
 #include "copium/ecs/EntitySet.h"
-
-#include <vector>
 
 namespace Copium
 {
@@ -11,6 +11,7 @@ namespace Copium
   {
   protected:
     EntitySet entities;
+
   public:
     virtual ~ComponentPoolBase() = default;
 

@@ -1,18 +1,19 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/buffer/IndexBuffer.h"
 #include "copium/buffer/RendererVertexBuffer.h"
 #include "copium/pipeline/Pipeline.h"
 #include "copium/util/Common.h"
 
-#include <glm/glm.hpp>
-
 namespace Copium
 {
   class LineRenderer
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(LineRenderer);
+
   public:
     LineRenderer(const AssetRef<Pipeline>& pipeline);
     ~LineRenderer();
@@ -36,6 +37,7 @@ namespace Copium
     CommandBuffer* currentCommandBuffer;
     int lineCount;
     void* mappedVertexBuffer;
+
   private:
     void InitializeIndexBuffer();
 

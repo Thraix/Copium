@@ -4,7 +4,8 @@ namespace Copium
 {
   Timer::Timer()
     : startTime{std::chrono::steady_clock::now()}
-  {}
+  {
+  }
 
   void Timer::Start()
   {

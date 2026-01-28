@@ -8,6 +8,7 @@ namespace Copium
   {
   private:
     bool focused;
+
   public:
     WindowFocusEvent(bool focused);
 

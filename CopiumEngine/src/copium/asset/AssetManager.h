@@ -1,18 +1,19 @@
 #pragma once
 
-#include "copium/asset/Asset.h"
-#include "copium/asset/AssetFile.h"
-#include "copium/util/Common.h"
-
 #include <functional>
 #include <map>
 #include <vector>
+
+#include "copium/asset/Asset.h"
+#include "copium/asset/AssetFile.h"
+#include "copium/util/Common.h"
 
 namespace Copium
 {
   class AssetManager
   {
     CP_STATIC_CLASS(AssetManager);
+
   private:
     using CreateAssetFunc = std::function<Asset&(const MetaFile& metaFile, const std::string& str)>;
     static std::map<std::string, CreateAssetFunc> assetTypes;
@@ -24,7 +25,7 @@ namespace Copium
     static AssetId assetId;
     static AssetId runtimeAssetId;
 
-    static std::vector<AssetFile> cachedAssetFiles; // TODO: Make a set?
+    static std::vector<AssetFile> cachedAssetFiles;  // TODO: Make a set?
   public:
     static void RegisterAssetDir(std::string assetDir);
     static void UnregisterAssetDir(std::string assetDir);
@@ -40,7 +41,9 @@ namespace Copium
     template <typename AssetType>
     static void RegisterAssetType(const std::string& assetType)
     {
-      CP_ASSERT(assetTypes.emplace(assetType, &AssetManager::CreateAsset<AssetType>).second, "Asset type already exists: %s", assetType.c_str());
+      CP_ASSERT(assetTypes.emplace(assetType, &AssetManager::CreateAsset<AssetType>).second,
+                "Asset type already exists: %s",
+                assetType.c_str());
       AssetFile::RegisterAssetType(assetType);
     }
 
@@ -61,7 +64,7 @@ namespace Copium
     }
 
     template <typename AssetT>
-    static AssetT& GetAsset(AssetId id) 
+    static AssetT& GetAsset(AssetId id)
     {
       Asset& asset = GetAsset(id);
       AssetT* assetT = dynamic_cast<AssetT*>(&asset);

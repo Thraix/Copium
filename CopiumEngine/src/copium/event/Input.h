@@ -1,9 +1,9 @@
 #pragma once
 
-#include "copium/util/BoundingBox.h"
-
 #include <glm/glm.hpp>
 #include <string>
+
+#include "copium/util/BoundingBox.h"
 
 namespace Copium
 {

@@ -1,10 +1,10 @@
 #include "copium/sampler/Font.h"
 
+#include <msdf-atlas-gen/msdf-atlas-gen.h>
+
 #include "copium/buffer/Buffer.h"
 #include "copium/core/Vulkan.h"
 #include "copium/sampler/Image.h"
-
-#include <msdf-atlas-gen/msdf-atlas-gen.h>
 
 namespace Copium
 {
@@ -12,7 +12,7 @@ namespace Copium
     : Sampler{SamplerCreator{metaFile.GetMetaClass("Font")}}
   {
     msdfgen::FreetypeHandle* ft = msdfgen::initializeFreetype();
-    CP_ASSERT(ft, "Failed to initialize FreeType"); // TODO: Move to Vulkan singleton class?
+    CP_ASSERT(ft, "Failed to initialize FreeType");  // TODO: Move to Vulkan singleton class?
     std::string fontPath = metaFile.GetMetaClass("Font").GetValue("filepath");
     msdfgen::FontHandle* font = msdfgen::loadFont(ft, fontPath.c_str());
     CP_ASSERT(font, "Failed to initialize font: %s", fontPath.c_str());
@@ -36,7 +36,9 @@ namespace Copium
     int width = 0, height = 0;
     packer.getDimensions(width, height);
 
-    msdf_atlas::ImmediateAtlasGenerator<float, 3, msdf_atlas::msdfGenerator, msdf_atlas::BitmapAtlasStorage<msdf_atlas::byte, 3>> generator(width, height);
+    msdf_atlas::
+      ImmediateAtlasGenerator<float, 3, msdf_atlas::msdfGenerator, msdf_atlas::BitmapAtlasStorage<msdf_atlas::byte, 3>>
+        generator(width, height);
     msdf_atlas::GeneratorAttributes attributes;
     generator.setAttributes(attributes);
     generator.setThreadCount(4);
@@ -78,11 +80,13 @@ namespace Copium
     VkImage imageCpy = image;
     VkDeviceMemory imageMemoryCpy = imageMemory;
     VkImageView imageViewCpy = imageView;
-    Vulkan::GetDevice().QueueIdleCommand([imageCpy, imageMemoryCpy, imageViewCpy]() {
-      vkDestroyImage(Vulkan::GetDevice(), imageCpy, nullptr);
-      vkFreeMemory(Vulkan::GetDevice(), imageMemoryCpy, nullptr);
-      vkDestroyImageView(Vulkan::GetDevice(), imageViewCpy, nullptr);
-    });
+    Vulkan::GetDevice().QueueIdleCommand(
+      [imageCpy, imageMemoryCpy, imageViewCpy]()
+      {
+        vkDestroyImage(Vulkan::GetDevice(), imageCpy, nullptr);
+        vkFreeMemory(Vulkan::GetDevice(), imageMemoryCpy, nullptr);
+        vkDestroyImageView(Vulkan::GetDevice(), imageViewCpy, nullptr);
+      });
   }
 
   VkDescriptorImageInfo Font::GetDescriptorImageInfo(int index) const
@@ -117,7 +121,7 @@ namespace Copium
     glm::vec2 offset{0.0f};
     for (auto c : str)
     {
-      if(c == ' ')
+      if (c == ' ')
       {
         const Glyph& glyph = GetGlyph(c);
         offset.x += glyph.advance;
@@ -153,15 +157,27 @@ namespace Copium
   void Font::InitializeTextureImageFromData(const uint8_t* rgbaData, int width, int height)
   {
     VkDeviceSize bufferSize = width * height * 4;
-    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};
+    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                         bufferSize,
+                         1};
     void* data = stagingBuffer.Map();
     memcpy(data, rgbaData, bufferSize);
     stagingBuffer.Unmap();
 
-    Image::InitializeImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &image, &imageMemory);
-    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    Image::InitializeImage(width,
+                           height,
+                           VK_FORMAT_R8G8B8A8_UNORM,
+                           VK_IMAGE_TILING_OPTIMAL,
+                           VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                           VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                           &image,
+                           &imageMemory);
+    Image::TransitionImageLayout(
+      image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     Image::CopyBufferToImage(stagingBuffer, image, width, height);
-    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    Image::TransitionImageLayout(
+      image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     imageView = Image::InitializeImageView(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
   }
 }

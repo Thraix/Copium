@@ -7,6 +7,7 @@ namespace Copium
   class Instance final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Instance);
+
   private:
     VkInstance instance;
     std::unique_ptr<DebugMessenger> debugMessenger;

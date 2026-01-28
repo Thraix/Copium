@@ -6,7 +6,8 @@ namespace Copium
 {
   ECSManager::ECSManager()
     : systemPool{std::make_unique<SystemPool>(this)}
-  {}
+  {
+  }
 
   ECSManager::~ECSManager()
   {

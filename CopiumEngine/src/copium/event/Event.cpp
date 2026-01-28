@@ -5,7 +5,8 @@ namespace Copium
 
   Event::Event(EventType type)
     : type{type}
-  {}
+  {
+  }
 
   EventType Event::GetType() const
   {

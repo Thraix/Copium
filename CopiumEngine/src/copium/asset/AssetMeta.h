@@ -1,9 +1,10 @@
 #pragma once
 
-#include "copium/util/Uuid.h"
-
 #include <stdint.h>
+
 #include <string>
+
+#include "copium/util/Uuid.h"
 
 namespace Copium
 {

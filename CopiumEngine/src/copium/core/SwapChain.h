@@ -1,12 +1,13 @@
 #pragma once
 
+#include <GLFW/glfw3.h>
+#include <vulkan/vulkan.h>
+
+#include <vector>
+
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/sampler/DepthAttachment.h"
 #include "copium/util/Common.h"
-
-#include <GLFW/glfw3.h>
-#include <vector>
-#include <vulkan/vulkan.h>
 
 namespace Copium
 {
@@ -23,8 +24,10 @@ namespace Copium
   class SwapChain final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(SwapChain);
+
   public:
     static const int MAX_FRAMES_IN_FLIGHT;
+
   private:
     VkSwapchainKHR handle;
     VkRenderPass renderPass;

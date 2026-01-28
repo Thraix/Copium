@@ -4,13 +4,14 @@
 
 namespace Copium
 {
-	class RuntimeException
-	{
+  class RuntimeException
+  {
   private:
     std::string errorMessage;
-	public:
+
+  public:
     RuntimeException(const std::string& str);
 
     const std::string& GetErrorMessage() const;
-	};
+  };
 }

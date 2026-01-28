@@ -1,9 +1,9 @@
 #pragma once
 
-#include "copium/pipeline/ShaderBinding.h"
-
 #include <set>
 #include <string>
+
+#include "copium/pipeline/ShaderBinding.h"
 
 namespace Copium
 {
@@ -11,6 +11,7 @@ namespace Copium
   {
   public:
     std::set<ShaderBinding> bindings;
+
   public:
     ShaderReflector(const std::string& vertexGlslFile, const std::string& fragmentGlslFile);
 

@@ -1,16 +1,15 @@
 #pragma once
 
+#include <functional>
+#include <map>
+#include <typeindex>
+#include <unordered_set>
 
 #include "copium/ecs/ComponentPool.h"
 #include "copium/ecs/Config.h"
 #include "copium/ecs/Signal.h"
 #include "copium/ecs/SystemPool.h"
 #include "copium/util/Common.h"
-
-#include <functional>
-#include <map>
-#include <typeindex>
-#include <unordered_set>
 
 namespace Copium
 {
@@ -22,6 +21,7 @@ namespace Copium
 
     std::unique_ptr<SystemPool> systemPool;
     int currentEntityId = 1;
+
   public:
     ECSManager();
     ~ECSManager();
@@ -85,7 +85,10 @@ namespace Copium
 
       if (pool)
       {
-        CP_ASSERT(!HasComponent<Component>(entity), "Component already exists in entity (entity=%u, Component=%s)", entity, typeid(Component).name());
+        CP_ASSERT(!HasComponent<Component>(entity),
+                  "Component already exists in entity (entity=%u, Component=%s)",
+                  entity,
+                  typeid(Component).name());
         return pool->Emplace(entity, component);
       }
       else
@@ -100,7 +103,10 @@ namespace Copium
     void RemoveComponent(EntityId entity)
     {
       auto pool = GetComponentPoolAssure<Component>();
-      CP_ASSERT(pool->Erase(entity), "Entity did not contain component (entity=%u, Component=%s)", entity, typeid(Component).name());
+      CP_ASSERT(pool->Erase(entity),
+                "Entity did not contain component (entity=%u, Component=%s)",
+                entity,
+                typeid(Component).name());
     }
 
     template <typename... Components>
@@ -114,7 +120,8 @@ namespace Copium
     {
       auto pool = GetComponentPoolAssure<Component>();
       Component* component = pool->FindComponent(entity);
-      CP_ASSERT(component, "Entity did not contain component (entity=%u, Component=%s)", entity, typeid(Component).name());
+      CP_ASSERT(
+        component, "Entity did not contain component (entity=%u, Component=%s)", entity, typeid(Component).name());
       return *component;
     }
 
@@ -212,7 +219,8 @@ namespace Copium
     template <typename Component, typename... Components>
     EntityId Find()
     {
-      return Find<Component, Components...>([] (EntityId, const Component& component, const Components&... components) { return true; });
+      return Find<Component, Components...>([](EntityId, const Component& component, const Components&... components)
+                                            { return true; });
     }
 
     template <typename T>
@@ -233,7 +241,9 @@ namespace Copium
     ComponentPool<Component>* GetComponentPoolAssure()
     {
       auto it = componentPool.find(GetComponentId<Component>());
-      CP_ASSERT(it != componentPool.end(), "Component has not been added to an entity (Component=%s)", typeid(Component).name());
+      CP_ASSERT(it != componentPool.end(),
+                "Component has not been added to an entity (Component=%s)",
+                typeid(Component).name());
       return static_cast<ComponentPool<Component>*>(it->second);
     }
   };

@@ -1,9 +1,10 @@
 #include "copium/util/FileSystem.h"
 
-#include <filesystem>
-#include <fstream>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#include <filesystem>
+#include <fstream>
 
 namespace Copium
 {

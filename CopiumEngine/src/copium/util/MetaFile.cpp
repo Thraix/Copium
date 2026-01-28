@@ -1,16 +1,16 @@
 #include "copium/util/MetaFile.h"
 
+#include <fstream>
+
 #include "copium/util/Common.h"
 #include "copium/util/StringUtil.h"
-
-#include <fstream>
 
 namespace Copium
 {
   std::string MetaFileClass::GetValue(const std::string& key, const std::string& val) const
   {
     auto it = values.find(key);
-    if(it != values.end())
+    if (it != values.end())
       return it->second;
     return val;
   }
@@ -39,14 +39,17 @@ namespace Copium
 
   std::ostream& operator<<(std::ostream& stream, const MetaFileClass& file)
   {
-    for(auto value : file.GetValues())
+    for (auto value : file.GetValues())
     {
       stream << value.first << "=" << value.second << std::endl;
     }
     return stream;
   }
 
-  MetaFile::MetaFile() {}
+  MetaFile::MetaFile()
+  {
+  }
+
   MetaFile::MetaFile(const std::string& filepath)
     : filepath{filepath}
   {
@@ -85,7 +88,7 @@ namespace Copium
     return it->second;
   }
 
-  const std::string& MetaFile::GetFilePath()  const
+  const std::string& MetaFile::GetFilePath() const
   {
     return filepath;
   }
@@ -97,7 +100,7 @@ namespace Copium
 
   std::ostream& operator<<(std::ostream& stream, const MetaFile& file)
   {
-    for(auto metaClass : file.classes)
+    for (auto metaClass : file.classes)
     {
       stream << "[" << metaClass.first << "]" << std::endl;
       stream << metaClass.second;
@@ -117,21 +120,21 @@ namespace Copium
     std::string currentClass = "";
     auto metaClassIt = classes.end();
     std::string line;
-    while(std::getline(stream, line))
+    while (std::getline(stream, line))
     {
       std::string_view trimmedLine = StringUtil::Trim(line);
-      if(trimmedLine.empty())
+      if (trimmedLine.empty())
         continue;
 
       if (trimmedLine[0] == '/' && trimmedLine[1] == '/')
         continue;
 
-      if(trimmedLine == "---")
+      if (trimmedLine == "---")
       {
         return;
       }
 
-      if(trimmedLine.front() == '[' && trimmedLine.back() == ']' )
+      if (trimmedLine.front() == '[' && trimmedLine.back() == ']')
       {
         currentClass = StringUtil::Trim(line);
         currentClass = currentClass.substr(1, currentClass.size() - 2);
@@ -142,7 +145,7 @@ namespace Copium
       }
 
       size_t pos = line.find("=");
-      if(pos == std::string::npos)
+      if (pos == std::string::npos)
       {
         CP_WARN("Meta file line does not contain \'=\'");
         continue;
@@ -150,7 +153,7 @@ namespace Copium
 
       std::string_view key = StringUtil::Trim(std::string_view(line.c_str(), pos));
       std::string_view value = StringUtil::Trim(std::string_view(line.c_str() + pos + 1));
-      if(key.length() == 0)
+      if (key.length() == 0)
       {
         CP_WARN("MetaFile key is empty");
         continue;
@@ -158,7 +161,7 @@ namespace Copium
 
       CP_ASSERT(metaClassIt != classes.end(), "No meta file header specified: ", filepath.c_str());
       auto res = metaClassIt->second.values.emplace(key, value);
-      if(!res.second)
+      if (!res.second)
       {
         CP_WARN("Meta file key is defined twice: %s", std::string(key).c_str());
       }
@@ -173,11 +176,11 @@ namespace Copium
     CP_ASSERT(stream, "Failed to read file: %s", file.c_str());
 
     MetaFile meta;
-    while(!stream.eof())
+    while (!stream.eof())
     {
       MetaFile meta{};
       stream >> meta;
-      if(meta.classes.empty())
+      if (meta.classes.empty())
         continue;
       metaFiles.emplace_back(meta);
     }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "copium/asset/AssetMeta.h"
 #include "copium/asset/AssetManager.h"
+#include "copium/asset/AssetMeta.h"
 
 namespace Copium
 {
@@ -11,27 +11,33 @@ namespace Copium
   public:
     AssetHandle()
       : id{NULL_ASSET_ID}
-    {}
+    {
+    }
 
     AssetHandle(const std::string& assetName)
       : id{AssetManager::LoadAsset(assetName).GetId()}
-    {}
+    {
+    }
 
     AssetHandle(const Uuid& uuid)
       : id{AssetManager::LoadAsset(uuid).GetId()}
-    {}
+    {
+    }
 
     AssetHandle(AssetType& asset)
       : id{AssetManager::DuplicateAsset(asset.GetId())}
-    {}
+    {
+    }
 
     AssetHandle(const std::string& name, std::unique_ptr<AssetType>&& runtimeAsset)
       : id{AssetManager::RegisterRuntimeAsset(name, std::move(runtimeAsset)).GetId()}
-    {}
+    {
+    }
 
     AssetHandle(AssetId id)
       : id{AssetManager::DuplicateAsset(id)}
-    {}
+    {
+    }
 
     AssetId GetId() const
     {
@@ -53,6 +59,7 @@ namespace Copium
     {
       return id != NULL_ASSET_ID;
     }
+
   private:
     AssetId id;
   };

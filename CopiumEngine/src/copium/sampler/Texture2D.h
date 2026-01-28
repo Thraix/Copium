@@ -8,6 +8,7 @@ namespace Copium
   class Texture2D final : public Sampler
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Texture2D);
+
   private:
     VkImage image;
     VkDeviceMemory imageMemory;
@@ -15,6 +16,7 @@ namespace Copium
 
     int width;
     int height;
+
   public:
     Texture2D(const MetaFile& metaFile);
     Texture2D(const std::vector<uint8_t>& rgbaData, int width, int height, const SamplerCreator& samplerCreator);

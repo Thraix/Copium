@@ -1,8 +1,8 @@
 #pragma once
 
-#include "copium/pipeline/VertexDescriptor.h"
-
 #include <glm/glm.hpp>
+
+#include "copium/pipeline/VertexDescriptor.h"
 
 namespace Copium
 {

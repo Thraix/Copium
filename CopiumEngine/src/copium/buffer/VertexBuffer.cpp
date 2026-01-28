@@ -3,7 +3,10 @@
 namespace Copium
 {
   VertexBuffer::VertexBuffer(const VertexDescriptor& descriptor, int vertexCount)
-    : Buffer{VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, descriptor.GetVertexSize() * vertexCount, 1}
+    : Buffer{VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+             descriptor.GetVertexSize() * vertexCount,
+             1}
   {
     VkDeviceSize offset = 0;
     for (auto&& binding : descriptor.GetBindings())

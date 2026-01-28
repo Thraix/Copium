@@ -1,14 +1,15 @@
 #pragma once
 
-#include "copium/util/MetaFile.h"
-
 #include <vulkan/vulkan.hpp>
+
+#include "copium/util/MetaFile.h"
 
 namespace Copium
 {
   class SamplerCreator
   {
     friend class Sampler;
+
   private:
     VkFilter minFilter{VK_FILTER_LINEAR};
     VkFilter magFilter{VK_FILTER_LINEAR};

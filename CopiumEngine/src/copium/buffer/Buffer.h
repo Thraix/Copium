@@ -1,14 +1,15 @@
 #pragma once
 
-#include "copium/util/Common.h"
-
 #include <vulkan/vulkan.hpp>
+
+#include "copium/util/Common.h"
 
 namespace Copium
 {
   class Buffer
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Buffer);
+
   protected:
     VkDeviceMemory memory;
     VkBuffer handle;

@@ -1,21 +1,22 @@
 #pragma once
 
+#include <memory>
+
 #include "copium/asset/AssetHandle.h"
 #include "copium/core/Device.h"
+#include "copium/core/ImGuiInstance.h"
 #include "copium/core/Instance.h"
 #include "copium/core/SwapChain.h"
 #include "copium/core/Window.h"
-#include "copium/core/ImGuiInstance.h"
-#include "copium/util/Common.h"
 #include "copium/sampler/Texture2D.h"
-
-#include <memory>
+#include "copium/util/Common.h"
 
 namespace Copium
 {
   class Vulkan
   {
     CP_STATIC_CLASS(Vulkan);
+
   private:
     static std::unique_ptr<Instance> instance;
     static std::unique_ptr<Window> window;
@@ -25,6 +26,7 @@ namespace Copium
 
     static AssetHandle<Texture2D> emptyTexture2D;
     static AssetHandle<Texture2D> whiteTexture2D;
+
   public:
     static void Initialize();
     static void Destroy();

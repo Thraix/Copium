@@ -1,7 +1,7 @@
 #include "Shader.h"
 
-#include "copium/util/FileSystem.h"
 #include "copium/core/Vulkan.h"
+#include "copium/util/FileSystem.h"
 #include "copium/util/RuntimeException.h"
 
 namespace Copium
@@ -10,24 +10,24 @@ namespace Copium
   {
     switch (type)
     {
-    case ShaderReadType::GlslCode:
-      vertShaderModule = InitializeShaderModuleFromGlslCode(vertexInput, shaderc_vertex_shader);
-      fragShaderModule = InitializeShaderModuleFromGlslCode(fragmentInput, shaderc_fragment_shader);
-      break;
-    case ShaderReadType::GlslFile:
-      vertShaderModule = InitializeShaderModuleFromGlslFile(vertexInput, shaderc_vertex_shader);
-      fragShaderModule = InitializeShaderModuleFromGlslFile(fragmentInput, shaderc_fragment_shader);
-      break;
-    case ShaderReadType::SpvCode:
-      vertShaderModule = InitializeShaderModule(vertexInput);
-      fragShaderModule = InitializeShaderModule(fragmentInput);
-      break;
-    case ShaderReadType::SpvFile:
-      vertShaderModule = InitializeShaderModule(FileSystem::ReadFile(vertexInput));
-      fragShaderModule = InitializeShaderModule(FileSystem::ReadFile(fragmentInput));
-      break;
-    default:
-      CP_ASSERT(false, "Unreachable switch case: %s", ToString(type).c_str());
+      case ShaderReadType::GlslCode:
+        vertShaderModule = InitializeShaderModuleFromGlslCode(vertexInput, shaderc_vertex_shader);
+        fragShaderModule = InitializeShaderModuleFromGlslCode(fragmentInput, shaderc_fragment_shader);
+        break;
+      case ShaderReadType::GlslFile:
+        vertShaderModule = InitializeShaderModuleFromGlslFile(vertexInput, shaderc_vertex_shader);
+        fragShaderModule = InitializeShaderModuleFromGlslFile(fragmentInput, shaderc_fragment_shader);
+        break;
+      case ShaderReadType::SpvCode:
+        vertShaderModule = InitializeShaderModule(vertexInput);
+        fragShaderModule = InitializeShaderModule(fragmentInput);
+        break;
+      case ShaderReadType::SpvFile:
+        vertShaderModule = InitializeShaderModule(FileSystem::ReadFile(vertexInput));
+        fragShaderModule = InitializeShaderModule(FileSystem::ReadFile(fragmentInput));
+        break;
+      default:
+        CP_ASSERT(false, "Unreachable switch case: %s", ToString(type).c_str());
     }
 
     shaderStages.resize(2);
@@ -48,10 +48,12 @@ namespace Copium
   {
     VkShaderModule vertShaderModuleCpy = vertShaderModule;
     VkShaderModule fragShaderModuleCpy = fragShaderModule;
-    Vulkan::GetDevice().QueueIdleCommand([vertShaderModuleCpy, fragShaderModuleCpy]() {
-      vkDestroyShaderModule(Vulkan::GetDevice(), vertShaderModuleCpy, nullptr);
-      vkDestroyShaderModule(Vulkan::GetDevice(), fragShaderModuleCpy, nullptr);
-    });
+    Vulkan::GetDevice().QueueIdleCommand(
+      [vertShaderModuleCpy, fragShaderModuleCpy]()
+      {
+        vkDestroyShaderModule(Vulkan::GetDevice(), vertShaderModuleCpy, nullptr);
+        vkDestroyShaderModule(Vulkan::GetDevice(), fragShaderModuleCpy, nullptr);
+      });
   }
 
   const std::vector<VkPipelineShaderStageCreateInfo> Shader::GetShaderStages() const
@@ -100,8 +102,12 @@ namespace Copium
     options.SetOptimizationLevel(shaderc_optimization_level_size);
 
     std::vector<char> glslCode = FileSystem::ReadFile(filename);
-    shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(glslCode.data(), glslCode.size(), type, filename.c_str(), options);
-    CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success, "Failed to compile shader: %s\n%s", filename.c_str(), result.GetErrorMessage().c_str());
+    shaderc::SpvCompilationResult result =
+      compiler.CompileGlslToSpv(glslCode.data(), glslCode.size(), type, filename.c_str(), options);
+    CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success,
+              "Failed to compile shader: %s\n%s",
+              filename.c_str(),
+              result.GetErrorMessage().c_str());
 
     std::vector<uint32_t> data{result.cbegin(), result.cend()};
     FileSystem::WriteFile(spvFilename, (const char*)data.data(), data.size() * sizeof(uint32_t));
@@ -116,7 +122,9 @@ namespace Copium
     options.SetOptimizationLevel(shaderc_optimization_level_size);
 
     shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(code.data(), type, "inline_shader_code", options);
-    CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success, "Failed to compile inline shader code: %s", result.GetErrorMessage());
+    CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success,
+              "Failed to compile inline shader code: %s",
+              result.GetErrorMessage());
 
     std::vector<uint32_t> data{result.cbegin(), result.cend()};
     return InitializeShaderModule(data.data(), data.size() * sizeof(uint32_t));
@@ -130,7 +138,8 @@ namespace Copium
     createInfo.pCode = data;
 
     VkShaderModule shaderModule;
-    CP_VK_ASSERT(vkCreateShaderModule(Vulkan::GetDevice(), &createInfo, nullptr, &shaderModule), "Failed to initialize shader module");
+    CP_VK_ASSERT(vkCreateShaderModule(Vulkan::GetDevice(), &createInfo, nullptr, &shaderModule),
+                 "Failed to initialize shader module");
 
     return shaderModule;
   }

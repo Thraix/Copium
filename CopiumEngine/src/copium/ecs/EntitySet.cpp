@@ -55,9 +55,23 @@ namespace Copium
     return entitiesList.size();
   }
 
-  std::vector<EntityId>& EntitySet::GetList() { return entitiesList; }
-  const std::vector<EntityId>& EntitySet::GetList() const { return entitiesList; }
+  std::vector<EntityId>& EntitySet::GetList()
+  {
+    return entitiesList;
+  }
 
-  std::vector<EntityId>::iterator EntitySet::begin() { return entitiesList.begin(); }
-  std::vector<EntityId>::iterator EntitySet::end() { return entitiesList.end(); }
+  const std::vector<EntityId>& EntitySet::GetList() const
+  {
+    return entitiesList;
+  }
+
+  std::vector<EntityId>::iterator EntitySet::begin()
+  {
+    return entitiesList.begin();
+  }
+
+  std::vector<EntityId>::iterator EntitySet::end()
+  {
+    return entitiesList.end();
+  }
 }

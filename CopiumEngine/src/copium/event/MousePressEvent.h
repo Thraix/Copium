@@ -1,8 +1,8 @@
 #pragma once
 
-#include "copium/event/Event.h"
-
 #include <glm/glm.hpp>
+
+#include "copium/event/Event.h"
 
 namespace Copium
 {
@@ -10,6 +10,7 @@ namespace Copium
   {
   private:
     int button;
+
   public:
     MousePressEvent(int button);
 

@@ -16,10 +16,18 @@ namespace Copium
     InitializeTextureImageFromFile(filepath);
   }
 
-  Texture2D::Texture2D(const std::vector<uint8_t>& rgbaData, int width, int height, const SamplerCreator& samplerCreator)
-    : Sampler{samplerCreator}, width{width}, height{height}
+  Texture2D::Texture2D(const std::vector<uint8_t>& rgbaData,
+                       int width,
+                       int height,
+                       const SamplerCreator& samplerCreator)
+    : Sampler{samplerCreator},
+      width{width},
+      height{height}
   {
-    CP_ASSERT(rgbaData.size() == width * height * 4, "rgbaData has invalid size, should be equal to width * height * 4 (%d) actually is %d", width * height * 4, rgbaData.size());
+    CP_ASSERT(rgbaData.size() == width * height * 4,
+              "rgbaData has invalid size, should be equal to width * height * 4 (%d) actually is %d",
+              width * height * 4,
+              rgbaData.size());
     InitializeTextureImageFromData(rgbaData.data(), width, height);
   }
 
@@ -28,11 +36,13 @@ namespace Copium
     VkImage imageCpy = image;
     VkDeviceMemory imageMemoryCpy = imageMemory;
     VkImageView imageViewCpy = imageView;
-    Vulkan::GetDevice().QueueIdleCommand([imageCpy, imageMemoryCpy, imageViewCpy]() {
-      vkDestroyImage(Vulkan::GetDevice(), imageCpy, nullptr);
-      vkFreeMemory(Vulkan::GetDevice(), imageMemoryCpy, nullptr);
-      vkDestroyImageView(Vulkan::GetDevice(), imageViewCpy, nullptr);
-    });
+    Vulkan::GetDevice().QueueIdleCommand(
+      [imageCpy, imageMemoryCpy, imageViewCpy]()
+      {
+        vkDestroyImage(Vulkan::GetDevice(), imageCpy, nullptr);
+        vkFreeMemory(Vulkan::GetDevice(), imageMemoryCpy, nullptr);
+        vkDestroyImageView(Vulkan::GetDevice(), imageViewCpy, nullptr);
+      });
   }
 
   VkDescriptorImageInfo Texture2D::GetDescriptorImageInfo(int index) const
@@ -45,15 +55,15 @@ namespace Copium
     return imageInfo;
   }
 
-    int Texture2D::GetWidth() const
-    {
-      return width;
-    }
+  int Texture2D::GetWidth() const
+  {
+    return width;
+  }
 
-    int Texture2D::GetHeight() const
-    {
-      return height;
-    }
+  int Texture2D::GetHeight() const
+  {
+    return height;
+  }
 
   void Texture2D::InitializeTextureImageFromFile(const std::string& filename)
   {
@@ -75,15 +85,27 @@ namespace Copium
   void Texture2D::InitializeTextureImageFromData(const uint8_t* rgbaData, int width, int height)
   {
     VkDeviceSize bufferSize = width * height * 4;
-    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};
+    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                         bufferSize,
+                         1};
     void* data = stagingBuffer.Map();
     memcpy(data, rgbaData, bufferSize);
     stagingBuffer.Unmap();
 
-    Image::InitializeImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &image, &imageMemory);
-    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    Image::InitializeImage(width,
+                           height,
+                           VK_FORMAT_R8G8B8A8_UNORM,
+                           VK_IMAGE_TILING_OPTIMAL,
+                           VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                           VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                           &image,
+                           &imageMemory);
+    Image::TransitionImageLayout(
+      image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     Image::CopyBufferToImage(stagingBuffer, image, width, height);
-    Image::TransitionImageLayout(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    Image::TransitionImageLayout(
+      image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     imageView = Image::InitializeImageView(image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
   }
 }

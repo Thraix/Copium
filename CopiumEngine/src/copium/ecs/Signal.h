@@ -1,31 +1,31 @@
 #pragma once
 
 #define CP_SIGNAL_DECLERATION_DEFINITION() \
-  static int GetIdStatic() \
-  { \
-      static int id = GetAllocatedId(); \
-      return id; \
-  } \
- \
-  int GetId() const \
-  { \
-    return GetIdStatic(); \
+  static int GetIdStatic()                 \
+  {                                        \
+    static int id = GetAllocatedId();      \
+    return id;                             \
+  }                                        \
+                                           \
+  int GetId() const                        \
+  {                                        \
+    return GetIdStatic();                  \
   }
 
 #define CP_SIGNAL_DECLERATION(SignalClass) \
-  static int GetIdStatic(); \
+  static int GetIdStatic();                \
   int GetId() const override
 
 #define CP_SIGNAL_DEFINITION(SignalClass) \
-  int SignalClass::GetIdStatic() \
-  { \
-    static int id = GetAllocatedId(); \
-    return id; \
-  } \
- \
-  int SignalClass::GetId() const \
-  { \
-    return GetIdStatic(); \
+  int SignalClass::GetIdStatic()          \
+  {                                       \
+    static int id = GetAllocatedId();     \
+    return id;                            \
+  }                                       \
+                                          \
+  int SignalClass::GetId() const          \
+  {                                       \
+    return GetIdStatic();                 \
   }
 
 namespace Copium

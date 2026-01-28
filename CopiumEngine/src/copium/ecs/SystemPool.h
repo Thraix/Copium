@@ -1,13 +1,13 @@
 #pragma once
 
-#include "copium/ecs/SystemBase.h"
-#include "copium/ecs/SystemOrderer.h"
-#include "copium/ecs/Signal.h"
-#include "copium/util/Common.h"
-
-#include <vector>
 #include <map>
 #include <typeindex>
+#include <vector>
+
+#include "copium/ecs/Signal.h"
+#include "copium/ecs/SystemBase.h"
+#include "copium/ecs/SystemOrderer.h"
+#include "copium/util/Common.h"
 
 namespace Copium
 {
@@ -16,6 +16,7 @@ namespace Copium
   class SystemPool final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(SystemPool);
+
   private:
     ECSManager* manager;
     std::map<std::type_index, SystemBase*> systems;

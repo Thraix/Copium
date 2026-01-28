@@ -1,17 +1,18 @@
 #pragma once
 
+#include <glm/glm.hpp>
+#include <vulkan/vulkan.hpp>
+
 #include "copium/buffer/Buffer.h"
 #include "copium/pipeline/ShaderBinding.h"
 #include "copium/util/Common.h"
-
-#include <glm/glm.hpp>
-#include <vulkan/vulkan.hpp>
 
 namespace Copium
 {
   class UniformBuffer final : public Buffer
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(UniformBuffer);
+
   private:
     ShaderBinding binding;
     std::vector<uint8_t> buffer;

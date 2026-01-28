@@ -1,14 +1,11 @@
 #pragma once
 
+#include <vulkan/vulkan.hpp>
+
 #include "copium/util/Common.h"
 #include "copium/util/Enum.h"
 
-#include <vulkan/vulkan.hpp>
-
-#define CP_WINDOW_MODE_ENUMS \
-        Fullscreen, \
-        BorderlessWindowed, \
-        Windowed
+#define CP_WINDOW_MODE_ENUMS Fullscreen, BorderlessWindowed, Windowed
 
 CP_ENUM_CREATOR(Copium, WindowMode, CP_WINDOW_MODE_ENUMS);
 
@@ -19,6 +16,7 @@ namespace Copium
   class Window final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Window);
+
   private:
     GLFWwindow* window;
     VkSurfaceKHR surface;

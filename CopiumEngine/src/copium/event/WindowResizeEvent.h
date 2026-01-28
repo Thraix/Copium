@@ -9,6 +9,7 @@ namespace Copium
   private:
     int width;
     int height;
+
   public:
     WindowResizeEvent(int width, int height);
 

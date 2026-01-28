@@ -5,7 +5,8 @@
 namespace Copium
 {
   Buffer::Buffer(VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkDeviceSize size, int count)
-    : size{size}, count{count}
+    : size{size},
+      count{count}
   {
     VkBufferCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -23,7 +24,8 @@ namespace Copium
     allocateInfo.allocationSize = memoryRequirements.size;
     allocateInfo.memoryTypeIndex = Vulkan::GetDevice().FindMemoryType(memoryRequirements.memoryTypeBits, properties);
 
-    CP_VK_ASSERT(vkAllocateMemory(Vulkan::GetDevice(), &allocateInfo, nullptr, &memory), "Failed to allocate buffer memory");
+    CP_VK_ASSERT(vkAllocateMemory(Vulkan::GetDevice(), &allocateInfo, nullptr, &memory),
+                 "Failed to allocate buffer memory");
 
     vkBindBufferMemory(Vulkan::GetDevice(), handle, memory, 0);
   }
@@ -32,10 +34,12 @@ namespace Copium
   {
     VkDeviceMemory memoryCpy = memory;
     VkBuffer handleCpy = handle;
-    Vulkan::GetDevice().QueueIdleCommand([memoryCpy, handleCpy]() {
-      vkFreeMemory(Vulkan::GetDevice(), memoryCpy, nullptr);
-      vkDestroyBuffer(Vulkan::GetDevice(), handleCpy, nullptr);
-    });
+    Vulkan::GetDevice().QueueIdleCommand(
+      [memoryCpy, handleCpy]()
+      {
+        vkFreeMemory(Vulkan::GetDevice(), memoryCpy, nullptr);
+        vkDestroyBuffer(Vulkan::GetDevice(), handleCpy, nullptr);
+      });
   }
 
   void Buffer::Update(void* indexData, int index)
@@ -58,7 +62,10 @@ namespace Copium
   void Buffer::UpdateStaging(void* data)
   {
     VkDeviceSize bufferSize = size * count;
-    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, 1};
+    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                         bufferSize,
+                         1};
 
     stagingBuffer.Update(data, 0);
 
@@ -67,7 +74,10 @@ namespace Copium
 
   void Buffer::UpdateStaging(void* data, VkDeviceSize offset, VkDeviceSize size)
   {
-    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, size, 1};
+    Buffer stagingBuffer{VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                         size,
+                         1};
 
     stagingBuffer.Update(data, 0);
 
@@ -89,7 +99,7 @@ namespace Copium
     mappedData = nullptr;
   }
 
-  Buffer::operator VkBuffer() const 
+  Buffer::operator VkBuffer() const
   {
     return handle;
   }
@@ -115,7 +125,8 @@ namespace Copium
     allocateInfo.commandBufferCount = 1;
 
     VkCommandBuffer commandBuffer;
-    CP_VK_ASSERT(vkAllocateCommandBuffers(Vulkan::GetDevice(), &allocateInfo, &commandBuffer), "Failed to initialize command buffer");
+    CP_VK_ASSERT(vkAllocateCommandBuffers(Vulkan::GetDevice(), &allocateInfo, &commandBuffer),
+                 "Failed to initialize command buffer");
 
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;

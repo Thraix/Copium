@@ -4,9 +4,11 @@
 
 namespace Copium
 {
-  void VertexDescriptor::AddAttribute(uint32_t binding, uint32_t location, VkFormat format, uint32_t offset, uint32_t size)
+  void VertexDescriptor::AddAttribute(
+    uint32_t binding, uint32_t location, VkFormat format, uint32_t offset, uint32_t size)
   {
-    CP_ASSERT(binding <= bindings.size(), "Attribute binding must less than or be equal to the amount of current bindings");
+    CP_ASSERT(binding <= bindings.size(),
+              "Attribute binding must less than or be equal to the amount of current bindings");
 
     if (binding == bindings.size())
       AddLayout(binding, size);

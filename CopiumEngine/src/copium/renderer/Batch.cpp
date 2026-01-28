@@ -7,9 +7,11 @@ namespace Copium
 {
   Batch::Batch(AssetRef<Pipeline>& pipeline, int vertexCount, const std::vector<const Sampler*> samplers)
     : vertexBuffer{RendererVertex::GetDescriptor(), vertexCount},
-      descriptorPool{pipeline.GetAsset().GetDescriptorSetCount() * SwapChain::MAX_FRAMES_IN_FLIGHT, 32 * SwapChain::MAX_FRAMES_IN_FLIGHT},
+      descriptorPool{pipeline.GetAsset().GetDescriptorSetCount() * SwapChain::MAX_FRAMES_IN_FLIGHT,
+                     32 * SwapChain::MAX_FRAMES_IN_FLIGHT},
       descriptorSet{pipeline.GetAsset().CreateDescriptorSet(descriptorPool, 0)}
-  {}
+  {
+  }
 
   RendererVertexBuffer& Batch::GetVertexBuffer()
   {

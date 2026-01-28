@@ -1,8 +1,8 @@
 #include "copium/pipeline/ShaderReflector.h"
 
-#include "copium/util/FileSystem.h"
-
 #include <string_view>
+
+#include "copium/util/FileSystem.h"
 
 namespace Copium
 {
@@ -36,12 +36,14 @@ namespace Copium
 
   void ShaderReflector::ParseLine(const std::string& str, int& index)
   {
-    while(str[index] != '\n' && index < str.size()) index++;
+    while (str[index] != '\n' && index < str.size())
+      index++;
   }
 
   void ShaderReflector::ParseWhitespace(const std::string& str, int& index)
   {
-    while ((str[index] == '\n' || str[index] == ' ' || str[index] == '\t' || str[index] == '\r') && index < str.size()) index++;
+    while ((str[index] == '\n' || str[index] == ' ' || str[index] == '\t' || str[index] == '\r') && index < str.size())
+      index++;
   }
 
   void ShaderReflector::ParseLayout(const std::string& str, int& index, ShaderType shaderType)
@@ -49,7 +51,7 @@ namespace Copium
     // TODO: Make more robust, currently we might get a crash on the string if the glsl file is invalid
     index += sizeof("layout") - 1;
     ParseWhitespace(str, index);
-    index++; // "("
+    index++;  // "("
     ParseWhitespace(str, index);
     if (std::string_view(&str[index], sizeof("set") - 1) != "set")
     {
@@ -60,29 +62,30 @@ namespace Copium
     shaderBinding.shaderType = shaderType;
     index += sizeof("set") - 1;
     ParseWhitespace(str, index);
-    index++; // "="
+    index++;  // "="
     ParseWhitespace(str, index);
     char* end;
     shaderBinding.set = std::strtol(&str[index], &end, 10);
     index = end - str.c_str();
     ParseWhitespace(str, index);
-    index++; // ","
+    index++;  // ","
     ParseWhitespace(str, index);
     index += sizeof("binding") - 1;
     ParseWhitespace(str, index);
-    index++; // "="
+    index++;  // "="
     ParseWhitespace(str, index);
     shaderBinding.binding = std::strtol(&str[index], &end, 10);
     index = end - str.c_str();
     ParseWhitespace(str, index);
-    index++; // ")
+    index++;  // ")
     ParseWhitespace(str, index);
     index += sizeof("uniform") - 1;
     ParseWhitespace(str, index);
 
     std::string_view type = ParseWord(str, index);
     ParseWhitespace(str, index);
-    if (str[index] == '{') ParseUniformBuffer(str, index, shaderBinding);
+    if (str[index] == '{')
+      ParseUniformBuffer(str, index, shaderBinding);
     ParseWhitespace(str, index);
     std::string_view name = ParseWord(str, index);
     shaderBinding.name = name;
@@ -109,11 +112,10 @@ namespace Copium
   std::string_view ShaderReflector::ParseWord(const std::string& str, int& index)
   {
     int start = index;
-    while (((str[index] >= 'a' && str[index] < 'z') || 
-            (str[index] >= 'A' && str[index] < 'Z') || 
+    while (((str[index] >= 'a' && str[index] < 'z') || (str[index] >= 'A' && str[index] < 'Z') ||
             (str[index] >= '0' && str[index] <= '9')) ||
-             str[index] == '_' && 
-           index < str.size()) index++;
+           str[index] == '_' && index < str.size())
+      index++;
     return std::string_view(&str[start], index - start);
   }
 
@@ -125,7 +127,7 @@ namespace Copium
     {
       std::string_view type = ParseWord(str, index);
       ParseWhitespace(str, index);
-      std::string_view name = ParseWord(str, index); // uniform name
+      std::string_view name = ParseWord(str, index);  // uniform name
       if (type == "mat3")
         binding.uniforms.emplace_back(UniformType::Mat3, std::string(name));
       else if (type == "mat4")
@@ -143,9 +145,10 @@ namespace Copium
       else
         CP_ABORT("Unsupported uniform type=%s", std::string(type).c_str());
       ParseWhitespace(str, index);
-      index++; // ";"
+      index++;  // ";"
       ParseWhitespace(str, index);
     }
-    if (index < str.size()) index++; // go past "}"
+    if (index < str.size())
+      index++;  // go past "}"
   }
 }

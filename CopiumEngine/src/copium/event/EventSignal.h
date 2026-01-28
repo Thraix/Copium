@@ -1,7 +1,7 @@
 #pragma once
 
-#include "copium/event/Event.h"
 #include "copium/ecs/Signal.h"
+#include "copium/event/Event.h"
 
 namespace Copium
 {

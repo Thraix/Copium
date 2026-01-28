@@ -16,13 +16,14 @@ namespace Copium
     VkImage imageCpy = image;
     VkDeviceMemory imageMemoryCpy = imageMemory;
     VkImageView imageViewCpy = imageView;
-    Vulkan::GetDevice().QueueIdleCommand([imageCpy, imageMemoryCpy, imageViewCpy]() {
-      vkDestroyImage(Vulkan::GetDevice(), imageCpy, nullptr);
-      vkFreeMemory(Vulkan::GetDevice(), imageMemoryCpy, nullptr);
-      vkDestroyImageView(Vulkan::GetDevice(), imageViewCpy, nullptr);
-    });
+    Vulkan::GetDevice().QueueIdleCommand(
+      [imageCpy, imageMemoryCpy, imageViewCpy]()
+      {
+        vkDestroyImage(Vulkan::GetDevice(), imageCpy, nullptr);
+        vkFreeMemory(Vulkan::GetDevice(), imageMemoryCpy, nullptr);
+        vkDestroyImageView(Vulkan::GetDevice(), imageViewCpy, nullptr);
+      });
   }
-
 
   void DepthAttachment::Resize(int width, int height)
   {
@@ -49,7 +50,14 @@ namespace Copium
   void DepthAttachment::InitializeDepthAttachment(int width, int height)
   {
     VkFormat depthFormat = Image::SelectDepthFormat();
-    Image::InitializeImage(width, height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &image, &imageMemory);
+    Image::InitializeImage(width,
+                           height,
+                           depthFormat,
+                           VK_IMAGE_TILING_OPTIMAL,
+                           VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                           VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                           &image,
+                           &imageMemory);
     imageView = Image::InitializeImageView(image, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
   }
 }

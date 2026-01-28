@@ -23,23 +23,22 @@ namespace Copium
       poolSizes.emplace_back(descriptorSetPoolSize);
     }
 
-
     VkDescriptorPoolCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     createInfo.poolSizeCount = poolSizes.size();
     createInfo.pPoolSizes = poolSizes.data();
-    createInfo.maxSets = uniformDescriptorSets + imageDescriptorSets; // I have no actual idea if this is fine
+    createInfo.maxSets = uniformDescriptorSets + imageDescriptorSets;  // I have no actual idea if this is fine
     createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
-    CP_VK_ASSERT(vkCreateDescriptorPool(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorPool), "Failed to initialize descriptor pool");
+    CP_VK_ASSERT(vkCreateDescriptorPool(Vulkan::GetDevice(), &createInfo, nullptr, &descriptorPool),
+                 "Failed to initialize descriptor pool");
   }
 
   DescriptorPool::~DescriptorPool()
   {
     VkDescriptorPool descriptorPoolCpy = descriptorPool;
-    Vulkan::GetDevice().QueueIdleCommand([descriptorPoolCpy]() {
-      vkDestroyDescriptorPool(Vulkan::GetDevice(), descriptorPoolCpy, nullptr);
-    });
+    Vulkan::GetDevice().QueueIdleCommand([descriptorPoolCpy]()
+                                         { vkDestroyDescriptorPool(Vulkan::GetDevice(), descriptorPoolCpy, nullptr); });
   }
 
   std::vector<VkDescriptorSet> DescriptorPool::AllocateDescriptorSets(VkDescriptorSetLayout descriptorSetLayout)
@@ -52,7 +51,8 @@ namespace Copium
     allocateInfo.descriptorSetCount = descriptorSets.size();
     allocateInfo.pSetLayouts = layouts.data();
 
-    CP_VK_ASSERT(vkAllocateDescriptorSets(Vulkan::GetDevice(), &allocateInfo, descriptorSets.data()), "Failed to allocate descriptor sets");
+    CP_VK_ASSERT(vkAllocateDescriptorSets(Vulkan::GetDevice(), &allocateInfo, descriptorSets.data()),
+                 "Failed to allocate descriptor sets");
 
     return descriptorSets;
   }
@@ -61,9 +61,12 @@ namespace Copium
   {
     VkDescriptorPool descriptorPoolCpy = descriptorPool;
     std::vector<VkDescriptorSet> descriptorSetsCpy = descriptorSets;
-    Vulkan::GetDevice().QueueIdleCommand([descriptorPoolCpy, descriptorSetsCpy]() {
-      vkFreeDescriptorSets(Vulkan::GetDevice(), descriptorPoolCpy, descriptorSetsCpy.size(), descriptorSetsCpy.data());
-    });
+    Vulkan::GetDevice().QueueIdleCommand(
+      [descriptorPoolCpy, descriptorSetsCpy]()
+      {
+        vkFreeDescriptorSets(
+          Vulkan::GetDevice(), descriptorPoolCpy, descriptorSetsCpy.size(), descriptorSetsCpy.data());
+      });
   }
 
   DescriptorPool::operator VkDescriptorPool() const

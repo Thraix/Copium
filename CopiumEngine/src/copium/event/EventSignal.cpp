@@ -4,7 +4,8 @@ namespace Copium
 {
   EventSignal::EventSignal(const Event& event)
     : event{event}
-  {}
+  {
+  }
 
   const Event& EventSignal::GetEvent() const
   {

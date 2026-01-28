@@ -64,22 +64,22 @@ namespace Copium
   {
     switch (type)
     {
-    case UniformType::Mat3:
-      return 4 * 9; // glm::mat3
-    case UniformType::Mat4:
-      return 4 * 16; // glm::mat4
-    case UniformType::Vec2:
-      return 4 * 2; // glm::vec2
-    case UniformType::Vec3:
-      return 4 * 3; // glm::vec3
-    case UniformType::Vec4:
-      return 4 * 4; // glm::vec4
-    case UniformType::Int:
-      return 4; // int
-    case UniformType::Float:
-      return 4; // float
-    default:
-      CP_ABORT("Unhandled switch case: %s", ToString(type).c_str());
+      case UniformType::Mat3:
+        return 4 * 9;  // glm::mat3
+      case UniformType::Mat4:
+        return 4 * 16;  // glm::mat4
+      case UniformType::Vec2:
+        return 4 * 2;  // glm::vec2
+      case UniformType::Vec3:
+        return 4 * 3;  // glm::vec3
+      case UniformType::Vec4:
+        return 4 * 4;  // glm::vec4
+      case UniformType::Int:
+        return 4;  // int
+      case UniformType::Float:
+        return 4;  // float
+      default:
+        CP_ABORT("Unhandled switch case: %s", ToString(type).c_str());
     }
   }
 
@@ -87,22 +87,22 @@ namespace Copium
   {
     switch (type)
     {
-    case UniformType::Mat3:
-      return 64; // alignas(16) glm::mat3
-    case UniformType::Mat4:
-      return 64; // alignas(16) glm::mat4
-    case UniformType::Vec2:
-      return 16; // alignas(16) glm::vec2
-    case UniformType::Vec3:
-      return 16; // alignas(16) glm::vec2
-    case UniformType::Vec4:
-      return 16; // alignas(16) glm::vec2
-    case UniformType::Int:
-      return 16; // alignas(16) glm::vec2
-    case UniformType::Float:
-      return 16; // alignas(16) glm::vec2
-    default:
-      CP_ABORT("Unhandled switch case", ToString(type).c_str());
+      case UniformType::Mat3:
+        return 64;  // alignas(16) glm::mat3
+      case UniformType::Mat4:
+        return 64;  // alignas(16) glm::mat4
+      case UniformType::Vec2:
+        return 16;  // alignas(16) glm::vec2
+      case UniformType::Vec3:
+        return 16;  // alignas(16) glm::vec2
+      case UniformType::Vec4:
+        return 16;  // alignas(16) glm::vec2
+      case UniformType::Int:
+        return 16;  // alignas(16) glm::vec2
+      case UniformType::Float:
+        return 16;  // alignas(16) glm::vec2
+      default:
+        CP_ABORT("Unhandled switch case", ToString(type).c_str());
     }
   }
 }

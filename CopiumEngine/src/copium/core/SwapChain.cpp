@@ -35,7 +35,8 @@ namespace Copium
   }
 
   SwapChain::SwapChain()
-    : flightIndex{0}, resizeFramebuffer{false}
+    : flightIndex{0},
+      resizeFramebuffer{false}
   {
     Initialize();
     InitializeImageViews();
@@ -120,7 +121,8 @@ namespace Copium
   {
     vkWaitForFences(Vulkan::GetDevice(), 1, &inFlightFences[flightIndex], VK_TRUE, UINT64_MAX);
 
-    VkResult result = vkAcquireNextImageKHR(Vulkan::GetDevice(), handle, UINT64_MAX, imageAvailableSemaphores[flightIndex], VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(
+      Vulkan::GetDevice(), handle, UINT64_MAX, imageAvailableSemaphores[flightIndex], VK_NULL_HANDLE, &imageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
       Recreate();
@@ -144,7 +146,8 @@ namespace Copium
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = &renderFinishedSemaphores[imageIndex];
 
-    CP_VK_ASSERT(vkQueueSubmit(Vulkan::GetDevice().GetGraphicsQueue(), 1, &submitInfo, inFlightFences[flightIndex]), "Failed to submit command buffer");
+    CP_VK_ASSERT(vkQueueSubmit(Vulkan::GetDevice().GetGraphicsQueue(), 1, &submitInfo, inFlightFences[flightIndex]),
+                 "Failed to submit command buffer");
   }
 
   void SwapChain::EndPresent()
@@ -248,7 +251,8 @@ namespace Copium
       createInfo.pQueueFamilyIndices = nullptr;
     }
 
-    CP_VK_ASSERT(vkCreateSwapchainKHR(Vulkan::GetDevice(), &createInfo, nullptr, &handle), "Failed to initialize the swapchain");
+    CP_VK_ASSERT(vkCreateSwapchainKHR(Vulkan::GetDevice(), &createInfo, nullptr, &handle),
+                 "Failed to initialize the swapchain");
 
     vkGetSwapchainImagesKHR(Vulkan::GetDevice(), handle, &imageCount, nullptr);
     images.resize(imageCount);
@@ -308,8 +312,10 @@ namespace Copium
     VkSubpassDependency dependency{};
     dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
     dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+    dependency.srcStageMask =
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+    dependency.dstStageMask =
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     dependency.srcAccessMask = 0;
     dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
@@ -323,7 +329,8 @@ namespace Copium
     renderPassCreateInfo.dependencyCount = 1;
     renderPassCreateInfo.pDependencies = &dependency;
 
-    CP_VK_ASSERT(vkCreateRenderPass(Vulkan::GetDevice(), &renderPassCreateInfo, nullptr, &renderPass), "Failed to initialze render pass");
+    CP_VK_ASSERT(vkCreateRenderPass(Vulkan::GetDevice(), &renderPassCreateInfo, nullptr, &renderPass),
+                 "Failed to initialze render pass");
   }
 
   void SwapChain::InitializeFramebuffers()
@@ -343,7 +350,8 @@ namespace Copium
       createInfo.height = extent.height;
       createInfo.layers = 1;
 
-      CP_VK_ASSERT(vkCreateFramebuffer(Vulkan::GetDevice(), &createInfo, nullptr, &framebuffers[i]), "Failed to initialize swap chain framebuffer");
+      CP_VK_ASSERT(vkCreateFramebuffer(Vulkan::GetDevice(), &createInfo, nullptr, &framebuffers[i]),
+                   "Failed to initialize swap chain framebuffer");
     }
   }
 
@@ -355,18 +363,21 @@ namespace Copium
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
     {
-      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]), "Failed to initialize available image semaphore");
+      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &imageAvailableSemaphores[i]),
+                   "Failed to initialize available image semaphore");
 
       VkFenceCreateInfo fenceCreateInfo{};
       fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
       fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-      CP_VK_ASSERT(vkCreateFence(Vulkan::GetDevice(), &fenceCreateInfo, nullptr, &inFlightFences[i]), "Failed to initialize in flight fence");
+      CP_VK_ASSERT(vkCreateFence(Vulkan::GetDevice(), &fenceCreateInfo, nullptr, &inFlightFences[i]),
+                   "Failed to initialize in flight fence");
     }
     renderFinishedSemaphores.resize(images.size());
-    for(size_t i = 0; i < renderFinishedSemaphores.size(); i++)
+    for (size_t i = 0; i < renderFinishedSemaphores.size(); i++)
     {
-      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]), "Failed to initialize render finished semaphore");
+      CP_VK_ASSERT(vkCreateSemaphore(Vulkan::GetDevice(), &semaphoreCreateInfo, nullptr, &renderFinishedSemaphores[i]),
+                   "Failed to initialize render finished semaphore");
     }
   }
 
@@ -387,7 +398,8 @@ namespace Copium
   {
     for (auto&& availableFormat : availableFormats)
     {
-      if (availableFormat.format == VK_FORMAT_R8G8B8A8_UNORM && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+      if (availableFormat.format == VK_FORMAT_R8G8B8A8_UNORM &&
+          availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
       {
         return availableFormat;
       }

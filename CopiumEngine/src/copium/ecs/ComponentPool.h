@@ -1,12 +1,12 @@
 #pragma once
 
+#include <vector>
+
+#include "copium/ecs/ComponentListener.h"
+#include "copium/ecs/ComponentPoolBase.h"
 #include "copium/ecs/Config.h"
 #include "copium/ecs/EntitySet.h"
-#include "copium/ecs/ComponentPoolBase.h"
-#include "copium/ecs/ComponentListener.h"
 #include "copium/util/Common.h"
-
-#include <vector>
 
 namespace Copium
 {
@@ -14,17 +14,19 @@ namespace Copium
   class ComponentPool : public ComponentPoolBase
   {
     using Iterator = typename std::vector<Component>::iterator;
+
   private:
     std::vector<Component> components;
     ComponentListener<Component>* listener = nullptr;
 
   public:
     ComponentPool()
-    {}
+    {
+    }
 
     ~ComponentPool() override
     {
-      if(listener)
+      if (listener)
         delete listener;
     }
 
@@ -37,7 +39,7 @@ namespace Copium
     {
       components.push_back(component);
       entities.Emplace(entity);
-      if(listener)
+      if (listener)
         listener->Added(entity, components.back());
       return components.back();
     }

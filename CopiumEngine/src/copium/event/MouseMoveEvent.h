@@ -1,8 +1,8 @@
 #pragma once
 
-#include "copium/event/Event.h"
-
 #include <glm/glm.hpp>
+
+#include "copium/event/Event.h"
 
 namespace Copium
 {
@@ -11,6 +11,7 @@ namespace Copium
   private:
     glm::vec2 pos;
     glm::vec2 delta;
+
   public:
     MouseMoveEvent(glm::vec2 pos, glm::vec2 delta);
 

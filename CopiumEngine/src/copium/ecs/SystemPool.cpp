@@ -6,7 +6,8 @@ namespace Copium
 {
   SystemPool::SystemPool(ECSManager* manager)
     : manager{manager}
-  {}
+  {
+  }
 
   SystemPool::~SystemPool()
   {

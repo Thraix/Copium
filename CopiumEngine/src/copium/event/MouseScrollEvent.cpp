@@ -3,8 +3,11 @@
 namespace Copium
 {
   MouseScrollEvent::MouseScrollEvent(int scrollX, int scrollY)
-    : Event{EventType::MouseScroll}, scrollX{scrollX}, scrollY{scrollY}
-  {}
+    : Event{EventType::MouseScroll},
+      scrollX{scrollX},
+      scrollY{scrollY}
+  {
+  }
 
   int MouseScrollEvent::GetScrollX() const
   {

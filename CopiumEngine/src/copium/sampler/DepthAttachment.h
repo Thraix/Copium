@@ -1,19 +1,21 @@
 #pragma once
 
+#include <vulkan/vulkan.hpp>
+
 #include "copium/sampler/Sampler.h"
 #include "copium/util/Common.h"
-
-#include <vulkan/vulkan.hpp>
 
 namespace Copium
 {
   class DepthAttachment final : public Sampler
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(DepthAttachment);
+
   private:
     VkImage image;
     VkDeviceMemory imageMemory;
     VkImageView imageView;
+
   public:
     DepthAttachment(int width, int height, const SamplerCreator& samplerCreator);
     ~DepthAttachment() override;

@@ -6,8 +6,12 @@ namespace Copium
 {
 
   RendererVertexBuffer::RendererVertexBuffer(const VertexDescriptor& descriptor, int vertexCount)
-    : Buffer{VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, descriptor.GetVertexSize() * vertexCount, SwapChain::MAX_FRAMES_IN_FLIGHT}
-  {}
+    : Buffer{VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+             descriptor.GetVertexSize() * vertexCount,
+             SwapChain::MAX_FRAMES_IN_FLIGHT}
+  {
+  }
 
   void RendererVertexBuffer::Bind(const CommandBuffer& commandBuffer)
   {

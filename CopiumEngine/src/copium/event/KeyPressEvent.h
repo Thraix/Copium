@@ -8,6 +8,7 @@ namespace Copium
   {
   private:
     int button;
+
   public:
     KeyPressEvent(int button);
 
