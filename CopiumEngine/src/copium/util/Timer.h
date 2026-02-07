@@ -15,5 +15,6 @@ namespace Copium
     void Start();
     double Elapsed();
     double ElapsedRestart();
+    void OffsetSeconds(int time);
   };
 }

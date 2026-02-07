@@ -46,6 +46,12 @@ namespace Copium
                    const Font& font,
                    float size,
                    const glm::vec3& color = glm::vec3(1, 1, 1));
+    // Returns the position where the text rendering ended
+    glm::vec2 TextUi(const std::string& str,
+                     const glm::vec2& position,
+                     const Font& font,
+                     float size,
+                     const glm::vec3& color = glm::vec3(1, 1, 1));
 
     void Begin(CommandBuffer& commandBuffer);
     void End();

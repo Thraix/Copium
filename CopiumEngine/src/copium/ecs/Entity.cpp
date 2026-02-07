@@ -40,13 +40,18 @@ namespace Copium
     return id != entity.id;
   }
 
-  Entity::operator bool() const
+  bool Entity::IsValid() const
   {
     if (id == INVALID_ENTITY)
       return false;
     if (manager)
       return manager->ValidEntity(id);
     return false;
+  }
+
+  Entity::operator bool() const
+  {
+    return IsValid();
   }
 
   void Entity::Invalidate()

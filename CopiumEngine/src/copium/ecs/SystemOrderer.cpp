@@ -10,12 +10,33 @@ namespace Copium
   {
   }
 
-  void SystemOrderer::Before(const std::type_index& otherSystemId)
+  void SystemOrderer::CommitOrdering()
+  {
+    for (const auto& [orderOperation, systemId] : orderQueue)
+    {
+      switch (orderOperation)
+      {
+        case OrderOperation::Before:
+        {
+          CommitBefore(systemId);
+          break;
+        }
+        case OrderOperation::After:
+        {
+          CommitAfter(systemId);
+          break;
+        }
+      }
+    }
+    orderQueue.clear();
+  }
+
+  void SystemOrderer::CommitBefore(const std::type_index& otherSystemId)
   {
     systemPool->MoveSystemBefore(systemId, otherSystemId);
   }
 
-  void SystemOrderer::After(const std::type_index& otherSystemId)
+  void SystemOrderer::CommitAfter(const std::type_index& otherSystemId)
   {
     systemPool->MoveSystemAfter(systemId, otherSystemId);
   }

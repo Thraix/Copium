@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <map>
+#include <set>
 #include <typeindex>
 #include <unordered_set>
 
@@ -10,36 +11,68 @@
 #include "copium/ecs/Signal.h"
 #include "copium/ecs/SystemPool.h"
 #include "copium/util/Common.h"
+#include "copium/util/GenericType.h"
+#include "copium/util/Uuid.h"
 
 namespace Copium
 {
   class ECSManager final
   {
+    CP_DELETE_COPY_AND_MOVE_CTOR(ECSManager);
+
   private:
     std::unordered_set<EntityId> entities;
-    std::map<std::type_index, ComponentPoolBase*> componentPool;
+    std::map<std::type_index, ComponentPoolBase*> componentPools;
 
-    std::unique_ptr<SystemPool> systemPool;
-    int currentEntityId = 1;
+    std::map<Uuid, std::unique_ptr<SystemPool>> systemPools;
+    EntityId currentEntityId = 1;
+    std::set<EntityId> destroyedEntityIds;
+
+    std::map<std::type_index, GenericType> globalDatas;
 
   public:
+    static std::vector<EntityId> emptyEntities;
+
     ECSManager();
     ~ECSManager();
 
     template <typename SystemClass, typename... Args>
-    SystemOrderer AddSystem(const Args&... args)
+    SystemOrderer& AddSystem(const Uuid& systemPoolId)
     {
-      return systemPool->AddSystem(typeid(SystemClass), new SystemClass{args...});
+      auto it = systemPools.find(systemPoolId);
+      if (it == systemPools.end())
+        it = systemPools.emplace(systemPoolId, std::make_unique<SystemPool>(this)).first;
+
+      return it->second->AddSystem(typeid(SystemClass), new SystemClass{});
     }
 
     template <typename SystemClass>
-    void RemoveSystem()
+    void RemoveSystem(const Uuid& systemPoolId)
     {
-      systemPool->RemoveSystem(typeid(SystemClass));
+      auto it = systemPools.find(systemPoolId);
+      CP_ASSERT(it != systemPools.end(), "SystemPool doesn't exist with Uuid=%s", systemPoolId.ToString().c_str());
+
+      it->second->RemoveSystem(typeid(SystemClass));
+
+      if (it->second->IsEmpty())
+        systemPools.erase(it);
     }
 
-    void UpdateSystems();
-    void UpdateSystems(const Signal& signal);
+    void CommitEntityUpdates();
+
+    void UpdateSystems(const Uuid& systemPoolId);
+
+    template <typename S, typename... Args>
+    void SendSignal(const Args&... args)
+    {
+      Signal::ValidateSignal<S>();
+      for (auto& systemPool : systemPools)
+      {
+        S* newSignal = new S{args...};
+        newSignal->uuid = S::UUID;
+        systemPool.second->SendSignal(newSignal);
+      }
+    }
 
     EntityId CreateEntity();
     void DestroyEntity(EntityId entity);
@@ -61,41 +94,36 @@ namespace Copium
       else
       {
         ComponentPool<Component>* pool{new ComponentPool<Component>{}};
-        componentPool.emplace(GetComponentId<Component>(), pool);
+        componentPools.emplace(GetComponentId<Component>(), pool);
         pool->SetComponentListener(listener);
       }
     }
 
     template <typename... Components>
-    std::tuple<Components&...> AddComponents(EntityId entity, Components&&... components)
+    void AddComponents(EntityId entity, Components&&... components)
     {
-      return std::forward_as_tuple(AddComponent(entity, Components(components))...);
+      (AddComponent(entity, components), ...);
     }
 
     template <typename Component, typename... Args>
-    Component& AddComponent(EntityId entity, Args&&... args)
+    void AddComponent(EntityId entity, Args&&... args)
     {
-      return AddComponent(entity, Component{args...});
+      AddComponent(entity, Component{args...});
     }
 
     template <typename Component>
-    Component& AddComponent(EntityId entity, const Component& component)
+    void AddComponent(EntityId entity, const Component& component)
     {
       auto pool = GetComponentPool<Component>();
 
       if (pool)
       {
-        CP_ASSERT(!HasComponent<Component>(entity),
-                  "Component already exists in entity (entity=%u, Component=%s)",
-                  entity,
-                  typeid(Component).name());
-        return pool->Emplace(entity, component);
+        pool->Emplace(entity, component);
       }
       else
       {
         ComponentPool<Component>* pool{new ComponentPool{entity, component}};
-        auto ret = componentPool.emplace(GetComponentId<Component>(), pool);
-        return pool->At(0);
+        auto ret = componentPools.emplace(GetComponentId<Component>(), pool);
       }
     }
 
@@ -103,10 +131,7 @@ namespace Copium
     void RemoveComponent(EntityId entity)
     {
       auto pool = GetComponentPoolAssure<Component>();
-      CP_ASSERT(pool->Erase(entity),
-                "Entity did not contain component (entity=%u, Component=%s)",
-                entity,
-                typeid(Component).name());
+      pool->Erase(entity);
     }
 
     template <typename... Components>
@@ -229,22 +254,54 @@ namespace Copium
       return std::type_index(typeid(T));
     }
 
-  private:
-    template <typename Component>
-    ComponentPool<Component>* GetComponentPool()
+    template <typename T, typename... Args>
+    void AddGlobalData(const Args&... args)
     {
-      auto it = componentPool.find(GetComponentId<Component>());
-      return it == componentPool.end() ? nullptr : static_cast<ComponentPool<Component>*>(it->second);
+      auto it = globalDatas.find(typeid(T));
+      CP_ASSERT(!HasGlobalData<T>(), "Global with typeid=%s already exists. Do nothing", typeid(T).name());
+
+      globalDatas.emplace(typeid(T), GenericType::Create<T>(args...));
+    }
+
+    template <typename T>
+    T& GetGlobalData()
+    {
+      auto it = globalDatas.find(typeid(T));
+      CP_ASSERT(it != globalDatas.end(), "Global with typeid=%s doesn't exist");
+
+      return it->second.Get<T>();
+    }
+
+    template <typename T>
+    bool HasGlobalData()
+    {
+      return globalDatas.find(typeid(T)) != globalDatas.end();
+    }
+
+    template <typename T>
+    void RemoveGlobalData()
+    {
+      auto it = globalDatas.find(typeid(T));
+      CP_ASSERT("Global with typeid=%s doesn't exist. Do nothing", typeid(T).name());
+      globalDatas.erase(it);
     }
 
     template <typename Component>
-    ComponentPool<Component>* GetComponentPoolAssure()
+    ComponentPool<std::remove_const_t<Component>>* GetComponentPool()
     {
-      auto it = componentPool.find(GetComponentId<Component>());
-      CP_ASSERT(it != componentPool.end(),
+      auto it = componentPools.find(GetComponentId<Component>());
+      return it == componentPools.end() ? nullptr
+                                        : static_cast<ComponentPool<std::remove_const_t<Component>>*>(it->second);
+    }
+
+    template <typename Component>
+    ComponentPool<std::remove_const_t<Component>>* GetComponentPoolAssure()
+    {
+      auto it = componentPools.find(GetComponentId<Component>());
+      CP_ASSERT(it != componentPools.end(),
                 "Component has not been added to an entity (Component=%s)",
                 typeid(Component).name());
-      return static_cast<ComponentPool<Component>*>(it->second);
+      return static_cast<ComponentPool<std::remove_const_t<Component>>*>(it->second);
     }
   };
 }

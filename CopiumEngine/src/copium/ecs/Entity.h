@@ -24,6 +24,7 @@ namespace Copium
     bool operator!=(const Entity& entity);
     operator bool() const;
 
+    bool IsValid() const;
     void Invalidate();
     void Destroy();
     void SetId(EntityId entityId);
@@ -33,15 +34,15 @@ namespace Copium
     static Entity Create(ECSManager* manager);
 
     template <typename Component, typename... Args>
-    inline Component& AddComponent(Args... args)
+    inline void AddComponent(Args... args)
     {
-      return manager->AddComponent<Component>(id, args...);
+      manager->AddComponent<Component>(id, args...);
     }
 
     template <typename... Components>
-    std::tuple<Components&...> AddComponents(Components&&... components)
+    void AddComponents(Components&&... components)
     {
-      return manager->AddComponents(id, components...);
+      manager->AddComponents(id, components...);
     }
 
     template <typename Component>

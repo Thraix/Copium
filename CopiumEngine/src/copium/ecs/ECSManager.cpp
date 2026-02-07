@@ -4,30 +4,37 @@
 
 namespace Copium
 {
+  std::vector<EntityId> ECSManager::emptyEntities = {};
+
   ECSManager::ECSManager()
-    : systemPool{std::make_unique<SystemPool>(this)}
   {
   }
 
   ECSManager::~ECSManager()
   {
-    for (auto&& components : componentPool)
+    for (auto&& components : componentPools)
     {
       delete components.second;
     }
-    componentPool.clear();
+    componentPools.clear();
   }
 
-  void ECSManager::UpdateSystems()
+  void ECSManager::CommitEntityUpdates()
   {
-    systemPool->Update();
+    for (auto& componentPool : componentPools)
+    {
+      componentPool.second->CommitUpdates();
+    }
   }
 
-  void ECSManager::UpdateSystems(const Signal& signal)
+  void ECSManager::UpdateSystems(const Uuid& systemPoolId)
   {
-    // TODO: Maybe we want a different pool for Signal based Systems for performance reasons?
-    // Maybe even a pool for each type of Signal?
-    systemPool->Update(signal);
+    auto it = systemPools.find(systemPoolId);
+    CP_ASSERT(it != systemPools.end(), "SystemPool doesn't exist with Uuid=%s", systemPoolId.ToString().c_str());
+    it->second->CommitSignals();
+    CommitEntityUpdates();
+    it->second->CommitUpdates();
+    it->second->Update();
   }
 
   size_t ECSManager::GetEntityCount() const
@@ -37,6 +44,13 @@ namespace Copium
 
   EntityId ECSManager::CreateEntity()
   {
+    if (!destroyedEntityIds.empty())
+    {
+      EntityId newId = *destroyedEntityIds.begin();
+      destroyedEntityIds.erase(destroyedEntityIds.begin());
+      return newId;
+    }
+
     CP_ASSERT(currentEntityId != MAX_NUM_ENTITIES, "No more entities available");
     entities.emplace(currentEntityId);
     currentEntityId++;
@@ -47,8 +61,21 @@ namespace Copium
   {
     auto it = entities.find(entity);
     CP_ASSERT(it != entities.end(), "Entity does not exist in ECSManager (entity=%u)", entity);
+    if (entity == currentEntityId - 1)
+    {
+      currentEntityId--;
+      while (!destroyedEntityIds.empty() && *destroyedEntityIds.rbegin() == currentEntityId - 1)
+      {
+        destroyedEntityIds.erase(std::prev(destroyedEntityIds.end()));
+      }
+    }
+    else
+    {
+      destroyedEntityIds.emplace(entity);
+    }
+
     entities.erase(it);
-    for (auto&& pool : componentPool)
+    for (auto&& pool : componentPools)
     {
       pool.second->Erase(entity);
     }

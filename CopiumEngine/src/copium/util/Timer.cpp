@@ -26,4 +26,9 @@ namespace Copium
 
     return elapsedTime;
   }
+
+  void Timer::OffsetSeconds(int time)
+  {
+    startTime += std::chrono::seconds(time);
+  }
 }

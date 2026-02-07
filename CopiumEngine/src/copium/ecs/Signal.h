@@ -1,48 +1,42 @@
 #pragma once
 
-#define CP_SIGNAL_DECLERATION_DEFINITION() \
-  static int GetIdStatic()                 \
-  {                                        \
-    static int id = GetAllocatedId();      \
-    return id;                             \
-  }                                        \
-                                           \
-  int GetId() const                        \
-  {                                        \
-    return GetIdStatic();                  \
-  }
+#include "copium/util/Uuid.h"
 
-#define CP_SIGNAL_DECLERATION(SignalClass) \
-  static int GetIdStatic();                \
-  int GetId() const override
-
-#define CP_SIGNAL_DEFINITION(SignalClass) \
-  int SignalClass::GetIdStatic()          \
-  {                                       \
-    static int id = GetAllocatedId();     \
-    return id;                            \
-  }                                       \
-                                          \
-  int SignalClass::GetId() const          \
-  {                                       \
-    return GetIdStatic();                 \
-  }
+#define CP_REGISTER_SIGNAL static inline Copium::Uuid UUID = Copium::Uuid()
 
 namespace Copium
 {
   class Signal
   {
-  private:
-    static inline int allocatedIds = 0;
-
   public:
     Signal() = default;
-    virtual ~Signal() = default;
 
-    virtual int GetId() const = 0;
+    const Uuid& GetUuid() const
+    {
+      return uuid;
+    }
 
-  protected:
-    static int GetAllocatedId();
+    template <typename T>
+    static void ValidateSignal()
+    {
+      static_assert(std::is_base_of_v<Signal, T>, "ValidateSignal : Given T is does not have Signal as base class");
+      static_assert(
+        has_static_uuid<T>(),
+        "ValidateSignal : Given T has not defined a UUID. Did you add CP_REGISTER_SIGNAL to your Signal class?");
+    }
+
+  private:
+    friend class ECSManager;
+    Uuid uuid;
+
+    template <typename, typename = void>
+    struct has_static_uuid : std::false_type
+    {
+    };
+
+    template <typename T>
+    struct has_static_uuid<T, std::void_t<decltype(T::UUID)>> : std::true_type
+    {
+    };
   };
-
 }

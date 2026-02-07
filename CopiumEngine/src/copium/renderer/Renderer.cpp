@@ -102,6 +102,58 @@ namespace Copium
     return offset;
   }
 
+  glm::vec2 Renderer::TextUi(
+    const std::string& str, const glm::vec2& position, const Font& font, float size, const glm::vec3& color)
+  {
+    glm::vec2 offset = position;
+    for (char c : str)
+    {
+      if (c == ' ')
+      {
+        const Glyph& glyph = font.GetGlyph(c);
+        offset.x += glyph.advance * size;
+        continue;
+      }
+      else if (c == '\t')
+      {
+        const Glyph& glyph = font.GetGlyph(' ');
+        offset.x += glyph.advance * size * 4;
+        continue;
+      }
+      else if (c == '\n')
+      {
+        offset.y += font.GetLineHeight() * size;
+        offset.x = position.x;
+        continue;
+      }
+      const Glyph& glyph = font.GetGlyph(c);
+      AllocateQuad();
+      int texIndex = AllocateSampler(font);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.l * size, -glyph.boundingBox.t * size},
+                color,
+                texIndex,
+                glm::vec2{glyph.texCoordBoundingBox.l, glyph.texCoordBoundingBox.t},
+                RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.l * size, -glyph.boundingBox.b * size},
+                color,
+                texIndex,
+                glm::vec2{glyph.texCoordBoundingBox.l, glyph.texCoordBoundingBox.b},
+                RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.r * size, -glyph.boundingBox.b * size},
+                color,
+                texIndex,
+                glm::vec2{glyph.texCoordBoundingBox.r, glyph.texCoordBoundingBox.b},
+                RendererVertex::TYPE_TEXT);
+      AddVertex(offset + glm::vec2{glyph.boundingBox.r * size, -glyph.boundingBox.t * size},
+                color,
+                texIndex,
+                glm::vec2{glyph.texCoordBoundingBox.r, glyph.texCoordBoundingBox.t},
+                RendererVertex::TYPE_TEXT);
+      offset.x += glyph.advance * size;
+    }
+    return offset;
+  }
+
   void Renderer::AddVertex(
     const glm::vec2& position, const glm::vec3& color, int texindex, const glm::vec2& texCoord, int type)
   {

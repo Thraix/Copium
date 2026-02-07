@@ -430,7 +430,7 @@ namespace Copium
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
 
-    VkExtent2D extent{width, height};
+    VkExtent2D extent{static_cast<uint32_t>(width), static_cast<uint32_t>(height)};
     extent.width = std::clamp(extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
     extent.height = std::clamp(extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
     return extent;
