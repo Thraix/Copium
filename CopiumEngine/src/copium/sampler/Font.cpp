@@ -15,7 +15,7 @@ namespace Copium
     CP_ASSERT(ft, "Failed to initialize FreeType");  // TODO: Move to Vulkan singleton class?
     std::string fontPath = metaFile.GetMetaClass("Font").GetValue("filepath");
     msdfgen::FontHandle* font = msdfgen::loadFont(ft, fontPath.c_str());
-    CP_ASSERT(font, "Failed to initialize font: %s", fontPath.c_str());
+    CP_ASSERT(font, "Failed to initialize font: {}", fontPath);
 
     std::vector<msdf_atlas::GlyphGeometry> glyphs;
     msdf_atlas::FontGeometry fontGeometry(&glyphs);
@@ -101,7 +101,7 @@ namespace Copium
 
   const Glyph& Font::GetGlyph(char c) const
   {
-    CP_ASSERT(glyphs.find(c) != glyphs.end(), "Glyph not found: %c", c);
+    CP_ASSERT(glyphs.find(c) != glyphs.end(), "Glyph not found: {}", c);
     return glyphs.find(c)->second;
   }
 

@@ -1,6 +1,6 @@
 #include "copium/pipeline/PipelineCreator.h"
 
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {

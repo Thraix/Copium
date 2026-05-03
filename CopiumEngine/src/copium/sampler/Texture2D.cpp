@@ -12,7 +12,7 @@ namespace Copium
     : Sampler{metaFile.GetMetaClass("Texture2D")}
   {
     const std::string& filepath = metaFile.GetMetaClass("Texture2D").GetValue("filepath");
-    CP_DEBUG("Loading texture file: %s", filepath.c_str());
+    CP_DEBUG("Loading texture file: {}", filepath);
     InitializeTextureImageFromFile(filepath);
   }
 
@@ -25,7 +25,7 @@ namespace Copium
       height{height}
   {
     CP_ASSERT(rgbaData.size() == width * height * 4,
-              "rgbaData has invalid size, should be equal to width * height * 4 (%d) actually is %d",
+              "rgbaData has invalid size, should be equal to width * height * 4 ({}) actually is {}",
               width * height * 4,
               rgbaData.size());
     InitializeTextureImageFromData(rgbaData.data(), width, height);

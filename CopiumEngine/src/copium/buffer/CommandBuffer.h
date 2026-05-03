@@ -5,11 +5,10 @@
 #include "copium/util/Common.h"
 #include "copium/util/Enum.h"
 
-#define CP_COMMAND_BUFFER_TYPE_ENUMS SingleUse, Dynamic
-CP_ENUM_CREATOR(Copium, CommandBufferType, CP_COMMAND_BUFFER_TYPE_ENUMS);
-
 namespace Copium
 {
+  CP_ENUM_CREATOR(CommandBufferType, SingleUse, Dynamic);
+
   class CommandBuffer
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(CommandBuffer);

@@ -110,7 +110,7 @@ namespace Copium
   UniformBuffer& DescriptorSet::GetUniformBuffer(const std::string& uniformBuffer)
   {
     auto it = uniformBuffers.find(uniformBuffer);
-    CP_ASSERT(it != uniformBuffers.end(), "UniformBuffer not found = %s", uniformBuffer.c_str());
+    CP_ASSERT(it != uniformBuffers.end(), "UniformBuffer not found = {}", uniformBuffer);
     return *it->second;
   }
 

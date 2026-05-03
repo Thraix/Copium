@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "copium/core/Vulkan.h"
+#include "copium/event/DropEvent.h"
 #include "copium/event/EventDispatcher.h"
 #include "copium/event/Input.h"
 #include "copium/event/KeyPressEvent.h"
@@ -101,7 +102,7 @@ namespace Copium
         break;
       }
       default:
-        CP_ABORT("Unreachable switch case: %s", ToString(mode).c_str());
+        CP_ABORT("Unreachable switch case: {}", mode);
     }
 
     CP_ASSERT(window, "Failed to initialize glfw window");
@@ -113,6 +114,7 @@ namespace Copium
     glfwSetCursorPosCallback(window, MouseMoveCallback);
     glfwSetWindowFocusCallback(window, WindowFocusCallback);
     glfwSetScrollCallback(window, MouseScrollCallback);
+    glfwSetDropCallback(window, DropCallback);
   }
 
   void Window::InitializeSurface()
@@ -191,5 +193,15 @@ namespace Copium
   void Window::MouseScrollCallback(GLFWwindow* glfwWindow, double xoffset, double yoffset)
   {
     EventDispatcher::QueueEvent(MouseScrollEvent{(int)xoffset, (int)yoffset});
+  }
+
+  void Window::DropCallback(GLFWwindow* window, int pathCount, const char* paths[])
+  {
+    std::vector<std::string> filePaths;
+    for (int i = 0; i < pathCount; i++)
+    {
+      filePaths.emplace_back(paths[i]);
+    }
+    EventDispatcher::QueueEvent(DropEvent{filePaths});
   }
 }

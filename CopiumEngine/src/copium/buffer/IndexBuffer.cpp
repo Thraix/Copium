@@ -2,6 +2,8 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include "copium/util/Trace.h"
+
 namespace Copium
 {
   IndexBuffer::IndexBuffer(int indexCount)

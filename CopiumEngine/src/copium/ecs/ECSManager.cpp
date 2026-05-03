@@ -1,6 +1,6 @@
 #include "copium/ecs/ECSManager.h"
 
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -30,7 +30,7 @@ namespace Copium
   void ECSManager::UpdateSystems(const Uuid& systemPoolId)
   {
     auto it = systemPools.find(systemPoolId);
-    CP_ASSERT(it != systemPools.end(), "SystemPool doesn't exist with Uuid=%s", systemPoolId.ToString().c_str());
+    CP_ASSERT(it != systemPools.end(), "SystemPool doesn't exist with Uuid={}", systemPoolId);
     it->second->CommitSignals();
     CommitEntityUpdates();
     it->second->CommitUpdates();
@@ -60,7 +60,7 @@ namespace Copium
   void ECSManager::DestroyEntity(EntityId entity)
   {
     auto it = entities.find(entity);
-    CP_ASSERT(it != entities.end(), "Entity does not exist in ECSManager (entity=%u)", entity);
+    CP_ASSERT(it != entities.end(), "Entity does not exist in ECSManager (entity={})", entity);
     if (entity == currentEntityId - 1)
     {
       currentEntityId--;

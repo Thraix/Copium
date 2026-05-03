@@ -1,6 +1,6 @@
 #include "copium/sampler/SamplerCreator.h"
 
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -34,7 +34,7 @@ namespace Copium
     else if (str == "linear")
       return VK_FILTER_LINEAR;
     else
-      CP_ABORT("Invalid texture filtering: %s", str.c_str());
+      CP_ABORT("Invalid texture filtering: {}", str);
   }
 
   VkSamplerAddressMode SamplerCreator::GetAddressModeFromString(const std::string& str) const
@@ -44,6 +44,6 @@ namespace Copium
     else if (str == "repeat")
       return VK_SAMPLER_ADDRESS_MODE_REPEAT;
     else
-      CP_ABORT("Invalid texture address mode: %s", str.c_str());
+      CP_ABORT("Invalid texture address mode: {}", str);
   }
 }

@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <map>
+#include <memory>
 #include <set>
 #include <typeindex>
 #include <unordered_set>
@@ -12,6 +13,7 @@
 #include "copium/ecs/SystemPool.h"
 #include "copium/util/Common.h"
 #include "copium/util/GenericType.h"
+#include "copium/util/Trace.h"
 #include "copium/util/Uuid.h"
 
 namespace Copium
@@ -50,7 +52,7 @@ namespace Copium
     void RemoveSystem(const Uuid& systemPoolId)
     {
       auto it = systemPools.find(systemPoolId);
-      CP_ASSERT(it != systemPools.end(), "SystemPool doesn't exist with Uuid=%s", systemPoolId.ToString().c_str());
+      CP_ASSERT(it != systemPools.end(), "SystemPool doesn't exist with Uuid={}", systemPoolId);
 
       it->second->RemoveSystem(typeid(SystemClass));
 
@@ -146,7 +148,7 @@ namespace Copium
       auto pool = GetComponentPoolAssure<Component>();
       Component* component = pool->FindComponent(entity);
       CP_ASSERT(
-        component, "Entity did not contain component (entity=%u, Component=%s)", entity, typeid(Component).name());
+        component, "Entity did not contain component (entity={}, Component={})", entity, typeid(Component).name());
       return *component;
     }
 
@@ -258,7 +260,7 @@ namespace Copium
     void AddGlobalData(const Args&... args)
     {
       auto it = globalDatas.find(typeid(T));
-      CP_ASSERT(!HasGlobalData<T>(), "Global with typeid=%s already exists. Do nothing", typeid(T).name());
+      CP_ASSERT(!HasGlobalData<T>(), "Global with typeid={} already exists. Do nothing", typeid(T).name());
 
       globalDatas.emplace(typeid(T), GenericType::Create<T>(args...));
     }
@@ -267,7 +269,7 @@ namespace Copium
     T& GetGlobalData()
     {
       auto it = globalDatas.find(typeid(T));
-      CP_ASSERT(it != globalDatas.end(), "Global with typeid=%s doesn't exist");
+      CP_ASSERT(it != globalDatas.end(), "Global with typeid={} doesn't exist");
 
       return it->second.Get<T>();
     }
@@ -282,7 +284,7 @@ namespace Copium
     void RemoveGlobalData()
     {
       auto it = globalDatas.find(typeid(T));
-      CP_ASSERT("Global with typeid=%s doesn't exist. Do nothing", typeid(T).name());
+      CP_ASSERT("Global with typeid={} doesn't exist. Do nothing", typeid(T).name());
       globalDatas.erase(it);
     }
 
@@ -299,7 +301,7 @@ namespace Copium
     {
       auto it = componentPools.find(GetComponentId<Component>());
       CP_ASSERT(it != componentPools.end(),
-                "Component has not been added to an entity (Component=%s)",
+                "Component has not been added to an entity (Component={})",
                 typeid(Component).name());
       return static_cast<ComponentPool<std::remove_const_t<Component>>*>(it->second);
     }

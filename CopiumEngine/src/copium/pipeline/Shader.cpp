@@ -27,7 +27,7 @@ namespace Copium
         fragShaderModule = InitializeShaderModule(FileSystem::ReadFile(fragmentInput));
         break;
       default:
-        CP_ASSERT(false, "Unreachable switch case: %s", ToString(type).c_str());
+        CP_ASSERT(false, "Unreachable switch case: {}", type);
     }
 
     shaderStages.resize(2);
@@ -85,7 +85,7 @@ namespace Copium
       {
         if (FileSystem::DateModified(filename) < FileSystem::DateModified(spvFilename))
         {
-          CP_DEBUG("Loading cached shader file: %s", filename.c_str());
+          CP_DEBUG("Loading cached shader file: {}", filename);
           std::vector<uint32_t> data = FileSystem::ReadFile32(spvFilename);
           return InitializeShaderModule(data.data(), data.size() * sizeof(uint32_t));
         }
@@ -95,7 +95,7 @@ namespace Copium
     {
       CP_WARN("Cached shader file is invalid, recreating it");
     }
-    CP_DEBUG("Compiling shader file: %s", filename.c_str());
+    CP_DEBUG("Compiling shader file: {}", filename);
     shaderc::Compiler compiler;
     shaderc::CompileOptions options;
 
@@ -105,9 +105,9 @@ namespace Copium
     shaderc::SpvCompilationResult result =
       compiler.CompileGlslToSpv(glslCode.data(), glslCode.size(), type, filename.c_str(), options);
     CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success,
-              "Failed to compile shader: %s\n%s",
-              filename.c_str(),
-              result.GetErrorMessage().c_str());
+              "Failed to compile shader: {}\n{}",
+              filename,
+              result.GetErrorMessage());
 
     std::vector<uint32_t> data{result.cbegin(), result.cend()};
     FileSystem::WriteFile(spvFilename, (const char*)data.data(), data.size() * sizeof(uint32_t));
@@ -123,7 +123,7 @@ namespace Copium
 
     shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(code.data(), type, "inline_shader_code", options);
     CP_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success,
-              "Failed to compile inline shader code: %s",
+              "Failed to compile inline shader code: {}",
               result.GetErrorMessage());
 
     std::vector<uint32_t> data{result.cbegin(), result.cend()};

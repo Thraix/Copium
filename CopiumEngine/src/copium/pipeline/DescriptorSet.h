@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
 #include <vulkan/vulkan.hpp>

@@ -1,8 +1,8 @@
-#include "Instance.h"
+#include "copium/core/Instance.h"
 
 #include <GLFW/glfw3.h>
 
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -43,7 +43,7 @@ namespace Copium
     CP_INFO("Supported Extensions:");
     for (auto&& extension : extensions)
     {
-      CP_INFO_CONT("\t%s", extension.extensionName);
+      CP_INFO_CONT("\t{}", extension.extensionName);
     }
 
     std::vector<const char*> layers{};
@@ -89,7 +89,7 @@ namespace Copium
     CP_INFO("Supported Layers:");
     for (auto&& availableLayer : availableLayers)
     {
-      CP_INFO_CONT("\t%s", availableLayer.layerName);
+      CP_INFO_CONT("\t{}", availableLayer.layerName);
     }
 
     for (auto&& layer : layers)

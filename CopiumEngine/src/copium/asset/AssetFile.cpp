@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include "copium/util/FileSystem.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -30,7 +31,7 @@ namespace Copium
       Load(metaFile, assetType);
       return;
     }
-    CP_WARN("Unknown Asset type in file: %s", metaFile.GetFilePath().c_str());
+    CP_WARN("Unknown Asset type in file: {}", metaFile.GetFilePath());
   }
 
   const std::string& AssetFile::GetPath() const
@@ -48,7 +49,7 @@ namespace Copium
     MetaFileClass& metaClass = metaFile.GetMetaClass(className);
     if (!metaClass.HasValue("uuid"))
     {
-      CP_WARN("Asset (%s) has no UUID assigned, generating new one", path.c_str());
+      CP_WARN("Asset ({}) has no UUID assigned, generating new one", path);
       metaClass.AddValue("uuid", Uuid{}.ToString());
       std::fstream file{path};
       file << metaFile;

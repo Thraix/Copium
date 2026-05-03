@@ -1,6 +1,6 @@
 #include "copium/event/EventDispatcher.h"
 
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -35,7 +35,7 @@ namespace Copium
             focusedEventHandler = eventHandler;
             return;
           default:
-            CP_ABORT("Unreachable switch case: %s", ToString(result).c_str());
+            CP_ABORT("Unreachable switch case: {}", result);
         }
       }
     }

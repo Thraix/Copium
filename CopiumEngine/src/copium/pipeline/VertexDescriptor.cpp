@@ -1,6 +1,6 @@
 #include "copium/pipeline/VertexDescriptor.h"
 
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {

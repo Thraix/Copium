@@ -1,6 +1,5 @@
 #include "copium/buffer/Framebuffer.h"
 
-#include "copium/asset/AssetManager.h"
 #include "copium/buffer/CommandBuffer.h"
 #include "copium/core/Vulkan.h"
 #include "copium/sampler/Image.h"
@@ -15,8 +14,8 @@ namespace Copium
 
     width = attachment.GetWidth();
     height = attachment.GetHeight();
-    CP_ASSERT(width > 0, "Width of framebuffer is less than 1: %d", width);
-    CP_ASSERT(height > 0, "Height of framebuffer is less than 1: %d", height);
+    CP_ASSERT(width > 0, "Width of framebuffer is less than 1: {}", width);
+    CP_ASSERT(height > 0, "Height of framebuffer is less than 1: {}", height);
 
     InitializeDepthBuffer();
     InitializeRenderPass();
@@ -27,8 +26,8 @@ namespace Copium
     : width{width},
       height{height}
   {
-    CP_ASSERT(width > 0, "Width of framebuffer is less than 1: %d", width);
-    CP_ASSERT(height > 0, "Height of framebuffer is less than 1: %d", height);
+    CP_ASSERT(width > 0, "Width of framebuffer is less than 1: {}", width);
+    CP_ASSERT(height > 0, "Height of framebuffer is less than 1: {}", height);
 
     InitializeImage(samplerCreator);
     InitializeDepthBuffer();
@@ -51,8 +50,8 @@ namespace Copium
 
   void Framebuffer::Resize(int width, int height)
   {
-    CP_ASSERT(width > 0, "Width of framebuffer is less than 1: %d", width);
-    CP_ASSERT(height > 0, "Height of framebuffer is less than 1: %d", height);
+    CP_ASSERT(width > 0, "Width of framebuffer is less than 1: {}", width);
+    CP_ASSERT(height > 0, "Height of framebuffer is less than 1: {}", height);
 
     Vulkan::GetDevice().WaitIdle();
     this->width = width;

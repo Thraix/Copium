@@ -111,7 +111,7 @@ namespace Copium
     {
       VkPhysicalDeviceProperties deviceProperties;
       vkGetPhysicalDeviceProperties(device, &deviceProperties);
-      CP_INFO_CONT("\t%s", deviceProperties.deviceName);
+      CP_INFO_CONT("\t{}", deviceProperties.deviceName);
       devicePriorities.emplace_back(device, GetPhysicalDevicePriority(device));
     }
 
@@ -125,7 +125,7 @@ namespace Copium
     VkPhysicalDeviceProperties deviceProperties;
     vkGetPhysicalDeviceProperties(it->first, &deviceProperties);
     physicalDevice = it->first;
-    CP_INFO("Selecting device: %s", deviceProperties.deviceName);
+    CP_INFO("Selecting device: {}", deviceProperties.deviceName);
   }
 
   void Device::InitializeLogicalDevice()

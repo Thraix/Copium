@@ -6,11 +6,10 @@
 #include "copium/util/Common.h"
 #include "copium/util/Enum.h"
 
-#define CP_SHADER_READ_TYPE_ENUMS GlslFile, GlslCode, SpvFile, SpvCode
-CP_ENUM_CREATOR(Copium, ShaderReadType, CP_SHADER_READ_TYPE_ENUMS);
-
 namespace Copium
 {
+  CP_ENUM_CREATOR(ShaderReadType, GlslFile, GlslCode, SpvFile, SpvCode);
+
   class Shader final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Shader);

@@ -5,14 +5,14 @@
 #include "copium/util/Common.h"
 #include "copium/util/Enum.h"
 
-#define CP_WINDOW_MODE_ENUMS Fullscreen, BorderlessWindowed, Windowed
-
-CP_ENUM_CREATOR(Copium, WindowMode, CP_WINDOW_MODE_ENUMS);
+#define CP_WINDOW_MODE_ENUMS
 
 struct GLFWwindow;
 
 namespace Copium
 {
+  CP_ENUM_CREATOR(WindowMode, Fullscreen, BorderlessWindowed, Windowed);
+
   class Window final
   {
     CP_DELETE_COPY_AND_MOVE_CTOR(Window);
@@ -48,5 +48,6 @@ namespace Copium
     static void MouseMoveCallback(GLFWwindow* window, double xpos, double ypos);
     static void WindowFocusCallback(GLFWwindow* window, int focused);
     static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+    static void DropCallback(GLFWwindow* window, int path_count, const char* paths[]);
   };
 }

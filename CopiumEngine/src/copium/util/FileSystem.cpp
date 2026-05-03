@@ -6,12 +6,14 @@
 #include <filesystem>
 #include <fstream>
 
+#include "copium/util/Trace.h"
+
 namespace Copium
 {
   std::vector<char> FileSystem::ReadFile(const std::string& filename)
   {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
+    CP_ASSERT(file.is_open(), "Failed to open file: {}", filename);
 
     size_t fileSize = (size_t)file.tellg();
     std::vector<char> buffer(fileSize);
@@ -25,7 +27,7 @@ namespace Copium
   std::vector<uint32_t> FileSystem::ReadFile32(const std::string& filename)
   {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
+    CP_ASSERT(file.is_open(), "Failed to open file: {}", filename);
 
     size_t fileSize = (size_t)file.tellg();
     CP_ASSERT(fileSize % 4 == 0, "byte size is not divisible by 4");
@@ -40,7 +42,7 @@ namespace Copium
   std::string FileSystem::ReadFileStr(const std::string& filename)
   {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
+    CP_ASSERT(file.is_open(), "Failed to open file: {}", filename);
 
     size_t fileSize = (size_t)file.tellg();
     std::string buffer;
@@ -57,7 +59,7 @@ namespace Copium
     std::filesystem::path path{filename};
     std::filesystem::create_directories(path.parent_path());
     std::ofstream file(filename, std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
+    CP_ASSERT(file.is_open(), "Failed to open file: {}", filename);
 
     file.write(data.c_str(), data.size());
   }
@@ -67,7 +69,7 @@ namespace Copium
     std::filesystem::path path{filename};
     std::filesystem::create_directories(path.parent_path());
     std::ofstream file(filename, std::ios::binary);
-    CP_ASSERT(file.is_open(), "Failed to open file: %s", filename.c_str());
+    CP_ASSERT(file.is_open(), "Failed to open file: {}", filename);
 
     file.write(data, size);
   }
@@ -81,7 +83,7 @@ namespace Copium
   int64_t FileSystem::DateModified(const std::string& filename)
   {
     struct stat result;
-    CP_ASSERT(stat(filename.c_str(), &result) == 0, "Cannot stat file %s", filename.c_str());
+    CP_ASSERT(stat(filename.c_str(), &result) == 0, "Cannot stat file {}", filename);
     return (int64_t)result.st_mtime;
   }
 }

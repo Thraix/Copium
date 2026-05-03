@@ -3,6 +3,7 @@
 #include <string_view>
 
 #include "copium/util/FileSystem.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -143,7 +144,7 @@ namespace Copium
       else if (type == "int")
         binding.uniforms.emplace_back(UniformType::Int, std::string(name));
       else
-        CP_ABORT("Unsupported uniform type=%s", std::string(type).c_str());
+        CP_ABORT("Unsupported uniform type={}", type);
       ParseWhitespace(str, index);
       index++;  // ";"
       ParseWhitespace(str, index);

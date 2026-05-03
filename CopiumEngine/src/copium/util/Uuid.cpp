@@ -1,6 +1,6 @@
 #include "copium/util/Uuid.h"
 
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -26,7 +26,7 @@ namespace Copium
     : msb{0},
       lsb{0}
   {
-    CP_ASSERT(uuidString.size() == 36, "Invalid Uuid string size: %s", uuidString.c_str());
+    CP_ASSERT(uuidString.size() == 36, "Invalid Uuid string size: {}", uuidString);
     for (int i = 0; i < 18; i++)
     {
       if (i == 8 || i == 13)  // skip "-"
@@ -91,7 +91,7 @@ namespace Copium
       return c - '0';
     if (c >= 'a' && c <= 'f')
       return c - 'a' + 10;
-    CP_ABORT("Invalid char value: %c (%d)", c, (int)c);
+    CP_ABORT("Invalid char value: {} ({})", c, (int)c);
   }
 
   char Uuid::DecToHex(uint8_t nibble) const
@@ -100,6 +100,6 @@ namespace Copium
       return '0' + nibble;
     if (nibble >= 10 && nibble <= 15)
       return 'a' + nibble - 10;
-    CP_ABORT("Invalid nibble value: %d", (int)nibble);
+    CP_ABORT("Invalid nibble value: {}", (int)nibble);
   }
 }

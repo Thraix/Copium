@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 
+#include <memory>
 #include <vector>
 
 #include "copium/buffer/CommandBuffer.h"

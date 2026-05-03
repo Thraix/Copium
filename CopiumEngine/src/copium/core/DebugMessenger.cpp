@@ -1,6 +1,7 @@
 #include "copium/core/DebugMessenger.h"
 
 #include "copium/core/Instance.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -64,9 +65,9 @@ namespace Copium
     if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
     {
       if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
-        CP_ABORT("%s", pCallbackData->pMessage);
+        CP_ABORT("{}", pCallbackData->pMessage);
       else
-        CP_WARN("%s", pCallbackData->pMessage);
+        CP_WARN("{}", pCallbackData->pMessage);
     }
     return VK_FALSE;
   }

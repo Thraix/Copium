@@ -41,8 +41,8 @@ namespace Copium
       return;
 
     CP_ASSERT(queueOperationOrder.size() == addQueue.size() + removeQueue.size(),
-              "queueOperationOrder size=%zu doesn't match the sum of the addQueue size=%zu and removeQueue size=%zu, "
-              "which is %zu",
+              "queueOperationOrder size={} doesn't match the sum of the addQueue size={} and removeQueue size={}, "
+              "which is {}",
               queueOperationOrder.size(),
               addQueue.size(),
               removeQueue.size(),
@@ -116,9 +116,9 @@ namespace Copium
   void SystemPool::MoveSystemAfter(const std::type_index& systemId, const std::type_index& afterSystemId)
   {
     auto it1 = systems.find(systemId);
-    CP_ASSERT(it1 != systems.end(), "System with typeid=%s does not exist in SystemPool", systemId.name());
+    CP_ASSERT(it1 != systems.end(), "System with typeid={} does not exist in SystemPool", systemId.name());
     auto it2 = systems.find(afterSystemId);
-    CP_ASSERT(it2 != systems.end(), "System with typeid=%s does not exist in SystemPool", afterSystemId.name());
+    CP_ASSERT(it2 != systems.end(), "System with typeid={} does not exist in SystemPool", afterSystemId.name());
 
     auto itSystemId = std::find(systemOrder.rbegin(), systemOrder.rend(), it1->second);
     auto itAfterSystemId = std::find(systemOrder.rbegin(), systemOrder.rend(), it2->second);
@@ -128,9 +128,9 @@ namespace Copium
   void SystemPool::MoveSystemBefore(const std::type_index& systemId, const std::type_index& beforeSystemId)
   {
     auto it1 = systems.find(systemId);
-    CP_ASSERT(it1 != systems.end(), "System with typeid=%s does not exist in SystemPool", systemId.name());
+    CP_ASSERT(it1 != systems.end(), "System with typeid={} does not exist in SystemPool", systemId.name());
     auto it2 = systems.find(beforeSystemId);
-    CP_ASSERT(it2 != systems.end(), "System with typeid=%s does not exist in SystemPool", beforeSystemId.name());
+    CP_ASSERT(it2 != systems.end(), "System with typeid={} does not exist in SystemPool", beforeSystemId.name());
 
     auto itSystemId = std::find(systemOrder.rbegin(), systemOrder.rend(), it1->second);
     auto itBeforeSystemId = std::find(systemOrder.rbegin(), systemOrder.rend(), it2->second);
@@ -141,10 +141,10 @@ namespace Copium
   void SystemPool::CommitAddSystem(int queueIndex)
   {
     CP_ASSERT(
-      queueIndex < addQueue.size(), "queueIndex=%d is greater than the addQueueSize=%d", queueIndex, addQueue.size());
+      queueIndex < addQueue.size(), "queueIndex={} is greater than the addQueueSize={}", queueIndex, addQueue.size());
 
     auto& [systemId, system, ordering] = addQueue[queueIndex];
-    CP_ASSERT(systems.find(systemId) == systems.end(), "System with typeid=%s already exists in SystemPool");
+    CP_ASSERT(systems.find(systemId) == systems.end(), "System with typeid={} already exists in SystemPool");
 
     systems.emplace(systemId, system);
     systemOrder.emplace_back(system);
@@ -154,16 +154,16 @@ namespace Copium
   void SystemPool::CommitRemoveSystem(int queueIndex)
   {
     CP_ASSERT(queueIndex < removeQueue.size(),
-              "queueIndex=%d is greater than the removeQueueSize=%d",
+              "queueIndex={} is greater than the removeQueueSize={}",
               queueIndex,
               removeQueue.size());
 
     const auto& systemId = removeQueue[queueIndex];
     auto it = systems.find(systemId);
-    CP_ASSERT(it != systems.end(), "System with typeid=%s does not exist in SystemPool", systemId.name());
+    CP_ASSERT(it != systems.end(), "System with typeid={} does not exist in SystemPool", systemId.name());
 
     auto itOrder = std::find(systemOrder.begin(), systemOrder.end(), it->second);
-    CP_ASSERT(itOrder != systemOrder.end(), "System with typeid=%s does not exist in systemOrder", systemId.name());
+    CP_ASSERT(itOrder != systemOrder.end(), "System with typeid={} does not exist in systemOrder", systemId.name());
 
     delete it->second;
     systems.erase(it);

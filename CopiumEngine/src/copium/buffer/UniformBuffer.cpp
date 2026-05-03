@@ -25,7 +25,7 @@ namespace Copium
 
   void UniformBuffer::Set(const std::string& str, const glm::mat3& data)
   {
-    CP_ASSERT(binding.GetUniformType(str) == UniformType::Mat3, "Uniform type missmatch = %s", str.c_str());
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Mat3, "Uniform type missmatch = {}", str);
     uint32_t offset = binding.GetUniformOffset(str);
     // memcpy(buffer.data() + offset,      &data[0], sizeof(glm::vec3));
     // memcpy(buffer.data() + offset + 16, &data[1], sizeof(glm::vec3));
@@ -36,42 +36,42 @@ namespace Copium
 
   void UniformBuffer::Set(const std::string& str, const glm::mat4& data)
   {
-    CP_ASSERT(binding.GetUniformType(str) == UniformType::Mat4, "Uniform type missmatch = %s", str.c_str());
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Mat4, "Uniform type missmatch = {}", str);
     uint32_t offset = binding.GetUniformOffset(str);
     memcpy(buffer.data() + offset, &data, sizeof(glm::mat4));
   }
 
   void UniformBuffer::Set(const std::string& str, const glm::vec2& data)
   {
-    CP_ASSERT(binding.GetUniformType(str) == UniformType::Vec2, "Uniform type missmatch = %s", str.c_str());
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Vec2, "Uniform type missmatch = {}", str);
     uint32_t offset = binding.GetUniformOffset(str);
     memcpy(buffer.data() + offset, &data, sizeof(glm::vec2));
   }
 
   void UniformBuffer::Set(const std::string& str, const glm::vec3& data)
   {
-    CP_ASSERT(binding.GetUniformType(str) == UniformType::Vec3, "Uniform type missmatch = %s", str.c_str());
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Vec3, "Uniform type missmatch = {}", str);
     uint32_t offset = binding.GetUniformOffset(str);
     memcpy(buffer.data() + offset, &data, sizeof(glm::vec3));
   }
 
   void UniformBuffer::Set(const std::string& str, const glm::vec4& data)
   {
-    CP_ASSERT(binding.GetUniformType(str) == UniformType::Vec4, "Uniform type missmatch = %s", str.c_str());
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Vec4, "Uniform type missmatch = {}", str);
     uint32_t offset = binding.GetUniformOffset(str);
     memcpy(buffer.data() + offset, &data, sizeof(glm::vec4));
   }
 
   void UniformBuffer::Set(const std::string& str, float data)
   {
-    CP_ASSERT(binding.GetUniformType(str) == UniformType::Float, "Uniform type missmatch = %s", str.c_str());
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Float, "Uniform type missmatch = {}", str);
     uint32_t offset = binding.GetUniformOffset(str);
     memcpy(buffer.data() + offset, &data, sizeof(float));
   }
 
   void UniformBuffer::Set(const std::string& str, int data)
   {
-    CP_ASSERT(binding.GetUniformType(str) == UniformType::Int, "Uniform type missmatch = %s", str.c_str());
+    CP_ASSERT(binding.GetUniformType(str) == UniformType::Int, "Uniform type missmatch = {}", str);
     uint32_t offset = binding.GetUniformOffset(str);
     memcpy(buffer.data() + offset, &data, sizeof(int));
   }

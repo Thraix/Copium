@@ -31,7 +31,7 @@ namespace Copium
     device = std::make_unique<Device>();
     swapChain = std::make_unique<SwapChain>();
     imGuiInstance = std::make_unique<ImGuiInstance>();
-    CP_INFO("Initialized Vulkan in %f seconds", timer.Elapsed());
+    CP_INFO("Initialized Vulkan in {} seconds", timer.Elapsed());
 
     timer.Start();
     AssetManager::RegisterAssetType<Texture2D>("Texture2D");
@@ -48,7 +48,7 @@ namespace Copium
       "empty_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 0, 255, 255}, 1, 1, SamplerCreator{})};
     whiteTexture2D = AssetHandle<Texture2D>{
       "white_texture2d", std::make_unique<Texture2D>(std::vector<uint8_t>{255, 255, 255, 255}, 1, 1, SamplerCreator{})};
-    CP_INFO("Initialized AssetManager in %f seconds", timer.Elapsed());
+    CP_INFO("Initialized AssetManager in {} seconds", timer.Elapsed());
   }
 
   void Vulkan::Destroy()
@@ -108,6 +108,6 @@ namespace Copium
 
   void Vulkan::glfw_error_callback(int error, const char* description)
   {
-    CP_ABORT("GLFW Error %d: %s\n", error, description);
+    CP_ABORT("GLFW Error {}: {}\n", error, description);
   }
 }

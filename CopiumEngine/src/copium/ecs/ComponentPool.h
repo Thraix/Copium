@@ -6,7 +6,7 @@
 #include "copium/ecs/ComponentPoolBase.h"
 #include "copium/ecs/Config.h"
 #include "copium/ecs/EntitySet.h"
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -68,8 +68,8 @@ namespace Copium
         return;
 
       CP_ASSERT(queueOperationOrder.size() == addQueue.size() + removeQueue.size(),
-                "queueOperationOrder size=%zu doesn't match the sum of the addQueue size=%zu and removeQueue size=%zu, "
-                "which is %zu",
+                "queueOperationOrder size={} doesn't match the sum of the addQueue size={} and removeQueue size={}, "
+                "which is {}",
                 queueOperationOrder.size(),
                 addQueue.size(),
                 removeQueue.size(),
@@ -152,14 +152,14 @@ namespace Copium
     void CommitAddComponent(int queueIndex)
     {
       CP_ASSERT(
-        queueIndex < addQueue.size(), "queueIndex=%d is greater than the addQueueSize=%d", queueIndex, addQueue.size());
+        queueIndex < addQueue.size(), "queueIndex={} is greater than the addQueueSize={}", queueIndex, addQueue.size());
 
       const auto& [entity, component] = addQueue[queueIndex];
       // TODO: Debugging errors caused by this assert might be a bit difficult, since there wont be any stacktrace for
       //       where the component was added. Might want to validate this in AddComponent somehow (like looping through
       //       the queued changes and work out if the component already exists)
       CP_ASSERT(Find(entity) == Size(),
-                "Component already exists in entity (entity=%u, Component=%s)",
+                "Component already exists in entity (entity={}, Component={})",
                 entity,
                 typeid(Component).name());
 
@@ -172,7 +172,7 @@ namespace Copium
     void CommitRemoveComponent(int queueIndex)
     {
       CP_ASSERT(queueIndex < removeQueue.size(),
-                "queueIndex=%d is greater than the removeQueueSize=%d",
+                "queueIndex={} is greater than the removeQueueSize={}",
                 queueIndex,
                 removeQueue.size());
 
@@ -183,7 +183,7 @@ namespace Copium
         // TODO: Debugging warnings caused by this might be a bit difficult, since there wont be any stacktrace for
         //       where the component was added. Might want to validate this in AddComponent somehow (like looping
         //       through the queued changes and work out if the component already exists)
-        CP_WARN("Entity did not contain component (entity=%u, Component=%s)", entity, typeid(Component).name());
+        CP_WARN("Entity did not contain component (entity={}, Component={})", entity, typeid(Component).name());
         return;
       }
 

@@ -1,5 +1,6 @@
 #include "copium/pipeline/DescriptorPool.h"
 
+#include "copium/core/SwapChain.h"
 #include "copium/core/Vulkan.h"
 
 namespace Copium
@@ -43,8 +44,8 @@ namespace Copium
 
   std::vector<VkDescriptorSet> DescriptorPool::AllocateDescriptorSets(VkDescriptorSetLayout descriptorSetLayout)
   {
-    std::vector<VkDescriptorSet> descriptorSets{SwapChain::MAX_FRAMES_IN_FLIGHT};
-    std::vector<VkDescriptorSetLayout> layouts{SwapChain::MAX_FRAMES_IN_FLIGHT, descriptorSetLayout};
+    std::vector<VkDescriptorSet> descriptorSets{(size_t)SwapChain::MAX_FRAMES_IN_FLIGHT};
+    std::vector<VkDescriptorSetLayout> layouts{(size_t)SwapChain::MAX_FRAMES_IN_FLIGHT, descriptorSetLayout};
     VkDescriptorSetAllocateInfo allocateInfo{};
     allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocateInfo.descriptorPool = descriptorPool;

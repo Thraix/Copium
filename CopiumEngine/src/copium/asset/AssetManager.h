@@ -2,11 +2,12 @@
 
 #include <functional>
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "copium/asset/Asset.h"
 #include "copium/asset/AssetFile.h"
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -42,7 +43,7 @@ namespace Copium
     static void RegisterAssetType(const std::string& assetType)
     {
       CP_ASSERT(assetTypes.emplace(assetType, &AssetManager::CreateAsset<AssetType>).second,
-                "Asset type already exists: %s",
+                "Asset type already exists: {}",
                 assetType.c_str());
       AssetFile::RegisterAssetType(assetType);
     }

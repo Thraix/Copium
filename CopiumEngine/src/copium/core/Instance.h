@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "copium/core/DebugMessenger.h"
 
 namespace Copium

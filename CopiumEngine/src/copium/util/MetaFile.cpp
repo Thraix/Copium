@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 #include "copium/util/StringUtil.h"
 
 namespace Copium
@@ -23,7 +23,7 @@ namespace Copium
   const std::string& MetaFileClass::GetValue(const std::string& key) const
   {
     auto it = values.find(key);
-    CP_ASSERT(it != values.end(), "Value does not exist: %s", key.c_str());
+    CP_ASSERT(it != values.end(), "Value does not exist: {}", key);
     return it->second;
   }
 
@@ -55,7 +55,7 @@ namespace Copium
   {
     std::ifstream stream(filepath);
 
-    CP_ASSERT(stream.is_open(), "Could not find meta file: %s", filepath.c_str());
+    CP_ASSERT(stream.is_open(), "Could not find meta file: {}", filepath);
     LoadMetaFile(stream);
   }
 
@@ -77,14 +77,14 @@ namespace Copium
   MetaFileClass& MetaFile::GetMetaClass(const std::string& className)
   {
     auto it = classes.find(className);
-    CP_ASSERT(it != classes.end(), "class does not exist: %s", className.c_str());
+    CP_ASSERT(it != classes.end(), "class does not exist: {}", className);
     return it->second;
   }
 
   const MetaFileClass& MetaFile::GetMetaClass(const std::string& className) const
   {
     auto it = classes.find(className);
-    CP_ASSERT(it != classes.end(), "class does not exist: ", className.c_str());
+    CP_ASSERT(it != classes.end(), "class does not exist: {}", className);
     return it->second;
   }
 
@@ -139,7 +139,7 @@ namespace Copium
         currentClass = StringUtil::Trim(line);
         currentClass = currentClass.substr(1, currentClass.size() - 2);
         metaClassIt = classes.find(currentClass);
-        CP_ASSERT(metaClassIt == classes.end(), "Meta file contains two of the same class: %s", currentClass.c_str());
+        CP_ASSERT(metaClassIt == classes.end(), "Meta file contains two of the same class: {}", currentClass);
         metaClassIt = classes.emplace(currentClass, MetaFileClass{}).first;
         continue;
       }
@@ -159,11 +159,11 @@ namespace Copium
         continue;
       }
 
-      CP_ASSERT(metaClassIt != classes.end(), "No meta file header specified: ", filepath.c_str());
+      CP_ASSERT(metaClassIt != classes.end(), "No meta file header specified: {}", filepath);
       auto res = metaClassIt->second.values.emplace(key, value);
       if (!res.second)
       {
-        CP_WARN("Meta file key is defined twice: %s", std::string(key).c_str());
+        CP_WARN("Meta file key is defined twice: {}", key);
       }
     }
   }
@@ -173,7 +173,7 @@ namespace Copium
     std::vector<MetaFile> metaFiles;
     std::ifstream stream{file};
 
-    CP_ASSERT(stream, "Failed to read file: %s", file.c_str());
+    CP_ASSERT(stream, "Failed to read file: {}", file);
 
     MetaFile meta;
     while (!stream.eof())

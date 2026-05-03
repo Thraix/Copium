@@ -1,6 +1,7 @@
 #include "copium/buffer/CommandBuffer.h"
 
 #include "copium/core/Vulkan.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -16,7 +17,7 @@ namespace Copium
         commandBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
         break;
       default:
-        CP_ABORT("Unreachable switch case: %s", ToString(type).c_str());
+        CP_ABORT("Unreachable switch case: {}", type);
     }
 
     VkCommandBufferAllocateInfo allocateInfo{};
@@ -49,33 +50,46 @@ namespace Copium
     beginInfo.flags = 0;
     beginInfo.pInheritanceInfo = nullptr;
 
+    int index = Vulkan::GetSwapChain().GetFlightIndex();
+
     switch (type)
     {
       case CommandBufferType::SingleUse:
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        index = 0;
         break;
       case CommandBufferType::Dynamic:
         break;
       default:
-        CP_ABORT("Unreachable switch case: %s", ToString(type).c_str());
+        CP_ABORT("Unreachable switch case: {}", type);
     }
 
-    vkResetCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()], 0);
-    CP_VK_ASSERT(vkBeginCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()], &beginInfo),
-                 "Failed to begin command buffer");
+    vkResetCommandBuffer(commandBuffers[index], 0);
+    CP_VK_ASSERT(vkBeginCommandBuffer(commandBuffers[index], &beginInfo), "Failed to begin command buffer");
   }
 
   void CommandBuffer::End()
   {
-    vkEndCommandBuffer(commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()]);
+    int index = Vulkan::GetSwapChain().GetFlightIndex();
+    if (type == CommandBufferType::SingleUse)
+    {
+      index = 0;
+    }
+    vkEndCommandBuffer(commandBuffers[index]);
   }
 
   void CommandBuffer::Submit()
   {
+    int index = Vulkan::GetSwapChain().GetFlightIndex();
+    if (type == CommandBufferType::SingleUse)
+    {
+      index = 0;
+    }
+
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()];
+    submitInfo.pCommandBuffers = &commandBuffers[index];
 
     vkQueueSubmit(Vulkan::GetDevice().GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
     // TODO: if singleUse?
@@ -84,6 +98,11 @@ namespace Copium
 
   CommandBuffer::operator VkCommandBuffer() const
   {
-    return commandBuffers[Vulkan::GetSwapChain().GetFlightIndex()];
+    int index = Vulkan::GetSwapChain().GetFlightIndex();
+    if (type == CommandBufferType::SingleUse)
+    {
+      index = 0;
+    }
+    return commandBuffers[index];
   }
 }

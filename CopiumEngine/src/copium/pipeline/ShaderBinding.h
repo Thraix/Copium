@@ -6,16 +6,12 @@
 
 #include "copium/util/Enum.h"
 
-#define CP_BINDING_TYPE_ENUMS Sampler2D, UniformBuffer
-#define CP_SHADER_TYPE_ENUMS Vertex, Fragment
-#define CP_UNIFORM_TYPE_ENUMS Mat3, Mat4, Vec2, Vec3, Vec4, Float, Int
-
-CP_ENUM_CREATOR(Copium, BindingType, CP_BINDING_TYPE_ENUMS);
-CP_ENUM_CREATOR(Copium, ShaderType, CP_SHADER_TYPE_ENUMS);
-CP_ENUM_CREATOR(Copium, UniformType, CP_UNIFORM_TYPE_ENUMS);
-
 namespace Copium
 {
+  CP_ENUM_CREATOR(BindingType, Sampler2D, UniformBuffer);
+  CP_ENUM_CREATOR(ShaderType, Vertex, Fragment);
+  CP_ENUM_CREATOR(UniformType, Mat3, Mat4, Vec2, Vec3, Vec4, Float, Int);
+
   struct ShaderBinding
   {
     std::string name;

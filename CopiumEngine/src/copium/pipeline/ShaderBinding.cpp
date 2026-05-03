@@ -1,6 +1,6 @@
 #include "copium/pipeline/ShaderBinding.h"
 
-#include "copium/util/Common.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -21,7 +21,7 @@ namespace Copium
         return offset;
       offset += GetUniformTypeOffset(uniformElem.first);
     }
-    CP_ABORT("Uniform not found=%s", uniform.c_str());
+    CP_ABORT("Uniform not found={}", uniform);
   }
 
   uint32_t ShaderBinding::GetUniformSize(const std::string& uniform) const
@@ -31,7 +31,7 @@ namespace Copium
       if (uniformElem.second == uniform)
         return GetUniformTypeSize(uniformElem.first);
     }
-    CP_ABORT("Uniform not found=%s", uniform.c_str());
+    CP_ABORT("Uniform not found={}", uniform);
   }
 
   UniformType ShaderBinding::GetUniformType(const std::string& uniform) const
@@ -41,7 +41,7 @@ namespace Copium
       if (uniformElem.second == uniform)
         return uniformElem.first;
     }
-    CP_ABORT("Uniform not found=%s", uniform.c_str());
+    CP_ABORT("Uniform not found={}", uniform);
   }
 
   uint32_t ShaderBinding::GetUniformBufferSize() const
@@ -79,7 +79,7 @@ namespace Copium
       case UniformType::Float:
         return 4;  // float
       default:
-        CP_ABORT("Unhandled switch case: %s", ToString(type).c_str());
+        CP_ABORT("Unhandled switch case: {}", type);
     }
   }
 
@@ -102,7 +102,7 @@ namespace Copium
       case UniformType::Float:
         return 16;  // alignas(16) glm::vec2
       default:
-        CP_ABORT("Unhandled switch case", ToString(type).c_str());
+        CP_ABORT("Unhandled switch case", type);
     }
   }
 }

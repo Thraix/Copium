@@ -3,8 +3,8 @@
 #include <filesystem>
 #include <fstream>
 
-#include "copium/util/Common.h"
 #include "copium/util/MetaFile.h"
+#include "copium/util/Trace.h"
 
 namespace Copium
 {
@@ -34,12 +34,12 @@ namespace Copium
                                 .c_str();
       try
       {
-        CP_DEBUG("Registering Asset: %s", assetPath.c_str());
+        CP_DEBUG("Registering Asset: {}", assetPath);
         cachedAssetFiles.emplace_back(assetPath);
       }
       catch (RuntimeException& exception)
       {
-        CP_ERR("Failed to register Asset: %s", assetPath.c_str());
+        CP_ERR("Failed to register Asset: {}", assetPath);
       }
     }
   }
@@ -68,7 +68,7 @@ namespace Copium
 
   Asset& AssetManager::LoadAsset(const std::string& assetPath)
   {
-    CP_DEBUG("Loading Asset: %s", assetPath.c_str());
+    CP_DEBUG("Loading Asset: {}", assetPath);
 
     for (auto& dir : assetDirs)
     {
@@ -80,12 +80,12 @@ namespace Copium
 
       return LoadAssetFromPath(path);
     }
-    CP_ABORT("Unknown Asset: %s", assetPath.c_str());
+    CP_ABORT("Unknown Asset: {}", assetPath);
   }
 
   Asset& AssetManager::LoadAsset(const Uuid& uuid)
   {
-    CP_DEBUG("Loading uuid Asset: %s", uuid.ToString().c_str());
+    CP_DEBUG("Loading uuid Asset: {}", uuid);
     for (auto&& assetFile : cachedAssetFiles)
     {
       if (assetFile.NeedReload())
@@ -96,16 +96,16 @@ namespace Copium
 
       return LoadAssetFromPath(assetFile.GetPath());
     }
-    CP_ABORT("Asset not found with uuid=%s", uuid.ToString().c_str());
+    CP_ABORT("Asset not found with uuid={}", uuid);
     // TODO: Reload the assetCache to see if a new file has appeared with that uuid
   }
 
   AssetId AssetManager::DuplicateAsset(AssetId id)
   {
     auto it = assets.find(id);
-    CP_ASSERT(it != assets.end(), "Failed to find asset with id=%d", id);
+    CP_ASSERT(it != assets.end(), "Failed to find asset with id={}", id);
 
-    CP_DEBUG("Duplicating asset: %s", it->second->GetName().c_str());
+    CP_DEBUG("Duplicating asset: {}", it->second->GetName());
     it->second->metaData.loadCount++;
     return id;
   }
@@ -118,8 +118,7 @@ namespace Copium
       CP_WARN("Asset not loaded");
       return;
     }
-    CP_DEBUG(
-      "Unloading Asset: %s (%d instances left)", it->second->GetName().c_str(), it->second->metaData.loadCount - 1);
+    CP_DEBUG("Unloading Asset: {} ({} instances left)", it->second->GetName(), it->second->metaData.loadCount - 1);
 
     it->second->metaData.loadCount--;
     if (it->second->metaData.loadCount > 0)
@@ -141,7 +140,7 @@ namespace Copium
   {
     if (assets.empty())
       return;
-    CP_WARN("Performing auto clean up of %d non unloaded assets", assets.size());
+    CP_WARN("Performing auto clean up of {} non unloaded assets", assets.size());
     while (!assets.empty())
     {
       UnloadAsset(assets.begin()->second->GetId());
@@ -152,10 +151,10 @@ namespace Copium
 
   Asset& AssetManager::RegisterRuntimeAsset(const std::string& name, const Uuid& uuid, std::unique_ptr<Asset>&& asset)
   {
-    CP_DEBUG("Registering Runtime Asset: %s", name.c_str());
+    CP_DEBUG("Registering Runtime Asset: {}", name);
 
     auto it = nameToAssetCache.find(name);
-    CP_ASSERT(it == nameToAssetCache.end(), "Asset already exists: %s", name.c_str());
+    CP_ASSERT(it == nameToAssetCache.end(), "Asset already exists: {}", name);
 
     AssetId id = runtimeAssetId++;
     Asset* asset2 = assets.emplace(id, std::move(asset)).first->second.get();
@@ -169,7 +168,7 @@ namespace Copium
 
   Asset& AssetManager::LoadAssetFromPath(const std::string& filepath)
   {
-    CP_DEBUG("Loading Asset: %s", filepath.c_str());
+    CP_DEBUG("Loading Asset: {}", filepath);
     auto it = pathToAssetCache.find(filepath);
     if (it != pathToAssetCache.end())
     {
@@ -184,6 +183,6 @@ namespace Copium
       if (metaFile.HasMetaClass(assetType.first))
         return assetType.second(metaFile, assetType.first);
     }
-    CP_ABORT("Unknown Asset type: %s", filepath.c_str());
+    CP_ABORT("Unknown Asset type: {}", filepath);
   }
 }
