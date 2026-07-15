@@ -64,6 +64,7 @@ namespace Copium
     device.reset();
     window.reset();
     instance.reset();
+    glfwTerminate();
   }
 
   Instance& Vulkan::GetInstance()

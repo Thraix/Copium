@@ -73,6 +73,12 @@ namespace Copium
       return *id != NULL_ASSET_ID;
     }
 
+    void Reset()
+    {
+      AssetManager::UnloadAsset(*id);
+      *id = NULL_ASSET_ID;
+    }
+
   private:
     struct AssetIdUnloader
     {
